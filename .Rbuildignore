@@ -1,3 +1,5 @@
+^renv$
+^renv\.lock$
 ^projectlive\.modules\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$

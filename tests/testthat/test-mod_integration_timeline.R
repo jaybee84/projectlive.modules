@@ -14,9 +14,9 @@ test_that("mod_integration_timeline_server", {
         get_rds_path() %>%
         readRDS() %>%
         dplyr::as_tibble() %>%
-        dplyr::filter(!is.na(.data$reportMilestone)) %>%
+        dplyr::filter(!is.na(.data$reportMilestone))
         # dplyr::select()
-        print()
+        # print()
     }
   )
 })

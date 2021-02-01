@@ -149,6 +149,7 @@ format_plot_data_with_config <- function(data, config){
   data %>%
     concatenate_df_list_columns_with_config(config) %>%
     recode_df_with_config(config) %>%
+    truncate_df_cols_with_config(config) %>%
     rename_df_columns_with_config(config)
 }
 
@@ -398,6 +399,31 @@ recode_df_with_config <- function(tbl, config){
   }
   return(tbl)
 }
+
+truncate_df_cols_with_config <- function(tbl, config){
+  config <- config %>%
+    purrr::pluck("columns") %>%
+    purrr::keep(
+      .,
+      purrr::map_lgl(., ~is.numeric(purrr::pluck(.x, "truncate")))
+    )
+
+  cols <- purrr::map_chr(config, purrr::pluck, "name")
+  widths <- config %>%
+    purrr::map_dbl(purrr::pluck, "truncate") %>%
+    as.integer() %>%
+    purrr::set_names(cols)
+
+  dplyr::mutate(
+    tbl,
+    dplyr::across(
+      cols,
+      ~ stringr::str_trunc(.x, width = widths[dplyr::cur_column()])
+    )
+  )
+}
+
+
 
 #' Get Number Of Distinct Values From Column
 #' This function returns the number of distinct values, including NA's in

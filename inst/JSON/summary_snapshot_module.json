@@ -109,25 +109,6 @@
       "fill"
     ]
   },
-  "merged_table": {
-    "join_column": "studyName",
-    "tables": [
-      "studies_table",
-      "files_table"
-    ],
-    "columns": [
-      [
-        "studyName",
-        "initiative"
-      ],
-      [
-        "studyName",
-        "resourceType",
-        "year",
-        "assay"
-      ]
-    ]
-  },
   "file_upload_timeline": {
     "empty_table_message": "The studies have not uploaded any files yet. Please check back later.",
     "table": "files",
@@ -137,7 +118,8 @@
         "name": "studyName",
         "display_name": "Study Name",
         "type": "character",
-        "na_replace": "pendingAnnotation"
+        "na_replace": "pendingAnnotation",
+        "truncate": 40
       },
       {
         "name": "resourceType",

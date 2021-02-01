@@ -11,13 +11,13 @@ test_that("mod_integration_timeline_server", {
     ),
     {
       expect_true(T)
-      # files <- "files" %>%
-      #   get_rds_path() %>%
-      #   readRDS() %>%
-      #   dplyr::as_tibble() %>%
-      #   dplyr::filter(!is.na(.data$reportMilestone))
-      #   # dplyr::select()
-      #   # print()
+      files <- "files" %>%
+        get_rds_path() %>%
+        readRDS() %>%
+        dplyr::as_tibble() %>%
+        dplyr::filter(!is.na(.data$reportMilestone))
+        # dplyr::select()
+        # print()
     }
   )
 })

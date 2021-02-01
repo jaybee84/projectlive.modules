@@ -5,7 +5,7 @@ saveRDS(incoming_data, "inst/RDS/incoming_data.rds")
 
 files <-
   get_synapse_tbl(syn, "syn16858331") %>%
-  dplyr::rename("initiative" = "consortium") %>%
+  dplyr::filter(!is.na(reportMilestone))
   format_date_columns()
 saveRDS(files, "inst/RDS/files.rds")
 

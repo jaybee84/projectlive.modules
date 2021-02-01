@@ -135,7 +135,8 @@ test_that("format_plot_data_with_config", {
         "name" = "consortium",
         "display_name" = "Consortium",
         "na_replace" = "Not Applicable",
-        "type" = "character"
+        "type" = "character",
+        "truncate" = 15
       ),
       list(
         "name" = "year",
@@ -145,18 +146,20 @@ test_that("format_plot_data_with_config", {
     )
   )
   data <- dplyr::tribble(
-    ~consortium, ~year, ~month,
-    NA,          2000L, NA,
-    "c1",        20001, "January"
+    ~consortium,                 ~year, ~month,
+    NA,                          2000L, NA,
+    "c1",                        2001L, "January",
+    "loooooooooooooooooooooong", 2001L, "January"
   )
   expected_result <- dplyr::tribble(
-    ~Consortium,      ~Year,
-    "Not Applicable", 2000L,
-    "c1",             20001
+    ~Consortium,       ~Year,
+    "Not Applicable",  2000L,
+    "c1",              2001L,
+    "looooooooooo...", 2001L
   )
   expect_equal(
-    expected_result,
-    format_plot_data_with_config(data, config)
+    format_plot_data_with_config(data, config),
+    expected_result
   )
 })
 
@@ -337,6 +340,70 @@ test_that("recode_df_with_config", {
       "col1" = c("x", NA, "b"),
       "col2" = c("z", "O", "M"),
       "col3" = c(1L, 2L, NA),
+    )
+  )
+})
+
+test_that("truncate_df_cols_with_config", {
+  tbl1 <- dplyr::tibble(
+    "col1" = c("aaaaaaaaaaaaaaaaaaaaaaa", "a", NA),
+    "col2" = c("bbbbbbbbbbbbbbbbbbbbbbb", "b", NA)
+  )
+  config1 <- list(
+    "columns" = list(
+      "col1" = list(
+        "name" = "col1",
+        "type" = "character"
+      ),
+      "col2" = list(
+        "name" = "col2",
+        "type" = "character"
+      )
+    )
+  )
+  config2 <- list(
+    "columns" = list(
+      "col1" = list(
+        "name" = "col1",
+        "type" = "character",
+        "truncate" = 6
+      ),
+      "col2" = list(
+        "name" = "col2",
+        "type" = "character"
+      )
+    )
+  )
+  config3 <- list(
+    "columns" = list(
+      "col1" = list(
+        "name" = "col1",
+        "type" = "character",
+        "truncate" = 6
+      ),
+      "col2" = list(
+        "name" = "col2",
+        "type" = "character",
+        "truncate" = 7
+      )
+    )
+  )
+  res1 <- truncate_df_cols_with_config(tbl1, config1)
+  expect_equal(res1, tbl1)
+  res2 <- truncate_df_cols_with_config(tbl1, config2)
+  expect_equal(
+    res2,
+    dplyr::tibble(
+      "col1" = c("aaa...", "a", NA),
+      "col2" = c("bbbbbbbbbbbbbbbbbbbbbbb", "b", NA)
+    )
+  )
+  res3 <- truncate_df_cols_with_config(tbl1, config3)
+  expect_equal(
+    res3,
+    dplyr::tibble(
+      "col1" = c("aaa...", "a", NA),
+      "col2" = c("bbbb...", "b", NA)
     )
   )
 })

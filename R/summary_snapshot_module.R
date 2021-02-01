@@ -4,6 +4,7 @@
 #' @description  A shiny Module.
 #'
 #' @param id shiny id
+#' @export
 summary_snapshot_module_ui <- function(id){
   ns <- shiny::NS(id)
 

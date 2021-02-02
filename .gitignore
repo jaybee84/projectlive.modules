@@ -2,3 +2,4 @@
 .Rhistory
 .RData
 .Ruserdata
+R/use_conda_env.R

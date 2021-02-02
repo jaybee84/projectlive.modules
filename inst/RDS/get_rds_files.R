@@ -1,19 +1,34 @@
 syn <- create_synapse_login()
 
+# nf ----
+
 incoming_data <- get_synapse_tbl(syn, "syn23364404")
-saveRDS(incoming_data, "inst/RDS/incoming_data.rds")
+saveRDS(incoming_data, "inst/RDS/nf_incoming_data.rds")
 
-files <-
+nf_files <-
   get_synapse_tbl(syn, "syn16858331") %>%
-  dplyr::filter(!is.na(reportMilestone))
   format_date_columns()
-saveRDS(files, "inst/RDS/files.rds")
+saveRDS(nf_files, "inst/RDS/nf_files.rds")
 
-publications <- get_synapse_tbl(syn, "syn16857542")
-saveRDS(publications, "inst/RDS/publications.rds")
+nf_publications <- get_synapse_tbl(syn, "syn16857542")
+saveRDS(nf_publications, "inst/RDS/nf_publications.rds")
 
-studies <- get_synapse_tbl(syn, "syn16787123")
-saveRDS(studies, "inst/RDS/studies.rds")
+nf_studies <- get_synapse_tbl(syn, "syn16787123")
+saveRDS(nf_studies, "inst/RDS/nf_studies.rds")
 
-tools <- get_synapse_tbl(syn, "syn16859448")
-saveRDS(tools, "inst/RDS/tools.rds")
+nf_tools <- get_synapse_tbl(syn, "syn16859448")
+saveRDS(nf_tools, "inst/RDS/nf_tools.rds")
+
+# csbc ----
+
+csbc_files <-
+  get_synapse_tbl(syn, "syn9630847") %>%
+  dplyr::select(
+    "id", "createdOn", "dataset", "assay", "Theme", "consortium", "grantName"
+  ) %>%
+  dplyr::mutate(
+    "accessType" = "PUBLIC"
+  ) %>%
+  format_date_columns()
+
+saveRDS(csbc_files, "inst/RDS/csbc_files.rds")

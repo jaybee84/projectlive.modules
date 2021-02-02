@@ -1,19 +1,19 @@
 nf_example_data <- function(){
   list(
     "tables" = list(
-      "files" = "files" %>%
+      "files" = "nf_files" %>%
         get_rds_path() %>%
         readRDS() %>%
         dplyr::as_tibble(),
-      "publications" = "publications" %>%
+      "publications" = "nf_publications" %>%
         get_rds_path() %>%
         readRDS() %>%
         dplyr::as_tibble(),
-      "studies" = "studies" %>%
+      "studies" = "nf_studies" %>%
         get_rds_path() %>%
         readRDS() %>%
         dplyr::as_tibble(),
-      "tools" = "tools" %>%
+      "tools" = "nf_tools" %>%
         get_rds_path() %>%
         readRDS() %>%
         dplyr::as_tibble()
@@ -23,7 +23,24 @@ nf_example_data <- function(){
 }
 
 nf_example_summary_snapshot_config <- function(){
-  "summary_snapshot_module" %>%
+  "nf_summary_snapshot_module" %>%
+    get_json_path() %>%
+    jsonlite::read_json()
+}
+
+csbc_example_data <- function(){
+  list(
+    "tables" = list(
+      "files" = "csbc_files" %>%
+        get_rds_path() %>%
+        readRDS() %>%
+        dplyr::as_tibble(),
+    )
+  )
+}
+
+csbc_example_summary_snapshot_config <- function(){
+  "csbc_summary_snapshot_module" %>%
     get_json_path() %>%
     jsonlite::read_json()
 }

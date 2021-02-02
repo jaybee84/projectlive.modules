@@ -34,7 +34,7 @@
       "icon": "pencil"
     }
   },
-  "consortium_activity": {
+  "initiative_activity": {
     "table": "files",
     "empty_table_message": "The investigator/investigators has/have not uploaded any files yet. Please check back later.",
     "columns": [

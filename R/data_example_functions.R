@@ -34,7 +34,7 @@ csbc_example_data <- function(){
       "files" = "csbc_files" %>%
         get_rds_path() %>%
         readRDS() %>%
-        dplyr::as_tibble(),
+        dplyr::as_tibble()
     )
   )
 }

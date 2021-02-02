@@ -34,14 +34,7 @@ summary_snapshot_module_ui <- function(id){
               shinydashboard::infoBoxOutput(ns('box4'), width = 3)
             )
           ),
-          shinydashboard::box(
-            title = "Initiative Activity",
-            status = "primary",
-            solidHeader = TRUE,
-            width = 12,
-            collapsible = FALSE,
-            plotly::plotlyOutput(ns("initiative_activity"))
-          ),
+          initiative_activity_module_ui(ns("initiative_activity")),
           shinydashboard::box(
             title = "Resources Generated",
             status = "primary",
@@ -136,30 +129,11 @@ summary_snapshot_module_server <- function(id, data, config){
       })
 
       # initiative_activity ----
-      initiative_activity_data <- shiny::reactive({
-        shiny::req(config(), data())
-        config <- purrr::pluck(config(), "initiative_activity")
-
-        data <- data() %>%
-          purrr::pluck("tables", config$table) %>%
-          format_plot_data_with_config(config)
-
-        shiny::validate(shiny::need(
-          nrow(data) > 0,
-          config$empty_table_message
-        ))
-
-        return(data)
-      })
-
-      output$initiative_activity <- plotly::renderPlotly({
-        shiny::req(config(), initiative_activity_data())
-        create_plot_with_config(
-          data = initiative_activity_data(),
-          config = config()$initiative_activity,
-          plot_func = "create_initiative_activity_plot"
-        )
-      })
+      initiative_activity_module_server(
+        id = "initiative_activity",
+        data = data,
+        config = shiny::reactive(purrr::pluck(config(), "initiative_activity"))
+      )
 
       # resources_generated ----
       resources_generated_data <- shiny::reactive({

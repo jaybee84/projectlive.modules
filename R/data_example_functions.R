@@ -1,4 +1,4 @@
-example_tables <- function(){
+nf_example_data <- function(){
   list(
     "tables" = list(
       "files" = "files" %>%
@@ -22,7 +22,7 @@ example_tables <- function(){
   )
 }
 
-example_summary_snapshot_module_config <- function(){
+nf_example_summary_snapshot_config <- function(){
   "summary_snapshot_module" %>%
     get_json_path() %>%
     jsonlite::read_json()

@@ -7,8 +7,8 @@ test_that("summary_snapshot_module_server", {
   shiny::testServer(
     summary_snapshot_module_server,
     args = list(
-      "data" = shiny::reactiveVal(example_tables()),
-      "config" = shiny::reactiveVal(example_summary_snapshot_module_config())
+      "data" = shiny::reactiveVal(nf_data),
+      "config" = shiny::reactiveVal(nf_summary_snapshot_config)
     ),
     {
       expect_type(output$header_text, "character")
@@ -16,8 +16,6 @@ test_that("summary_snapshot_module_server", {
       expect_type(output$box2, "list")
       expect_type(output$box3, "list")
       expect_type(output$box4, "list")
-      expect_type(initiative_activity_data(), "list")
-      expect_type(output$initiative_activity, "character")
       expect_type(resources_generated_data(), "list")
       expect_type(output$resources_generated, "character")
       expect_type(file_upload_timeline_filter_choices(), "character")

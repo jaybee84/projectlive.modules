@@ -21,9 +21,12 @@ Depends: R (>= 4.0)
 Imports:
   dplyr (>= 1.0),
   forcats (>= 0.5),
+  DT (>= 0.1),
   ggplot2 (>= 3.3),
   glue (>= 1.0),
   jsonlite (>= 1.0),
+  kableExtra (>= 1.0),
+  knitr (>= 1.0),
   lubridate (>= 1.0),
   magrittr (>= 1.0),
   plotly (>= 4.9),

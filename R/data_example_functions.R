@@ -28,6 +28,12 @@ nf_example_summary_snapshot_config <- function(){
     jsonlite::read_json()
 }
 
+nf_example_study_summary_config <- function(){
+  "nf_study_summary_module" %>%
+    get_json_path() %>%
+    jsonlite::read_json()
+}
+
 csbc_example_data <- function(){
   list(
     "tables" = list(

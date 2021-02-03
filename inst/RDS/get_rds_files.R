@@ -53,3 +53,13 @@ csbc_files <-
 
 
 saveRDS(csbc_files, "inst/RDS/csbc_files.rds")
+
+
+csbc_publications <- get_synapse_tbl(syn, "syn21868591")
+saveRDS(csbc_publications, "inst/RDS/csbc_publications.rds")
+
+csbc_studies <- get_synapse_tbl(syn, "syn21918972")
+saveRDS(csbc_studies, "inst/RDS/csbc_studies.rds")
+
+csbc_tools <- get_synapse_tbl(syn, "syn21930566")
+saveRDS(csbc_tools, "inst/RDS/csbc_tools.rds")

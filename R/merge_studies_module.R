@@ -45,6 +45,7 @@ merge_studies_module_server <- function(id, data, config){
       merged_table <- shiny::reactive({
         shiny::req(data(), config())
         data <- data()
+        print(data)
         create_merged_table_with_config(
           data()$tables,
           purrr::pluck(config(), "merged_table")

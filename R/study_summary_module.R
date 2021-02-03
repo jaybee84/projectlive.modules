@@ -24,22 +24,6 @@ study_summary_module_ui <- function(id){
             status = "primary"
           ),
           merge_studies_module_ui(ns("merge_studies")),
-          # shinydashboard::box(
-          #   DT::dataTableOutput(ns('study_table')),
-          #   title = "Participating Studies",
-          #   status = "primary",
-          #   solidHeader = TRUE,
-          #   width = 12,
-          #   collapsible = FALSE
-          # ),
-          # shinydashboard::box(
-          #   shinydashboard::infoBoxOutput(ns('study'), width = 12),
-          #   title = "",
-          #   status = "primary",
-          #   solidHeader = F,
-          #   width = 12,
-          #   collapsible = FALSE,
-          # ),
           shinydashboard::box(
             shiny::htmlOutput(ns('study_summary')),
             title = "Study Summary",

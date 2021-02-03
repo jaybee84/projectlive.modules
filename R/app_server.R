@@ -7,4 +7,10 @@ server <- function(input, output, session) {
     data = data,
     config = shiny::reactive(nf_example_summary_snapshot_config())
   )
+
+  study_summary_module_server(
+    id = "study_summary_module",
+    data = data,
+    config = shiny::reactive(nf_example_study_summary_config())
+  )
 }

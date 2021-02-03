@@ -39,8 +39,10 @@ study_summary_module_ui <- function(id){
             width = 12,
             collapsible = FALSE,
           ),
+
+          # use filtered merged table/selected study ----
           shinydashboard::box(
-            shiny::htmlOutput(ns('study_details')),
+            shiny::htmlOutput(ns('study_summary')),
             title = "Study Summary",
             status = "primary",
             solidHeader = T,
@@ -64,7 +66,7 @@ study_summary_module_ui <- function(id){
             collapsible = FALSE
           ),
           shinydashboard::box(
-            plotly::plotlyOutput(ns('annotation_activity')),
+            plotly::plotlyOutput(ns('annotation_activity_plot')),
             title = "Annotation Activity",
             status = "primary",
             solidHeader = TRUE,
@@ -72,7 +74,7 @@ study_summary_module_ui <- function(id){
             collapsible = FALSE
           ),
           shinydashboard::box(
-            plotly::plotlyOutput(ns('publication_status')),
+            plotly::plotlyOutput(ns('publication_status_plot')),
             title = "Publication Status",
             status = "primary",
             solidHeader = TRUE,
@@ -181,93 +183,12 @@ study_summary_module_server <- function(id, data, config){
       })
 
       # use filtered merged table/selected study
-      output$annotation_activity <- plotly::renderPlotly({
-        shiny::req(filtered_merged_table(), config())
-        config <- purrr::pluck(config(), "annotation_activity")
 
-        data <- filtered_merged_table() %>%
-          format_plot_data_with_config(config) %>%
-          create_plot_count_df(
-            factor_columns   = config$plot$x,
-            complete_columns = c(config$plot$x, config$plot$facet)
-          )
-
-        validate(need(sum(data$Count) > 0, config$empty_table_message))
-
-        create_plot_with_config(
-          data, config, "create_annotation_activity_plot"
-        )
-      })
-
-      output$data_focus_selection_ui <- shiny::renderUI({
-        shiny::req(config)
-        choices <- purrr::pluck(config(), "data_focus", "plot", "fill")
-        shiny::selectizeInput(
-          ns('data_focus_columns'),
-          label = "Choose to view",
-          choices = choices,
-          selected = choices,
-          multiple = T
-        )
-      })
-
-      output$data_focus_plot <- plotly::renderPlotly({
+      output$study_summary <- shiny::renderText({
 
         shiny::req(filtered_merged_table(), config())
 
-        config <- purrr::pluck(config(), "data_focus")
-
-        data_list <- filtered_merged_table() %>%
-          format_plot_data_with_config(config) %>%
-          create_data_focus_tables(config$plot$x, config$plot$fill)
-
-        validate(need(length(data_list) > 0 , config$empty_table_message))
-
-        create_data_focus_plots(data_list, config)
-      })
-
-      output$study_timeline_plot <- plotly::renderPlotly({
-        shiny::req(filtered_merged_table(), config())
-
-        config <- purrr::pluck(config(), "study_timeline")
-
-        data <- filtered_merged_table() %>%
-          format_plot_data_with_config(config) %>%
-          tidyr::drop_na()
-
-        validate(need(nrow(data) > 0 , config$empty_table_message))
-
-        create_plot_with_config(
-          data, config, "create_study_timeline_plot"
-        )
-      })
-
-      output$publication_status <- plotly::renderPlotly({
-
-        shiny::req(config(), data(), selected_study_name())
-
-        config <- purrr::pluck(config(), "publication_status")
-
-        data <- data() %>%
-          purrr::pluck("tables", config$table) %>%
-          filter_list_column(config$filter_column, selected_study_name()) %>%
-          format_plot_data_with_config(config)
-
-        validate(need(nrow(data) > 0 , config$empty_table_message))
-
-        create_plot_with_config(
-          data,
-          config,
-          "create_publication_status_plot"
-        )%>%
-          plotly::layout(yaxis = list(range = c(0, 5)), autosize = T)
-      })
-
-      output$study_details <- shiny::renderText({
-
-        shiny::req(filtered_merged_table(), config())
-
-        config <- purrr::pluck(config(), "study_details")
+        config <- purrr::pluck(config(), "study_summary")
 
         filtered_merged_table() %>%
           format_plot_data_with_config(config) %>%
@@ -290,6 +211,78 @@ study_summary_module_server <- function(id, data, config){
           ) %>%
           kableExtra::kable_styling("striped", full_width = T)
       })
+
+      output$study_timeline_plot <- plotly::renderPlotly({
+        shiny::req(filtered_merged_table(), config())
+
+        config <- purrr::pluck(config(), "study_timeline_plot")
+
+        data <- filtered_merged_table() %>%
+          format_plot_data_with_config(config) %>%
+          tidyr::drop_na()
+
+        validate(need(nrow(data) > 0 , config$empty_table_message))
+
+        create_plot_with_config(
+          data, config, "create_study_timeline_plot"
+        )
+      })
+
+      output$data_focus_plot <- plotly::renderPlotly({
+
+        shiny::req(filtered_merged_table(), config())
+
+        config <- purrr::pluck(config(), "data_focus_plot")
+
+        data_list <- filtered_merged_table() %>%
+          format_plot_data_with_config(config) %>%
+          create_data_focus_tables(config$plot$x, config$plot$fill)
+
+        validate(need(length(data_list) > 0 , config$empty_table_message))
+
+        create_data_focus_plots(data_list, config)
+      })
+
+      output$annotation_activity_plot <- plotly::renderPlotly({
+        shiny::req(filtered_merged_table(), config())
+        config <- purrr::pluck(config(), "annotation_activity_plot")
+
+        data <- filtered_merged_table() %>%
+          format_plot_data_with_config(config) %>%
+          create_plot_count_df(
+            factor_columns   = config$plot$x,
+            complete_columns = c(config$plot$x, config$plot$facet)
+          )
+
+        validate(need(sum(data$Count) > 0, config$empty_table_message))
+
+        create_plot_with_config(
+          data, config, "create_annotation_activity_plot"
+        )
+      })
+
+      output$publication_status_plot <- plotly::renderPlotly({
+
+        shiny::req(config(), data(), selected_study_name())
+
+        config <- purrr::pluck(config(), "publication_status_plot")
+
+        data <- data() %>%
+          purrr::pluck("tables", config$table) %>%
+          filter_list_column(config$filter_column, selected_study_name()) %>%
+          format_plot_data_with_config(config)
+
+        validate(need(nrow(data) > 0 , config$empty_table_message))
+
+        create_plot_with_config(
+          data,
+          config,
+          "create_publication_status_plot"
+        )%>%
+          plotly::layout(yaxis = list(range = c(0, 5)), autosize = T)
+      })
+
+
 
     }
   )

@@ -28,12 +28,12 @@ test_that("study_summary_module_server", {
       expect_type(output$study, "list")
       expect_type(filtered_merged_table(), "list")
 
-      expect_type(output$annotation_activity, "character")
-      expect_type(output$data_focus_selection_ui, "list")
-      expect_type(output$data_focus_plot, "character")
+      expect_type(output$study_summary, "character")
       expect_type(output$study_timeline_plot, "character")
-      expect_type(output$publication_status, "character")
-      expect_type(output$study_details, "character")
+      expect_type(output$data_focus_plot, "character")
+      expect_type(output$annotation_activity_plot, "character")
+      expect_type(output$publication_status_plot, "character")
+
     }
   )
 })

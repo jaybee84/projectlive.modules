@@ -1,12 +1,9 @@
 {
+  "header_text": "You are now viewing studies moderated by {data()$selected_group}.Please hover your cursor over the plots to view more information. You can also zoom into parts of the plot.",
   "merged_table": {
     "filter_column": "studyName",
     "join_column": "studyName",
-    "tables": [
-      "studies",
-      "files",
-      "tools"
-    ],
+    "tables": ["studies", "files", "tools"],
     "columns": [
       [
         "studyName",
@@ -15,7 +12,7 @@
         "studyLeads",
         "diseaseFocus",
         "summary",
-        "consortium",
+        "initiative",
         "studyId"
       ],
       [

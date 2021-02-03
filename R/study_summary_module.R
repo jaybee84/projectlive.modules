@@ -6,10 +6,10 @@
 #' @param id shiny id
 #'
 #' @rdname study_summary_module
-#' @export 
+#' @export
 study_summary_module_ui <- function(id){
   ns <- shiny::NS(id)
-  
+
   shiny::tagList(
     shinydashboard::dashboardPage(
       shinydashboard::dashboardHeader(disable = T),
@@ -17,67 +17,67 @@ study_summary_module_ui <- function(id){
       shinydashboard::dashboardBody(
         shiny::fluidPage(
           shinydashboard::box(
+            shiny::textOutput(ns('header_text')),
             title = "Funding Partner",
             width = 12,
             solidHeader = T,
-            status = "primary",
-            shiny::textOutput(ns('funding_agency')),
+            status = "primary"
           ),
           shinydashboard::box(
+            DT::dataTableOutput(ns('study_table')),
             title = "Participating Studies",
             status = "primary",
             solidHeader = TRUE,
             width = 12,
-            collapsible = FALSE,
-            DT::dataTableOutput(ns('study_table')),
+            collapsible = FALSE
           ),
           shinydashboard::box(
+            shinydashboard::infoBoxOutput(ns('study'), width = 12),
             title = "",
             status = "primary",
             solidHeader = F,
             width = 12,
             collapsible = FALSE,
-            shinydashboard::infoBoxOutput(ns('study'), width = 12)
           ),
           shinydashboard::box(
+            shiny::htmlOutput(ns('study_details')),
             title = "Study Summary",
             status = "primary",
             solidHeader = T,
             width = 12,
-            collapsible = FALSE,
-            shiny::htmlOutput(ns('study_details'))
+            collapsible = FALSE
           ),
           shinydashboard::box(
+            plotly::plotlyOutput(ns('study_timeline_plot')),
             title = "Study Timeline",
             status = "primary",
             solidHeader = TRUE,
             width = 12,
-            collapsible = FALSE,
-            plotly::plotlyOutput(ns('study_timeline_plot'))
+            collapsible = FALSE
           ),
           shinydashboard::box(
+            plotly::plotlyOutput(ns('data_focus_plot')),
             title = "Data Focus",
             status = "primary",
             solidHeader = TRUE,
             width = 12,
-            collapsible = FALSE,
-            plotly::plotlyOutput(ns('data_focus_plot'))
+            collapsible = FALSE
           ),
           shinydashboard::box(
-            title = "Annotation Activity", 
-            status = "primary", 
+            plotly::plotlyOutput(ns('annotation_activity')),
+            title = "Annotation Activity",
+            status = "primary",
             solidHeader = TRUE,
             width = 12,
-            collapsible = FALSE,
-            plotly::plotlyOutput(ns('annotation_activity'))
+            collapsible = FALSE
           ),
           shinydashboard::box(
-            title = "Publication Status", 
-            status = "primary", 
+            plotly::plotlyOutput(ns('publication_status')),
+            title = "Publication Status",
+            status = "primary",
             solidHeader = TRUE,
             width = 12,
-            collapsible = FALSE,
-            plotly::plotlyOutput(ns('publication_status'))
+            collapsible = FALSE
           )
         )
       )
@@ -97,145 +97,111 @@ study_summary_module_server <- function(id, data, config){
     id,
     function(input, output, session) {
       ns <- session$ns
-      
-      merged_table <- shiny::reactive({
-        
-        shiny::req(data(), config())
-        
-        config <- purrr::pluck(
-          config(),
-          "modules",
-          "study_summary",
-          "outputs",
-          "merged_table"
-        )
-        
-        create_merged_table_with_config(data(), config())
-        
+
+      output$header_text <- shiny::renderText({
+        shiny::req(config())
+        glue::glue(config()$header_text)
       })
-      
-      study_table <- shiny::reactive({
-        
+
+      # create filtered merged table ----
+      data2 <- shiny::reactive({
         shiny::req(data(), config())
-        
-        config <- purrr::pluck(
-          config(),
-          "modules",
-          "study_summary",
-          "outputs",
-          "study_table"
-        ) 
-        
-        merged_table() %>% 
+        data <- data()
+        table <- create_merged_table_with_config(
+          data()$tables,
+          purrr::pluck(config(), "merged_table")
+        )
+        data$tables$merged <- table
+        return(data)
+      })
+
+      study_table <- shiny::reactive({
+
+        shiny::req(data2(), config())
+
+        config <- purrr::pluck(config(), "study_table")
+
+        data2() %>%
+          purrr::pluck("tables", "merged") %>%
           dplyr::select_at(
             unlist(c(config$group_columns, config$count_columns))
-          ) %>% 
-          dplyr::group_by_at(unlist(config$group_columns))%>% 
+          ) %>%
+          dplyr::group_by_at(unlist(config$group_columns))%>%
           dplyr::summarise_at(
-            unlist(config$count_columns), 
+            unlist(config$count_columns),
             dplyr::n_distinct,
             na.rm = T
-          ) %>% 
-          dplyr::ungroup() %>% 
-          format_plot_data_with_config(config) %>% 
+          ) %>%
+          dplyr::ungroup() %>%
+          format_plot_data_with_config(config) %>%
           dplyr::arrange(!!rlang::sym(config$id_column))
       })
-      
-      ##start making outputs
-      output$funding_agency <- shiny::renderText({
-        print(glue::glue(
-          "You are now viewing studies moderated by {data()$selected_group}. 
-      Please click on a row in the table below to select a study and view the details."
-        ))
-      })
-      
+
+
+
       output$study_table <- DT::renderDataTable(
-        base::as.data.frame(study_table()), 
-        server = TRUE, 
+        base::as.data.frame(study_table()),
+        server = TRUE,
         selection = 'single'
       )
-      
+
       selected_study_name <- shiny::reactive({
-        shiny::req(!is.null(input$study_table_rows_selected), config)
-        
-        column_name <- purrr::pluck(
-          config,
-          "modules",
-          "study_summary",
-          "outputs",
-          "study_table",
-          "id_column"
-        ) 
-        
-        study_table() %>% 
-          dplyr::slice(input$study_table_rows_selected) %>% 
+        shiny::req(
+          study_table(),
+          config(),
+          !is.null(input$study_table_rows_selected)
+        )
+
+        column_name <- purrr::pluck(config(), "study_table", "id_column")
+
+        study_table() %>%
+          dplyr::slice(input$study_table_rows_selected) %>%
           dplyr::pull(column_name)
       })
-      
+
       output$study <- shinydashboard::renderInfoBox({
         shiny::req(selected_study_name())
         shinydashboard::infoBox(
           "You have selected",
           selected_study_name(),
           icon = shiny::icon("file"),
-          color = "light-blue", #Valid colors are: red, yellow, aqua, blue, light-blue, green, navy, teal, olive, lime, orange, fuchsia, purple, maroon, black.
+          color = "light-blue",
           fill = FALSE
         )
       })
-      
+
       filtered_merged_table <- shiny::reactive({
-        column <- purrr::pluck(
-          config,
-          "modules",
-          "study_summary",
-          "outputs",
-          "merged_table",
-          "filter_column"
-        ) 
-        shiny::req(merged_table(), selected_study_name())
-        filter_list_column(merged_table(), column, selected_study_name()) 
+        column <- purrr::pluck(config(), "merged_table", "filter_column")
+        shiny::req(data2(), selected_study_name())
+        filter_list_column(
+          data2()$tables$merged,
+          column,
+          selected_study_name()
+        )
       })
-      
+
+      # use filtered merged table/selected study
       output$annotation_activity <- plotly::renderPlotly({
-        
-        shiny::req(
-          filtered_merged_table(), 
-          config
-        )
-        
-        config <- purrr::pluck(
-          config,
-          "modules",
-          "study_summary",
-          "outputs",
-          "annotation_activity"
-        )
-        
-        data <- filtered_merged_table() %>% 
-          format_plot_data_with_config(config) %>% 
+        shiny::req(filtered_merged_table(), config())
+        config <- purrr::pluck(config(), "annotation_activity")
+
+        data <- filtered_merged_table() %>%
+          format_plot_data_with_config(config) %>%
           create_plot_count_df(
-            factor_columns   = config$plot$x, 
+            factor_columns   = config$plot$x,
             complete_columns = c(config$plot$x, config$plot$facet)
           )
-        
+
         validate(need(sum(data$Count) > 0, config$empty_table_message))
-        
+
         create_plot_with_config(
           data, config, "create_annotation_activity_plot"
-        ) 
+        )
       })
-      
+
       output$data_focus_selection_ui <- shiny::renderUI({
         shiny::req(config)
-        choices <- config %>% 
-          purrr::pluck(
-            "modules", 
-            "study_summary", 
-            "outputs", 
-            "data_focus", 
-            "plot",
-            "fill"
-          )
+        choices <- purrr::pluck(config(), "data_focus", "plot", "fill")
         shiny::selectizeInput(
           ns('data_focus_columns'),
           label = "Choose to view",
@@ -243,74 +209,52 @@ study_summary_module_server <- function(id, data, config){
           selected = choices,
           multiple = T
         )
-        
       })
-      
+
       output$data_focus_plot <- plotly::renderPlotly({
-        
-        shiny::req(
-          filtered_merged_table(), 
-          config
-        )
-        
-        config <- config %>% 
-          purrr::pluck(
-            "modules", 
-            "study_summary", 
-            "outputs", 
-            "data_focus"
-          ) 
-        
-        data_list <- filtered_merged_table() %>% 
-          format_plot_data_with_config(config) %>% 
+
+        shiny::req(filtered_merged_table(), config())
+
+        config <- purrr::pluck(config(), "data_focus")
+
+        data_list <- filtered_merged_table() %>%
+          format_plot_data_with_config(config) %>%
           create_data_focus_tables(config$plot$x, config$plot$fill)
-        
+
         validate(need(length(data_list) > 0 , config$empty_table_message))
-        
+
         create_data_focus_plots(data_list, config)
       })
-      
+
       output$study_timeline_plot <- plotly::renderPlotly({
-        shiny::req(filtered_merged_table(), config)
-        
-        config <- config %>% 
-          purrr::pluck(
-            "modules", 
-            "study_summary", 
-            "outputs", 
-            "study_timeline"
-          ) 
-        
+        shiny::req(filtered_merged_table(), config())
+
+        config <- purrr::pluck(config(), "study_timeline")
+
         data <- filtered_merged_table() %>%
-          format_plot_data_with_config(config) %>% 
+          format_plot_data_with_config(config) %>%
           tidyr::drop_na()
-        
+
         validate(need(nrow(data) > 0 , config$empty_table_message))
-        
+
         create_plot_with_config(
           data, config, "create_study_timeline_plot"
         )
       })
-      
+
       output$publication_status <- plotly::renderPlotly({
-        
-        shiny::req(config, data(), selected_study_name())
-        
-        config <- purrr::pluck(
-          config,
-          "modules",
-          "study_summary",
-          "outputs",
-          "publication_status"
-        )
-        
-        data <- data() %>% 
-          purrr::pluck("tables", config$table) %>% 
-          filter_list_column(config$filter_column, selected_study_name()) %>% 
+
+        shiny::req(config(), data(), selected_study_name())
+
+        config <- purrr::pluck(config(), "publication_status")
+
+        data <- data() %>%
+          purrr::pluck("tables", config$table) %>%
+          filter_list_column(config$filter_column, selected_study_name()) %>%
           format_plot_data_with_config(config)
-        
+
         validate(need(nrow(data) > 0 , config$empty_table_message))
-        
+
         create_plot_with_config(
           data,
           config,
@@ -318,41 +262,35 @@ study_summary_module_server <- function(id, data, config){
         )%>%
           plotly::layout(yaxis = list(range = c(0, 5)), autosize = T)
       })
-      
+
       output$study_details <- shiny::renderText({
-        
-        shiny::req(filtered_merged_table(), config)
-        
-        config <- config %>% 
-          purrr::pluck(
-            "modules", 
-            "study_summary", 
-            "outputs", 
-            "study_details"
-          ) 
-        
-        filtered_merged_table() %>% 
-          format_plot_data_with_config(config) %>% 
-          dplyr::distinct() %>% 
+
+        shiny::req(filtered_merged_table(), config())
+
+        config <- purrr::pluck(config(), "study_details")
+
+        filtered_merged_table() %>%
+          format_plot_data_with_config(config) %>%
+          dplyr::distinct() %>%
           dplyr::mutate("Unique Study ID" = stringr::str_c(
             '<a href=',
             '"https://www.synapse.org/#!Synapse:',
             .data$`Unique Study ID`,
-            '">', 
+            '">',
             .data$`Unique Study ID`,
             '</a>'
-          )) %>% 
-          tidyr::pivot_longer(dplyr::everything()) %>% 
+          )) %>%
+          tidyr::pivot_longer(dplyr::everything()) %>%
           dplyr::mutate(
             "name" = stringr::str_to_title(.data$name),
             "name" = stringr::str_c("<b>", .data$name, "</b>")
-          ) %>% 
+          ) %>%
           knitr::kable(
             "html", escape = FALSE, col.names = NULL, align = c('r', 'l')
-          ) %>% 
+          ) %>%
           kableExtra::kable_styling("striped", full_width = T)
       })
-      
+
     }
   )
 }

@@ -7,6 +7,7 @@ saveRDS(incoming_data, "inst/RDS/nf_incoming_data.rds")
 
 nf_files <-
   get_synapse_tbl(syn, "syn16858331") %>%
+  dplyr::slice(1:5000) %>%
   format_date_columns() %>%
   dplyr::select(
     "id",
@@ -21,7 +22,10 @@ nf_files <-
     "accessType",
     "initiative",
     "year",
-    "month"
+    "month",
+    "tumorType",
+    "species",
+    "projectId"
   )
 
 

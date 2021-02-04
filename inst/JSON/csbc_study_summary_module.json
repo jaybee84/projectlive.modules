@@ -1,0 +1,225 @@
+{
+  "header_text": "Please hover your cursor over the plots to view more information. You can also zoom into parts of the plot.",
+  "merged_table": {
+    "filter_column": "grantName",
+    "join_column": "grantName",
+    "tables": ["studies", "files", "tools"],
+    "columns": [
+      [
+        "grantName",
+        "consortium",
+        "grantId"
+      ],
+      [
+        "grantName",
+        "assay",
+        "id",
+        "year",
+        "month"
+      ],
+      [
+        "grantName",
+        "toolName"
+      ]
+    ]
+  },
+  "study_table": {
+    "group_columns": ["grantName"],
+    "count_columns": [
+      "individualID",
+      "assay",
+      "id",
+      "toolName"
+    ],
+    "columns": [
+      {
+        "display_name": "Name",
+        "name": "grantName"
+      },
+      {
+        "display_name": "Leads",
+        "name": "studyLeads",
+        "type": "list:character"
+      },
+      {
+        "display_name": "Assays",
+        "name": "assay"
+      },
+      {
+        "display_name": "Files",
+        "name": "id"
+      },
+      {
+        "display_name": "Tools",
+        "name": "toolName"
+      }
+    ],
+    "id_column": "Name"
+  },
+  "study_summary": {
+    "columns": [
+      {
+        "name": "studyId",
+        "type": "character",
+        "display_name": "Unique Study ID"
+      },
+      {
+        "name": "studyStatus",
+        "type": "character",
+        "display_name": "Study Status"
+      },
+      {
+        "name": "dataStatus",
+        "type": "character",
+        "display_name": "Data Status"
+      },
+      {
+        "name": "summary",
+        "type": "character"
+      },
+      {
+        "name": "diseaseFocus",
+        "type": "list:character",
+        "display_name": "Disease Focus"
+      }
+    ]
+  },
+  "study_timeline_plot": {
+    "columns": [
+      {
+        "name": "grantName",
+        "display_name": "Study Name",
+        "type": "character"
+      },
+      {
+        "name": "resourceType",
+        "display_name": "Resource Type",
+        "type": "character"
+      },
+      {
+        "name": "year",
+        "display_name": "Year",
+        "type": "integer"
+      },
+      {
+        "name": "month",
+        "display_name": "Month",
+        "type": "factor"
+      }
+    ],
+    "plot": {
+      "x": "Study Name",
+      "fill": "Resource Type",
+      "facet": [
+        "Year",
+        "Month"
+      ]
+    },
+    "tooltips": [
+      "count",
+      "fill"
+    ],
+    "empty_table_message": "The investigator/investigators has/have not uploaded any files yet. Please check back later."
+  },
+  "data_focus_plot": {
+    "columns": [
+      {
+        "name": "grantName",
+        "display_name": "Study Name",
+        "type": "character"
+      },
+      {
+        "name": "assay",
+        "display_name": "Assays Used",
+        "type": "character"
+      },
+      {
+        "name": "resourceType",
+        "display_name": "Resource Added",
+        "type": "character"
+      },
+      {
+        "name": "species",
+        "display_name": "Species Used",
+        "type": "character"
+      },
+      {
+        "name": "tumorType",
+        "display_name": "Tumor Types Investigated",
+        "type": "character"
+      }
+    ],
+    "plot": {
+      "x": "Study Name",
+      "fill": [
+        "Assays Used",
+        "Resource Added",
+        "Species Used",
+        "Tumor Types Investigated"
+      ]
+    },
+    "tooltips": [
+      "count",
+      "fill"
+    ],
+    "empty_table_message": "The investigators have not uploaded data for this study yet. Please check back later."
+  },
+  "annotation_activity_plot": {
+    "table": "merged_table",
+    "empty_table_message": "The investigators have not uploaded any files yet. Please check back later.",
+    "tooltips": [
+      "Count",
+      "fill"
+    ],
+    "columns": [
+      {
+        "name": "studyLeads",
+        "display_name": "Study Leads",
+        "type": "list:character",
+        "na_replace": "pendingAnnotation"
+      },
+      {
+        "name": "assay",
+        "display_name": "Assay",
+        "type": "character",
+        "na_replace": "pendingAnnotation"
+      },
+      {
+        "name": "year",
+        "display_name": "Year",
+        "type": "integer"
+      }
+    ],
+    "plot": {
+      "x": "Study Leads",
+      "y": "Count",
+      "fill": "Assay",
+      "facet": "Year"
+    }
+  },
+  "publication_status_plot": {
+    "table": "publications",
+    "filter_column": "grantName",
+    "columns": [
+      {
+        "name": "year",
+        "display_name": "Year",
+        "type": "integer"
+      },
+      {
+        "name": "grantName",
+        "display_name": "Study Name",
+        "type": "list:character"
+      }
+    ],
+    "plot": {
+      "x": "Year",
+      "fill": "Study Name"
+    },
+    "empty_table_message": "This study has no associated publications yet.",
+    "tooltips": [
+      "count",
+      "fill"
+    ]
+  }
+}

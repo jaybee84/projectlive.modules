@@ -72,6 +72,15 @@ study_summary_module_ui <- function(id){
 
 # Study Summary Module Server
 
+#' @title study_summary_module_server and study_summary_module_server_ui
+#' @param data A named list. The list must contain a list named "tables".
+#' @param config A named list. The list must contain lists for each section:
+#' - header_text
+#' - study_table
+#' - study_summary
+#' - data_focus_plot
+#' - annotation_activity_plot
+#' - publication_status_plot
 #' @rdname study_summary_module
 #' @export
 #' @keywords internal
@@ -96,8 +105,9 @@ study_summary_module_server <- function(id, data, config){
 
         config <- purrr::pluck(config(), "study_summary")
 
-        data2() %>%
-          purrr::pluck("tables", "merged") %>%
+        data <- data2() %>%
+          purrr::pluck("tables", config$table) %>%
+          filter_list_column(config$filter_column, data2()$selected_study) %>%
           format_plot_data_with_config(config) %>%
           dplyr::distinct() %>%
           dplyr::mutate("Unique Study ID" = stringr::str_c(
@@ -125,7 +135,8 @@ study_summary_module_server <- function(id, data, config){
         config <- purrr::pluck(config(), "study_timeline_plot")
 
         data <- data2() %>%
-          purrr::pluck("tables", "merged") %>%
+          purrr::pluck("tables", config$table) %>%
+          filter_list_column(config$filter_column, data2()$selected_study) %>%
           format_plot_data_with_config(config) %>%
           tidyr::drop_na()
 
@@ -137,13 +148,13 @@ study_summary_module_server <- function(id, data, config){
       })
 
       output$data_focus_plot <- plotly::renderPlotly({
-
         shiny::req(data2(), config())
 
         config <- purrr::pluck(config(), "data_focus_plot")
 
         data_list <- data2() %>%
-          purrr::pluck("tables", "merged") %>%
+          purrr::pluck("tables", config$table) %>%
+          filter_list_column(config$filter_column, data2()$selected_study) %>%
           format_plot_data_with_config(config) %>%
           create_data_focus_tables(config$plot$x, config$plot$fill)
 
@@ -157,7 +168,8 @@ study_summary_module_server <- function(id, data, config){
         config <- purrr::pluck(config(), "annotation_activity_plot")
 
         data <- data2() %>%
-          purrr::pluck("tables", "merged") %>%
+          purrr::pluck("tables", config$table) %>%
+          filter_list_column(config$filter_column, data2()$selected_study) %>%
           format_plot_data_with_config(config) %>%
           create_plot_count_df(
             factor_columns   = config$plot$x,
@@ -173,13 +185,14 @@ study_summary_module_server <- function(id, data, config){
 
       output$publication_status_plot <- plotly::renderPlotly({
 
-        shiny::req(config(), data(), data2())
+        shiny::req(data2(), config())
 
         config <- purrr::pluck(config(), "publication_status_plot")
 
-        data <- data() %>%
+        data <- data2() %>%
           purrr::pluck("tables", config$table) %>%
           filter_list_column(config$filter_column, data2()$selected_study) %>%
+          tidyr::unnest(cols = config$filter_column) %>%
           format_plot_data_with_config(config)
 
         validate(need(nrow(data) > 0 , config$empty_table_message))
@@ -188,7 +201,7 @@ study_summary_module_server <- function(id, data, config){
           data,
           config,
           "create_publication_status_plot"
-        )%>%
+        ) %>%
           plotly::layout(yaxis = list(range = c(0, 5)), autosize = T)
       })
 

@@ -11,7 +11,7 @@ merge_studies_module_ui <- function(id){
 
   shiny::tagList(
     shinydashboard::box(
-      DT::dataTableOutput(ns('study_table')),
+      DT::dataTableOutput(ns("study_table")),
       title = "Participating Studies",
       status = "primary",
       solidHeader = TRUE,
@@ -42,34 +42,32 @@ merge_studies_module_server <- function(id, data, config){
     function(input, output, session) {
       ns <- session$ns
 
-      merged_table <- shiny::reactive({
-        shiny::req(data(), config())
-        data <- data()
-        create_merged_table_with_config(
-          data()$tables,
-          purrr::pluck(config(), "merged_table")
-        )
-      })
-
       study_table <- shiny::reactive({
 
-        shiny::req(merged_table(), config())
+        shiny::req(data(), config())
 
         config <- purrr::pluck(config(), "study_table")
 
-        merged_table() %>%
-          dplyr::select_at(
-            unlist(c(config$group_columns, config$count_columns))
-          ) %>%
-          dplyr::group_by_at(unlist(config$group_columns))%>%
-          dplyr::summarise_at(
-            unlist(config$count_columns),
-            dplyr::n_distinct,
-            na.rm = T
-          ) %>%
-          dplyr::ungroup() %>%
-          format_plot_data_with_config(config) %>%
-          dplyr::arrange(!!rlang::sym(config$id_column))
+        files <- summarise_df_counts(
+          data = purrr::pluck(data(), "tables", "files"),
+          group_column = config$join_column,
+          columns = config$tables$files$columns
+        )
+
+        tools <- summarise_df_counts(
+          data = purrr::pluck(data(), "tables", "tools"),
+          group_column = config$join_column,
+          columns = config$tables$tools$columns
+        )
+
+        data() %>%
+          purrr::pluck("tables", "studies") %>%
+          dplyr::select(dplyr::all_of(
+            unlist(config$tables$studies$columns)
+          )) %>%
+          dplyr::left_join(files, by = config$join_column) %>%
+          dplyr::left_join(tools, by = config$join_column) %>%
+          format_plot_data_with_config(config$tables$merged)
       })
 
       output$study_table <- DT::renderDataTable(
@@ -79,13 +77,12 @@ merge_studies_module_server <- function(id, data, config){
       )
 
       selected_study_name <- shiny::reactive({
-        shiny::req(
-          study_table(),
+        shiny::req(study_table(),
           config(),
           !is.null(input$study_table_rows_selected)
         )
 
-        column_name <- purrr::pluck(config(), "study_table", "id_column")
+        column_name <- purrr::pluck(config(), "study_name_column")
 
         study_table() %>%
           dplyr::slice(input$study_table_rows_selected) %>%
@@ -103,20 +100,9 @@ merge_studies_module_server <- function(id, data, config){
         )
       })
 
-      filtered_merged_table <- shiny::reactive({
-        column <- purrr::pluck(config(), "merged_table", "filter_column")
-        shiny::req(merged_table(), selected_study_name())
-        filter_list_column(
-          merged_table(),
-          column,
-          selected_study_name()
-        )
-      })
-
       data2 <- shiny::reactive({
-        shiny::req(data(), filtered_merged_table(), selected_study_name())
+        shiny::req(data(), selected_study_name())
         data <- data()
-        data$tables$merged <- filtered_merged_table ()
         data$selected_study <- selected_study_name()
         return(data)
       })

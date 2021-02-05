@@ -1,13 +1,13 @@
 Package: projectlive.modules
-Title: What the Package Does (One Line, Title Case)
-Version: 0.1.4
+Title: Modules for Project Live shiny apps.
+Version: 0.1.6
 Authors@R: 
     person(given = "Andrew",
            family = "Lamb",
            role = c("aut", "cre"),
            email = "andrewelamb@gamil.com",
            comment = c(ORCID = "0000-0002-0326-7494"))
-Description: What the package does (one paragraph).
+Description: Modules for Project Live shiny apps.
 License: MIT + file LICENSE
 Suggests: 
     testthat,

@@ -16,13 +16,13 @@ get_synapse_tbl <- function(syn, table_id, columns = NULL, limit = NULL){
         purrr::map_chr(., purrr::pluck, "columnType"), "_LIST"
       )
     ) %>%
-    purrr::map_chr(purrr::pluck("name")) %>%
-    purrr::keep(., . %in% columns)
+    purrr::map_chr(purrr::pluck("name"))
 
   if(is.null(columns)){
     column_string <- "*"
   } else {
     column_string <- stringr::str_c(columns, collapse = ", ")
+    list_columns <- purrr::keep(list_columns, list_columns %in% columns)
   }
 
   query_string <- glue::glue("SELECT {column_string} FROM {table_id}")

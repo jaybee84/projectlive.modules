@@ -1,100 +1,79 @@
 {
   "header_text": "Please hover your cursor over the plots to view more information. You can also zoom into parts of the plot.",
-  "merged_table": {
-    "filter_column": "grantName",
-    "join_column": "grantName",
-    "tables": ["studies", "files", "tools"],
-    "columns": [
-      [
-        "grantName",
-        "consortium",
-        "grantId"
-      ],
-      [
-        "grantName",
-        "assay",
-        "id",
-        "year",
-        "month"
-      ],
-      [
-        "grantName",
-        "toolName"
-      ]
-    ]
-  },
   "study_table": {
-    "group_columns": ["grantName"],
-    "count_columns": [
-      "individualID",
-      "assay",
-      "id",
-      "toolName"
-    ],
-    "columns": [
-      {
-        "display_name": "Name",
-        "name": "grantName"
+    "join_column": "grantName",
+    "tables": {
+      "studies": {
+        "columns": [
+          "grantName",
+          "consortium"
+        ]
       },
-      {
-        "display_name": "Leads",
-        "name": "studyLeads",
-        "type": "list:character"
+      "files": {
+        "columns": [
+          "grantName",
+          "assay",
+          "id"
+        ]
       },
-      {
-        "display_name": "Assays",
-        "name": "assay"
+      "tools": {
+        "columns": [
+          "grantName",
+          "toolName"
+        ]
       },
-      {
-        "display_name": "Files",
-        "name": "id"
-      },
-      {
-        "display_name": "Tools",
-        "name": "toolName"
+      "merged": {
+        "columns": [
+          {
+            "display_name": "Grant Name",
+            "name": "grantName"
+          },
+          {
+            "display_name": "Consortium",
+            "name": "consortium"
+          },
+          {
+            "display_name": "Assays",
+            "name": "assay"
+          },
+          {
+            "display_name": "Files",
+            "name": "id"
+          },
+          {
+            "display_name": "Tools",
+            "name": "toolName"
+          }
+        ]
       }
-    ],
-    "id_column": "Name"
+    }
   },
+  "study_name_column": "Grant Name",
   "study_summary": {
+    "table": "studies",
+    "filter_column": "grantName",
     "columns": [
       {
-        "name": "studyId",
+        "name": "grantId",
         "type": "character",
         "display_name": "Unique Study ID"
-      },
-      {
-        "name": "studyStatus",
-        "type": "character",
-        "display_name": "Study Status"
-      },
-      {
-        "name": "dataStatus",
-        "type": "character",
-        "display_name": "Data Status"
-      },
-      {
-        "name": "summary",
-        "type": "character"
-      },
-      {
-        "name": "diseaseFocus",
-        "type": "list:character",
-        "display_name": "Disease Focus"
       }
     ]
   },
   "study_timeline_plot": {
+    "table": "files",
+    "filter_column": "grantName",
     "columns": [
       {
         "name": "grantName",
-        "display_name": "Study Name",
+        "display_name": "Grant Name",
         "type": "character"
       },
       {
         "name": "resourceType",
         "display_name": "Resource Type",
-        "type": "character"
+        "type": "character",
+        "na_replace": "Not Annotated"
       },
       {
         "name": "year",
@@ -108,7 +87,7 @@
       }
     ],
     "plot": {
-      "x": "Study Name",
+      "x": "Grant Name",
       "fill": "Resource Type",
       "facet": [
         "Year",
@@ -122,6 +101,8 @@
     "empty_table_message": "The investigator/investigators has/have not uploaded any files yet. Please check back later."
   },
   "data_focus_plot": {
+    "table": "files",
+    "filter_column": "grantName",
     "columns": [
       {
         "name": "grantName",
@@ -131,22 +112,26 @@
       {
         "name": "assay",
         "display_name": "Assays Used",
-        "type": "character"
+        "type": "character",
+        "na_replace": "Not Annotated"
       },
       {
         "name": "resourceType",
         "display_name": "Resource Added",
-        "type": "character"
+        "type": "character",
+        "na_replace": "Not Annotated"
       },
       {
-        "name": "species",
-        "display_name": "Species Used",
-        "type": "character"
+        "name": "gender",
+        "display_name": "Gender",
+        "type": "character",
+        "na_replace": "Not Annotated"
       },
       {
-        "name": "tumorType",
-        "display_name": "Tumor Types Investigated",
-        "type": "character"
+        "name": "dataset",
+        "display_name": "Dataset",
+        "type": "character",
+        "na_replace": "Not Annotated"
       }
     ],
     "plot": {
@@ -154,8 +139,8 @@
       "fill": [
         "Assays Used",
         "Resource Added",
-        "Species Used",
-        "Tumor Types Investigated"
+        "Gender",
+        "Dataset"
       ]
     },
     "tooltips": [
@@ -165,17 +150,13 @@
     "empty_table_message": "The investigators have not uploaded data for this study yet. Please check back later."
   },
   "annotation_activity_plot": {
-    "table": "merged_table",
-    "empty_table_message": "The investigators have not uploaded any files yet. Please check back later.",
-    "tooltips": [
-      "Count",
-      "fill"
-    ],
+    "table": "files",
+    "filter_column": "grantName",
     "columns": [
       {
-        "name": "studyLeads",
-        "display_name": "Study Leads",
-        "type": "list:character",
+        "name": "consortium",
+        "display_name": "Consortium",
+        "type": "character",
         "na_replace": "pendingAnnotation"
       },
       {
@@ -191,30 +172,35 @@
       }
     ],
     "plot": {
-      "x": "Study Leads",
+      "x": "Consortium",
       "y": "Count",
       "fill": "Assay",
       "facet": "Year"
-    }
+    },
+    "empty_table_message": "The investigators have not uploaded any files yet. Please check back later.",
+    "tooltips": [
+      "Count",
+      "fill"
+    ]
   },
   "publication_status_plot": {
     "table": "publications",
     "filter_column": "grantName",
     "columns": [
       {
-        "name": "year",
+        "name": "publicationYear",
         "display_name": "Year",
         "type": "integer"
       },
       {
         "name": "grantName",
-        "display_name": "Study Name",
-        "type": "list:character"
+        "display_name": "Grant Name",
+        "type": "character"
       }
     ],
     "plot": {
       "x": "Year",
-      "fill": "Study Name"
+      "fill": "Grant Name"
     },
     "empty_table_message": "This study has no associated publications yet.",
     "tooltips": [

@@ -11,6 +11,18 @@ study_summary_module_server(id, data, config)
 }
 \arguments{
 \item{id}{shiny id}
+
+\item{data}{A named list. The list must contain a list named "tables".}
+
+\item{config}{A named list. The list must contain lists for each section:
+\itemize{
+\item header_text
+\item study_table
+\item study_summary
+\item data_focus_plot
+\item annotation_activity_plot
+\item publication_status_plot
+}}
 }
 \description{
 A shiny Module.

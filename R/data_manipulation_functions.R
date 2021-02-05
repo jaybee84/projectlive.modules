@@ -29,6 +29,22 @@ format_date_columns <- function(data){
   return(data)
 }
 
+summarise_df_counts <- function(data, group_column, columns){
+  files <- data %>%
+    dplyr::select(dplyr::all_of(unlist(columns))) %>%
+    tidyr::unnest(dplyr::everything()) %>%
+    dplyr::group_by_at(group_column) %>%
+    dplyr::summarise(
+      dplyr::across(
+        dplyr::everything(),
+        dplyr::n_distinct,
+        na.rm = T
+      )
+    ) %>%
+    dplyr::ungroup()
+}
+
+
 #' Filter List Column
 #' This function filters a list column in the input data. Rows are kept if all
 #' items in the values are in the supplied column.

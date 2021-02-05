@@ -6,6 +6,13 @@ create_synapse_login <- function(){
   return(syn)
 }
 
+#' Get Synapse Table
+#'
+#' @param syn An object of reticulate::import("synapseclient")$Synapse()
+#' @param table_id A synapse table id
+#' @param columns A vector of columns to get from the syanpse table
+#' @param limit An integer, limits the number of rows in the table
+#' @export
 get_synapse_tbl <- function(syn, table_id, columns = NULL, limit = NULL){
   list_columns <- table_id %>%
     syn$getTableColumns() %>%

@@ -35,7 +35,7 @@ plot_module_ui <- function(id, title){
 #' @keywords internal
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
-plot_module_server <- function(id, data, config, plot_func){
+plot_module_server <- function(id, data, config, plot_func, ...){
   shiny::moduleServer(
     id,
     function(input, output, session) {
@@ -60,7 +60,8 @@ plot_module_server <- function(id, data, config, plot_func){
         create_plot_with_config(
           data = plot_data(),
           config = config(),
-          plot_func = plot_func()
+          plot_func = plot_func(),
+          ...
         )
       })
     }

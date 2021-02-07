@@ -38,7 +38,11 @@ create_plot_with_config <- function(data, config, plot_func, ...){
     plotly::ggplotly(
       tooltip = c(config$tooltips),
       ...
+    ) %>%
+    plotly::layout(
+      autosize = T
     )
+
 }
 
 #' Create Initiative Activity Plot

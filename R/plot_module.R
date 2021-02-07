@@ -1,15 +1,16 @@
-# Initiative Activity Module UI
-#' @title initiative_activity_module_server and
-#' initiative_activity_module_server_ui
-#' @rdname initiative_activity_module
+# Plot Module UI
+#' @title plot_module_server and
+#' plot_module_server_ui
+#' @rdname plot_module
 #' @description  A shiny Module.
 #'
 #' @param id shiny id
+#' @param title A string, the displayed title of the shinydashboard::box()
 #' @export
-initiative_activity_module_ui <- function(id){
+plot_module_ui <- function(id, title){
   ns <- shiny::NS(id)
   shinydashboard::box(
-    title = "Initiative Activity",
+    title = title,
     status = "primary",
     solidHeader = TRUE,
     width = 12,
@@ -18,19 +19,23 @@ initiative_activity_module_ui <- function(id){
   )
 }
 
-# Initiative Activity Module Server
+# Plot Module Server
 
-#' @title initiative_activity_module_server and initiative_activity_module_server_ui
+#' @title plot_module_server and plot_module_server_ui
 #' @param id shiny id
-#' @param data A named list. The list must contain a list named "tables".
-#' @param config A named list.
+#' @param data A shiny::reactive() that returns a named list. The list must
+#' contain a list named "tables".
+#' @param config A shiny::reactive() that returns a named list.
+#' @param plot_func A shiny::reactive() that returns a string that is the name of
+#' a plotting function.
+#' @param ... Arguments to plotly::ggplotly
 #'
-#' @rdname initiative_activity_module
+#' @rdname plot_module
 #' @export
 #' @keywords internal
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
-initiative_activity_module_server <- function(id, data, config){
+plot_module_server <- function(id, data, config, plot_func){
   shiny::moduleServer(
     id,
     function(input, output, session) {
@@ -55,7 +60,7 @@ initiative_activity_module_server <- function(id, data, config){
         create_plot_with_config(
           data = plot_data(),
           config = config(),
-          plot_func = "create_initiative_activity_plot"
+          plot_func = plot_func()
         )
       })
     }

@@ -34,15 +34,8 @@ summary_snapshot_module_ui <- function(id){
               shinydashboard::infoBoxOutput(ns('box4'), width = 3)
             )
           ),
-          initiative_activity_module_ui(ns("initiative_activity")),
-          shinydashboard::box(
-            title = "Resources Generated",
-            status = "primary",
-            solidHeader = TRUE,
-            width = 12,
-            collapsible = FALSE,
-            plotly::plotlyOutput(ns("resources_generated"))
-          ),
+          plot_module_ui(ns("initiative_activity"), "Initiative Activity"),
+          plot_module_ui(ns("resources_generated"), "Resources Generated"),
           shinydashboard::box(
             title = "File Upload Timeline",
             status = "primary",
@@ -128,35 +121,19 @@ summary_snapshot_module_server <- function(id, data, config){
         create_info_box(config, data())
       })
 
-      # initiative_activity ----
-      initiative_activity_module_server(
+      plot_module_server(
         id = "initiative_activity",
         data = data,
-        config = shiny::reactive(purrr::pluck(config(), "initiative_activity"))
+        config = shiny::reactive(purrr::pluck(config(), "initiative_activity")),
+        plot_func = shiny::reactive("create_initiative_activity_plot")
       )
 
-      # resources_generated ----
-      resources_generated_data <- shiny::reactive({
-        shiny::req(config(), data())
-        config <- purrr::pluck(config(), "resources_generated")
-
-        data <- data() %>%
-          purrr::pluck("tables", config$table) %>%
-          format_plot_data_with_config(config)
-
-        shiny::validate(shiny::need(nrow(data) > 0, config$empty_table_message))
-
-        return(data)
-      })
-
-      output$resources_generated <- plotly::renderPlotly({
-        shiny::req(config(), resources_generated_data())
-        create_plot_with_config(
-          data = resources_generated_data(),
-          config = config()$resources_generated,
-          plot_func = "create_resources_generated_plot"
-        )
-      })
+      plot_module_server(
+        id = "resources_generated",
+        data = data,
+        config = shiny::reactive(purrr::pluck(config(), "resources_generated")),
+        plot_func = shiny::reactive("create_resources_generated_plot")
+      )
 
       # file_upload_timeline ----
       file_upload_timeline_filter_choices <- shiny::reactive({
@@ -221,10 +198,7 @@ summary_snapshot_module_server <- function(id, data, config){
           config = config()$file_upload_timeline,
           plot_func =  "create_file_upload_timeline_plot",
           height = 870
-        ) %>%
-          plotly::layout(
-            autosize = T
-          )
+        )
       })
 
     }

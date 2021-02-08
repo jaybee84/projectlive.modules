@@ -8,7 +8,7 @@ plot_module_server_ui}
 \usage{
 plot_module_ui(id, title)
 
-plot_module_server(id, data, config, plot_func)
+plot_module_server(id, data, config, plot_func, ...)
 }
 \arguments{
 \item{id}{shiny id}

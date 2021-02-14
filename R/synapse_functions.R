@@ -52,7 +52,6 @@ get_synapse_tbl <- function(
   }
 
   query_string %>%
-    print() %>%
     glue::glue() %>%
     print() %>%
     syn$tableQuery() %>%

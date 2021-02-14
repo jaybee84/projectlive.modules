@@ -2,7 +2,9 @@ syn <- create_synapse_login()
 
 # nf ----
 
-incoming_data <- get_synapse_tbl(syn, "syn23364404")
+incoming_data <- get_synapse_tbl(
+  syn, "syn23364404", filters = "reportMilestone IS NOT NULL"
+)
 saveRDS(incoming_data, "inst/RDS/nf_incoming_data.rds")
 
 nf_studies <-get_synapse_tbl(syn, "syn16787123")
@@ -43,6 +45,47 @@ nf_files <-
   )
 
 saveRDS(nf_files, "inst/RDS/nf_files.rds")
+
+
+nf_files2 <-
+  get_synapse_tbl(
+    syn,
+    "syn16858331",
+    limit = 5000,
+    columns = c(
+      "id",
+      "individualID",
+      "specimenID",
+      "assay",
+      "consortium",
+      "dataType",
+      "fileFormat",
+      "resourceType",
+      "studyName",
+      "accessType",
+      "initiative",
+      "tumorType",
+      "species",
+      "projectId",
+      "reportMilestone",
+      "createdOn"
+    ),
+    filters = c(
+      "reportMilestone IS NOT NULL"
+    )
+  ) %>%
+  format_date_columns() %>%
+  dplyr::select(-c("createdOn", "ROW_ID", "ROW_VERSION", "ROW_ETAG")) %>%
+  dplyr::left_join(
+    dplyr::select(
+      nf_studies,
+      "studyName",
+      "studyLeads"
+    ),
+    by = "studyName"
+  )
+
+saveRDS(nf_files2, "inst/RDS/nf_files2.rds")
 
 nf_publications <- get_synapse_tbl(syn, "syn16857542")
 saveRDS(nf_publications, "inst/RDS/nf_publications.rds")

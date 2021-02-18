@@ -55,11 +55,7 @@ saveRDS(nf_tools, "inst/RDS/nf_tools.rds")
 csbc_studies <-
   projectlive.modules::get_synapse_tbl(
     syn,
-    "syn21918972",
-    columns = c(
-      "grantName",
-      "theme"
-    )
+    "syn21918972"
   ) %>%
   dplyr::select(-c("ROW_ID", "ROW_VERSION"))
 
@@ -80,13 +76,16 @@ csbc_files <-
       "consortium",
       "organ",
       "experimentalStrategy"
-    )
+    ),
+    limit = 10000
   ) %>%
-  dplyr::slice(1:10000) %>%
   format_date_columns() %>%
   dplyr::select(-c("createdOn", "ROW_ID", "ROW_VERSION", "ROW_ETAG")) %>%
   dplyr::mutate( "accessType" = "PUBLIC") %>%
-  dplyr::left_join(csbc_studies, by = "grantName")
+  dplyr::left_join(
+    dplyr::select(csbc_studies, "theme", "grantName"),
+    by = "grantName"
+  )
 
 saveRDS(csbc_files, "inst/RDS/csbc_files.rds")
 

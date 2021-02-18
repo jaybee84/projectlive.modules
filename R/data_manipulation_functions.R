@@ -131,7 +131,7 @@ create_plot_count_df <- function(data, factor_columns, complete_columns){
 
 #' Format Plot Data With Config
 #'
-#' This function runs a tible through the main data cleanup functions befoire
+#' This function runs a tibble through the main data cleanup functions before
 #' being displayed in a plot or data table. See those functions for more
 #' details.
 #'
@@ -143,10 +143,15 @@ create_plot_count_df <- function(data, factor_columns, complete_columns){
 #'    "c1",        20001, "January"
 #'  )
 #'
-#' @param config A list with a named list named "columns" that has an entry
+#' @param config A named list.
+#'
+#' The list must contained an item named "columns" that has an entry
 #' for each column needed in the tibble. Each column must have a "name",
 #' and "type" field. Optional fields include "replace_values", "display_name",
-#' "na_replace", and "deafult_replace".
+#' "na_replace", and "default_replace".
+#'
+#' The list may also contain an item named drop_na. If the value of drop_na
+#' is True, all rows with na values will be droped.
 #'
 #'   config <- list(
 #'    "columns" = list(
@@ -162,11 +167,16 @@ create_plot_count_df <- function(data, factor_columns, complete_columns){
 #' @importFrom magrittr %>%
 #' @export
 format_plot_data_with_config <- function(data, config){
-  data %>%
+  result <- data %>%
     concatenate_df_list_columns_with_config(config) %>%
     recode_df_with_config(config) %>%
     truncate_df_cols_with_config(config) %>%
     rename_df_columns_with_config(config)
+
+  if(!is.null(config$drop_na) && config$drop_na){
+    result <- tidyr::drop_na(result)
+  }
+  return(result)
 }
 
 #' Create Data Focus Tables

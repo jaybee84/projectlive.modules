@@ -52,34 +52,40 @@ saveRDS(nf_tools, "inst/RDS/nf_tools.rds")
 
 # csbc ----
 
-csbc_studies <- get_synapse_tbl(syn, "syn21918972")
+csbc_studies <-
+  projectlive.modules::get_synapse_tbl(
+    syn,
+    "syn21918972"
+  ) %>%
+  dplyr::select(-c("ROW_ID", "ROW_VERSION"))
+
 saveRDS(csbc_studies, "inst/RDS/csbc_studies.rds")
 
 csbc_files <-
-  get_synapse_tbl(
+  projectlive.modules::get_synapse_tbl(
     syn,
     "syn9630847",
     columns = c(
       "id",
-      "dataset",
       "assay",
-      "gender",
-      "consortium",
+      "diagnosis",
+      "tumorType",
+      "species",
       "grantName",
-      "resourceType",
-      "createdOn"
+      "createdOn",
+      "consortium",
+      "organ",
+      "experimentalStrategy"
     )
   ) %>%
-  dplyr::filter(.data$grantName %in% csbc_studies$grantName) %>%
-  dplyr::slice(1:10000) %>%
   format_date_columns() %>%
   dplyr::select(-c("createdOn", "ROW_ID", "ROW_VERSION", "ROW_ETAG")) %>%
-  dplyr::mutate(
-    "accessType" = "PUBLIC",
-    "resourceType" = as.character(.data$resourceType),
-    "gender" = as.character(.data$gender),
-    "dataset" = as.character(.data$gender)
-  )
+  dplyr::mutate( "accessType" = "PUBLIC") %>%
+  dplyr::inner_join(
+    dplyr::select(csbc_studies, "theme", "grantName"),
+    by = "grantName",
+  ) %>%
+  dplyr::slice(1:20000L)
 
 saveRDS(csbc_files, "inst/RDS/csbc_files.rds")
 

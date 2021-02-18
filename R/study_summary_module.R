@@ -201,8 +201,7 @@ study_summary_module_server <- function(id, data, config){
           data,
           config,
           "create_publication_status_plot"
-        ) %>%
-          plotly::layout(yaxis = list(range = c(0, 5)), autosize = T)
+        )
       })
 
     }

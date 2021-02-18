@@ -186,5 +186,19 @@ test_that("create_study_timeline_plot",{
   expect_type(fig, "list")
 })
 
+test_that("create_publication_status_plot",{
+  data <- dplyr::tibble(
+    "Year" = c(rep(2018L, 20), rep(2020L, 5), rep(2019L, 11)),
+    "Grant Name" = "G1"
+  )
 
+  fig <- create_publication_status_plot(
+    data,
+    x = "Year",
+    fill = "Grant Name"
+    ) %>%
+    plotly::ggplotly(tooltip = c("count", "fill"))
+  print(fig)
 
+  expect_type(fig, "list")
+})

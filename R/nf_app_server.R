@@ -1,4 +1,4 @@
-server <- function(input, output, session) {
+nf_server <- function(input, output, session) {
 
   data <- shiny::reactive(nf_example_data())
 

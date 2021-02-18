@@ -129,7 +129,7 @@ test_that("create_plot_count_df", {
 })
 
 test_that("format_plot_data_with_config", {
-  config <- list(
+  config1 <- list(
     "columns" = list(
       list(
         "name" = "consortium",
@@ -145,22 +145,85 @@ test_that("format_plot_data_with_config", {
       )
     )
   )
-  data <- dplyr::tribble(
+  data1 <- dplyr::tribble(
     ~consortium,                 ~year, ~month,
     NA,                          2000L, NA,
     "c1",                        2001L, "January",
     "loooooooooooooooooooooong", 2001L, "January"
   )
-  expected_result <- dplyr::tribble(
+  expected1 <- dplyr::tribble(
     ~Consortium,       ~Year,
     "Not Applicable",  2000L,
     "c1",              2001L,
     "looooooooooo...", 2001L
   )
   expect_equal(
-    format_plot_data_with_config(data, config),
-    expected_result
+    format_plot_data_with_config(data1, config1),
+    expected1
   )
+
+  config2 <- list(
+    "drop_na" = T,
+    "columns" = list(
+      list(
+        "name" = "consortium",
+        "display_name" = "Consortium",
+        "type" = "character",
+        "truncate" = 15
+      ),
+      list(
+        "name" = "year",
+        "display_name" = "Year",
+        "type" = "integer"
+      )
+    )
+  )
+  data2 <- dplyr::tribble(
+    ~consortium,                 ~year, ~month,
+    NA,                          2000L, NA,
+    "c1",                        2001L, "January",
+    "loooooooooooooooooooooong", 2001L, "January"
+  )
+  expected2 <- dplyr::tribble(
+    ~Consortium,       ~Year,
+    "c1",              2001L,
+    "looooooooooo...", 2001L
+  )
+  expect_equal(
+    format_plot_data_with_config(data2, config2),
+    expected2
+  )
+
+  config3 <- list(
+    "drop_na" = T,
+    "columns" = list(
+      list(
+        "name" = "consortium",
+        "display_name" = "Consortium",
+        "type" = "list:character"
+      ),
+      list(
+        "name" = "year",
+        "display_name" = "Year",
+        "type" = "integer"
+      )
+    )
+  )
+
+  data3 <- dplyr::tibble(
+    "consortium" = list(c("C1", "C2"), "C1", NA),
+    "year" = 2020L
+  )
+
+  expected3 <- dplyr::tibble(
+    "Consortium" = c("C1 | C2", "C1"),
+    "Year" = 2020L
+  )
+  expect_equal(
+    format_plot_data_with_config(data3, config3),
+    expected3
+  )
+
 })
 
 test_that("create_data_focus_tables", {
@@ -189,28 +252,43 @@ test_that("create_data_focus_tables", {
 test_that("concatenate_list_columns", {
   tbl1 <- dplyr::tibble(
     "cola" = list(c("a", "b"), "a", c("a", "c")),
-    "colb" = c("a", "b", "c")
+    "colb" = c("a", "b", "c"),
+    "colc" = c("a", "b", NA),
+    "cold" = list(c("a", "b"), "a", NA)
   )
   col1 <- "cola"
   col2 <- "colb"
+  col3 <- "colc"
+  col4 <- "cold"
+
   res1 <- concatenate_list_columns(tbl1, col1)
-  res2 <- concatenate_list_columns(tbl1, col2)
-  res3 <- concatenate_list_columns(tbl1, c(col1, col2))
   expect_equal(
     res1,
     dplyr::tibble(
       "cola" = c("a | b", "a", "a | c"),
-      "colb" = c("a", "b", "c")
+      "colb" = c("a", "b", "c"),
+      "colc" = c("a", "b", NA),
+      "cold" = list(c("a", "b"), "a", NA)
     )
   )
+
+  res2 <- concatenate_list_columns(tbl1, col2)
   expect_equal(res2, tbl1)
+
+  res3 <- concatenate_list_columns(tbl1, col3)
+  expect_equal(res3, tbl1)
+
+  res4 <- concatenate_list_columns(tbl1, col4)
   expect_equal(
-    res3,
+    res4,
     dplyr::tibble(
-      "cola" = c("a | b", "a", "a | c"),
-      "colb" = c("a", "b", "c")
+      "cola" = list(c("a", "b"), "a", c("a", "c")),
+      "colb" = c("a", "b", "c"),
+      "colc" = c("a", "b", NA),
+      "cold" = c("a | b", "a", NA),
     )
   )
+
 })
 
 test_that("safe_pluck_list", {

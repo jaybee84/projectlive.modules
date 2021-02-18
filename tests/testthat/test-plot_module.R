@@ -20,7 +20,7 @@ test_that("plot_module_server_nf", {
   )
 })
 
-test_that("plot_module_server_csbc", {
+test_that("plot_module_server_csbc1", {
   shiny::testServer(
     plot_module_server,
     args = list(

@@ -76,16 +76,16 @@ csbc_files <-
       "consortium",
       "organ",
       "experimentalStrategy"
-    ),
-    limit = 10000
+    )
   ) %>%
   format_date_columns() %>%
   dplyr::select(-c("createdOn", "ROW_ID", "ROW_VERSION", "ROW_ETAG")) %>%
   dplyr::mutate( "accessType" = "PUBLIC") %>%
-  dplyr::left_join(
+  dplyr::inner_join(
     dplyr::select(csbc_studies, "theme", "grantName"),
-    by = "grantName"
-  )
+    by = "grantName",
+  ) %>%
+  dplyr::slice(1:20000L)
 
 saveRDS(csbc_files, "inst/RDS/csbc_files.rds")
 

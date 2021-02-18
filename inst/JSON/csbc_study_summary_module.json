@@ -70,8 +70,8 @@
         "type": "character"
       },
       {
-        "name": "resourceType",
-        "display_name": "Resource Type",
+        "name": "assay",
+        "display_name": "Assay",
         "type": "character",
         "na_replace": "Not Annotated"
       },
@@ -88,7 +88,7 @@
     ],
     "plot": {
       "x": "Grant Name",
-      "fill": "Resource Type",
+      "fill": "Assay",
       "facet": [
         "Year",
         "Month"
@@ -116,20 +116,20 @@
         "na_replace": "Not Annotated"
       },
       {
-        "name": "resourceType",
-        "display_name": "Resource Added",
+        "name": "diagnosis",
+        "display_name": "Diagnosis",
         "type": "character",
         "na_replace": "Not Annotated"
       },
       {
-        "name": "gender",
-        "display_name": "Gender",
+        "name": "species",
+        "display_name": "Species",
         "type": "character",
         "na_replace": "Not Annotated"
       },
       {
-        "name": "dataset",
-        "display_name": "Dataset",
+        "name": "tumorType",
+        "display_name": "Tumor Type",
         "type": "character",
         "na_replace": "Not Annotated"
       }
@@ -138,9 +138,9 @@
       "x": "Study Name",
       "fill": [
         "Assays Used",
-        "Resource Added",
-        "Gender",
-        "Dataset"
+        "Diagnosis",
+        "Species",
+        "Tumor Type"
       ]
     },
     "tooltips": [

@@ -68,6 +68,7 @@
   "resources_generated": {
     "table": "files",
     "empty_table_message": "The investigator/investigators has/have not uploaded any files yet. Please check back later.",
+    "drop_na": true,
     "columns": [
       {
         "name": "year",
@@ -81,7 +82,7 @@
         "na_replace": "Not Applicable"
       },
       {
-        "name": "Theme",
+        "name": "theme",
         "display_name": "Theme",
         "type": "list:character"
       }

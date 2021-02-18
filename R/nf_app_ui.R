@@ -1,4 +1,4 @@
-ui <- function() {
+nf_ui <- function() {
   shiny::tagList(
     shiny::navbarPage(
       title = shiny::strong("projectLive"), selected = "About",

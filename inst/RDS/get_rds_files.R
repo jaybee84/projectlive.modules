@@ -86,7 +86,7 @@ csbc_files <-
   format_date_columns() %>%
   dplyr::select(-c("createdOn", "ROW_ID", "ROW_VERSION", "ROW_ETAG")) %>%
   dplyr::mutate( "accessType" = "PUBLIC") %>%
-  dplyr::left_join(studies, by = "grantName")
+  dplyr::left_join(csbc_studies, by = "grantName")
 
 saveRDS(csbc_files, "inst/RDS/csbc_files.rds")
 

@@ -23,6 +23,25 @@ test_that("nf_merge_studies_module_server", {
   )
 })
 
+test_that("nf_gff_merge_studies_module_server", {
+  shiny::testServer(
+    merge_studies_module_server,
+    args = list(
+      "data" = shiny::reactive(nf_gff_data),
+      "config" = shiny::reactive(nf_study_summary_config)
+    ),
+    {
+      expect_type(study_table(), "list")
+      expect_type(output$study_table, "character")
+      session$setInputs("study_table_rows_selected" = 3)
+      expect_type(selected_study_name(), "character")
+      expect_type(output$study, "list")
+      res <- session$getReturned()()
+      expect_type(res$selected_study, "character")
+    }
+  )
+})
+
 test_that("csbc_merge_studies_module_server", {
   shiny::testServer(
     merge_studies_module_server,

@@ -1,3 +1,5 @@
+utils::globalVariables(c("."))
+
 get_system_path <- function(name, extension, folder){
   name %>%
     stringr::str_c(extension) %>%

@@ -15,10 +15,15 @@ NA,          2000L, NA,
 "c1",        20001, "January"
 )}
 
-\item{config}{A list with a named list named "columns" that has an entry
+\item{config}{A named list.
+
+The list must contained an item named "columns" that has an entry
 for each column needed in the tibble. Each column must have a "name",
 and "type" field. Optional fields include "replace_values", "display_name",
-"na_replace", and "deafult_replace".
+"na_replace", and "default_replace".
+
+The list may also contain an item named drop_na. If the value of drop_na
+is True, all rows with na values will be droped.
 
 config <- list(
 "columns" = list(
@@ -32,7 +37,7 @@ list(
 )}
 }
 \description{
-This function runs a tible through the main data cleanup functions befoire
+This function runs a tibble through the main data cleanup functions before
 being displayed in a plot or data table. See those functions for more
 details.
 }

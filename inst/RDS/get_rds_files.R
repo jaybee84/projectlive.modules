@@ -12,7 +12,6 @@ nf_files <-
   get_synapse_tbl(
     syn,
     "syn16858331",
-    limit = 5000,
     columns = c(
       "id",
       "individualID",
@@ -33,11 +32,12 @@ nf_files <-
   ) %>%
   format_date_columns() %>%
   dplyr::select(-c("createdOn", "ROW_ID", "ROW_VERSION", "ROW_ETAG")) %>%
-  dplyr::left_join(
+  dplyr::inner_join(
     dplyr::select(
       nf_studies,
       "studyName",
-      "studyLeads"
+      "studyLeads",
+      "fundingAgency"
     ),
     by = "studyName"
   )

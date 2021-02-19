@@ -32,6 +32,54 @@ test_that("filter_list_column",{
   )
 })
 
+
+test_that("format_date_columns", {
+  data1 <- dplyr::tibble("createdOn" = c(1.454526e+12, 1.454526e+12))
+  data2 <- dplyr::tibble("year" = 2001L, "month" = "January")
+  result1 <- format_date_columns(data1)
+  result2 <- format_date_columns(data2)
+  expect_named(result1, c("createdOn", "datetime", "date", "year", "month"))
+  expect_named(result2, c("year", "month"))
+})
+
+test_that("summarise_df_counts",{
+  data1 <- dplyr::tibble(
+    "group_col" = c(rep("g1", 5), rep("g2", 3)),
+    "count_col1" = c(rep("x", 2), rep("y", 6)),
+    "count_col2" = c(rep("a", 1), rep("b", 7)),
+    "col4" = "x"
+  )
+  group_column <-  "group_col"
+  columns <-  list("group_col", "count_col1", "count_col2")
+
+  result1 <- summarise_df_counts(data1, group_column, columns)
+  expect_equal(
+    result1,
+    dplyr::tibble(
+      "group_col" = c("g1", "g2"),
+      "count_col1" = c(2, 1),
+      "count_col2" = c(2, 1)
+    )
+  )
+
+  data2 <- dplyr::tibble(
+    "group_col" = character(),
+    "count_col1" = character(),
+    "count_col2" = character(),
+    "col4" = character()
+  )
+
+  result2 <- summarise_df_counts(data2, group_column, columns)
+  expect_equal(
+    result2,
+    dplyr::tibble(
+      "group_col" = character(),
+      "count_col1" = character(),
+      "count_col2" = character()
+    )
+  )
+})
+
 test_that("create_merged_table_with_config", {
   config <- list(
     "join_column" = "studyName",

@@ -30,8 +30,11 @@ format_date_columns <- function(data){
 }
 
 summarise_df_counts <- function(data, group_column, columns){
-  files <- data %>%
-    dplyr::select(dplyr::all_of(unlist(columns))) %>%
+  result <- dplyr::select(data, dplyr::all_of(unlist(columns)))
+
+  if(nrow(result) == 0) return(result)
+
+  result %>%
     tidyr::unnest(dplyr::everything()) %>%
     dplyr::group_by_at(group_column) %>%
     dplyr::summarise(

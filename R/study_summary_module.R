@@ -140,7 +140,7 @@ study_summary_module_server <- function(id, data, config){
           format_plot_data_with_config(config) %>%
           tidyr::drop_na()
 
-        validate(need(nrow(data) > 0 , config$empty_table_message))
+        shiny::validate(shiny::need(nrow(data) > 0 , config$empty_table_message))
 
         create_plot_with_config(
           data, config, "create_study_timeline_plot"
@@ -158,7 +158,7 @@ study_summary_module_server <- function(id, data, config){
           format_plot_data_with_config(config) %>%
           create_data_focus_tables(config$plot$x, config$plot$fill)
 
-        validate(need(length(data_list) > 0 , config$empty_table_message))
+        shiny::validate(shiny::need(length(data_list) > 0 , config$empty_table_message))
 
         create_data_focus_plots(data_list, config)
       })
@@ -176,7 +176,7 @@ study_summary_module_server <- function(id, data, config){
             complete_columns = c(config$plot$x, config$plot$facet)
           )
 
-        validate(need(sum(data$Count) > 0, config$empty_table_message))
+        shiny::validate(shiny::need(sum(data$Count) > 0, config$empty_table_message))
 
         create_plot_with_config(
           data, config, "create_annotation_activity_plot"
@@ -195,7 +195,7 @@ study_summary_module_server <- function(id, data, config){
           tidyr::unnest(cols = config$filter_column) %>%
           format_plot_data_with_config(config)
 
-        validate(need(nrow(data) > 0 , config$empty_table_message))
+        shiny::validate(shiny::need(nrow(data) > 0 , config$empty_table_message))
 
         create_plot_with_config(
           data,

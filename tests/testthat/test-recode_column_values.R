@@ -48,44 +48,50 @@ test_that("recode_column_values", {
   )
 })
 
-# test_that("recode_df_with_config", {
-#   tbl1 <- dplyr::tibble(
-#     "col1" = c("a", NA, "b"),
-#     "col2" = c("c", "d", NA),
-#     "col3" = c(1L, 2L, NA),
-#   )
-#   config1 <- list(
-#     "columns" = list(
-#       "col1" = list(
-#         "name" = "col1",
-#         "type" = "character",
-#         "replace_values" = list(
-#           "a" = "x"
-#         )
-#       ),
-#       "col2" = list(
-#         "name" = "col2",
-#         "type" = "character",
-#         "replace_values" = list(
-#           "c" = "z"
-#         ),
-#         "na_replace" = "M",
-#         "default_replace" = "O"
-#       ),
-#       "col3" = list(
-#         "name" = "col3",
-#         "type" = "integer"
-#       )
-#     )
-#   )
-#   res1 <- recode_df_with_config(tbl1, config1)
-#   expect_equal(
-#     res1,
-#     dplyr::tibble(
-#       "col1" = c("x", NA, "b"),
-#       "col2" = c("z", "O", "M"),
-#       "col3" = c(1L, 2L, NA),
-#     )
-#   )
-# })
+test_that("recode_df_with_config", {
+  tbl1 <- dplyr::tibble(
+    "col1" = c("a", NA, "b"),
+    "col2" = c("c", "d", NA),
+    "col3" = c(1L, 2L, NA),
+    "col4" = c(T, F, F),
+  )
+  config1 <- list(
+    "columns" = list(
+      list(
+        "name" = "col1",
+        "type" = "character",
+        "replace_values" = list(
+          "a" = "x"
+        )
+      ),
+      list(
+        "name" = "col2",
+        "type" = "character",
+        "replace_values" = list(
+          "c" = "z"
+        ),
+        "na_replace" = "M",
+        "default_replace" = "O"
+      ),
+      list(
+        "name" = "col3",
+        "type" = "integer"
+      ),
+      list(
+        "name" = "col4",
+        "type" = "logical"
+      )
+    )
+  )
+  res1 <- recode_df_with_config(tbl1, config1)
+  expect_equal(
+    res1,
+    dplyr::tibble(
+      "col1" = c("x", NA, "b"),
+      "col2" = c("z", "O", "M"),
+      "col3" = c(1L, 2L, NA),
+      "col4" = c(T, F, F),
+    )
+  )
+})
 

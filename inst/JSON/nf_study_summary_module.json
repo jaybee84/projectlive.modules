@@ -35,8 +35,7 @@
           },
           {
             "display_name": "Leads",
-            "name": "studyLeads",
-            "type": "list:character"
+            "name": "studyLeads"
           },
           {
             "display_name": "Study Status",
@@ -82,26 +81,21 @@
     "columns": [
       {
         "name": "studyId",
-        "type": "character",
         "display_name": "Unique Study ID"
       },
       {
         "name": "studyStatus",
-        "type": "character",
         "display_name": "Study Status"
       },
       {
         "name": "dataStatus",
-        "type": "character",
         "display_name": "Data Status"
       },
       {
-        "name": "summary",
-        "type": "character"
+        "name": "summary"
       },
       {
         "name": "diseaseFocus",
-        "type": "list:character",
         "display_name": "Disease Focus"
       }
     ]
@@ -112,13 +106,11 @@
     "columns": [
       {
         "name": "studyName",
-        "display_name": "Study Name",
-        "type": "character"
+        "display_name": "Study Name"
       },
       {
         "name": "resourceType",
-        "display_name": "Resource Type",
-        "type": "character"
+        "display_name": "Resource Type"
       },
       {
         "name": "year",
@@ -151,28 +143,23 @@
     "columns": [
       {
         "name": "studyName",
-        "display_name": "Study Name",
-        "type": "character"
+        "display_name": "Study Name"
       },
       {
         "name": "assay",
-        "display_name": "Assays Used",
-        "type": "character"
+        "display_name": "Assays Used"
       },
       {
         "name": "resourceType",
-        "display_name": "Resource Added",
-        "type": "character"
+        "display_name": "Resource Added"
       },
       {
         "name": "species",
-        "display_name": "Species Used",
-        "type": "character"
+        "display_name": "Species Used"
       },
       {
         "name": "tumorType",
-        "display_name": "Tumor Types Investigated",
-        "type": "character"
+        "display_name": "Tumor Types Investigated"
       }
     ],
     "plot": {
@@ -197,14 +184,12 @@
       {
         "name": "studyLeads",
         "display_name": "Study Leads",
-        "type": "list:character",
-        "na_replace": "pendingAnnotation"
+        "na_replace": "Pending Annotation"
       },
       {
         "name": "assay",
         "display_name": "Assay",
-        "type": "character",
-        "na_replace": "pendingAnnotation"
+        "na_replace": "Pending Annotation"
       },
       {
         "name": "year",
@@ -236,8 +221,7 @@
       },
       {
         "name": "studyName",
-        "display_name": "Study Name",
-        "type": "list:character"
+        "display_name": "Study Name"
       }
     ],
     "plot": {

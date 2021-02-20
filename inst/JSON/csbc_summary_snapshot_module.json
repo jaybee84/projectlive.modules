@@ -4,33 +4,25 @@
     "box1": {
       "title": "Studies",
       "table": "studies",
-      "columns": [
-        "grantId"
-      ],
+      "columns": ["grantId"],
       "icon": "university"
     },
     "box2": {
       "title": "Files",
       "table": "files",
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "icon": "file"
     },
     "box3": {
       "title": "Datasets",
       "table": "datasets",
-      "columns": [
-        "datasetId"
-      ],
+      "columns": ["datasetId"],
       "icon": "file"
     },
     "box4": {
       "title": "Publications",
       "table": "publications",
-      "columns": [
-        "publicationId"
-      ],
+      "columns": ["publicationId"],
       "icon": "pencil"
     }
   },
@@ -51,8 +43,7 @@
       {
         "name": "accessType",
         "display_name": "Access Type",
-        "na_replace": "NOT ANNOTATED",
-        "type": "character"
+        "na_replace": "NOT ANNOTATED"
       }
     ],
     "plot": {
@@ -60,10 +51,7 @@
       "fill": "Access Type",
       "facet": "Year"
     },
-    "tooltips": [
-      "count",
-      "fill"
-    ]
+    "tooltips": [ "count", "fill"]
   },
   "resources_generated": {
     "table": "files",
@@ -78,13 +66,11 @@
       {
         "name": "grantName",
         "display_name": "Grant Name",
-        "type": "list:character",
         "na_replace": "Not Applicable"
       },
       {
         "name": "theme",
-        "display_name": "Theme",
-        "type": "list:character"
+        "display_name": "Theme"
       }
     ],
     "plot": {
@@ -105,15 +91,13 @@
       {
         "name": "grantName",
         "display_name": "Grant Name",
-        "type": "list:character",
-        "na_replace": "pendingAnnotation",
+        "na_replace": "Pending Annotation",
         "truncate": 40
       },
       {
         "name": "assay",
         "display_name": "Assay",
-        "type": "list:character",
-        "na_replace": "pendingAnnotation"
+        "na_replace": "Pending Annotation"
       },
       {
         "name": "year",

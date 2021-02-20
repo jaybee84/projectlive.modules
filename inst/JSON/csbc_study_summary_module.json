@@ -55,7 +55,6 @@
     "columns": [
       {
         "name": "grantId",
-        "type": "character",
         "display_name": "Unique Study ID"
       }
     ]
@@ -66,13 +65,11 @@
     "columns": [
       {
         "name": "grantName",
-        "display_name": "Grant Name",
-        "type": "character"
+        "display_name": "Grant Name"
       },
       {
         "name": "assay",
         "display_name": "Assay",
-        "type": "character",
         "na_replace": "Not Annotated"
       },
       {
@@ -106,31 +103,26 @@
     "columns": [
       {
         "name": "grantName",
-        "display_name": "Study Name",
-        "type": "character"
+        "display_name": "Study Name"
       },
       {
         "name": "assay",
         "display_name": "Assays Used",
-        "type": "character",
         "na_replace": "Not Annotated"
       },
       {
         "name": "diagnosis",
         "display_name": "Diagnosis",
-        "type": "character",
         "na_replace": "Not Annotated"
       },
       {
         "name": "species",
         "display_name": "Species",
-        "type": "character",
         "na_replace": "Not Annotated"
       },
       {
         "name": "tumorType",
         "display_name": "Tumor Type",
-        "type": "character",
         "na_replace": "Not Annotated"
       }
     ],
@@ -156,14 +148,12 @@
       {
         "name": "consortium",
         "display_name": "Consortium",
-        "type": "character",
-        "na_replace": "pendingAnnotation"
+        "na_replace": "Pending Annotation"
       },
       {
         "name": "assay",
         "display_name": "Assay",
-        "type": "character",
-        "na_replace": "pendingAnnotation"
+        "na_replace": "Pending Annotation"
       },
       {
         "name": "year",
@@ -194,8 +184,7 @@
       },
       {
         "name": "grantName",
-        "display_name": "Grant Name",
-        "type": "character"
+        "display_name": "Grant Name"
       }
     ],
     "plot": {

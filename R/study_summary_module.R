@@ -191,11 +191,12 @@ study_summary_module_server <- function(id, data, config){
 
         data <- data2() %>%
           purrr::pluck("tables", config$table) %>%
-          filter_list_column(config$filter_column, data2()$selected_study) %>%
-          tidyr::unnest(cols = config$filter_column) %>%
-          format_plot_data_with_config(config)
+          filter_list_column(config$filter_column, data2()$selected_study)
 
         shiny::validate(shiny::need(nrow(data) > 0 , config$empty_table_message))
+
+        data <- data %>%
+          format_plot_data_with_config(config)
 
         create_plot_with_config(
           data,

@@ -227,6 +227,7 @@
   "publication_status_plot": {
     "table": "publications",
     "filter_column": "studyName",
+    "unnest_columns" : "studyName",
     "columns": [
       {
         "name": "year",

@@ -132,55 +132,7 @@ create_plot_count_df <- function(data, factor_columns, complete_columns){
 }
 
 
-#' Format Plot Data With Config
-#'
-#' This function runs a tibble through the main data cleanup functions before
-#' being displayed in a plot or data table. See those functions for more
-#' details.
-#'
-#' @param data A Tibble
-#'
-#'   data <- dplyr::tribble(
-#'    ~consortium, ~year, ~month,
-#'    NA,          2000L, NA,
-#'    "c1",        20001, "January"
-#'  )
-#'
-#' @param config A named list.
-#'
-#' The list must contained an item named "columns" that has an entry
-#' for each column needed in the tibble. Each column must have a "name",
-#' and "type" field. Optional fields include "replace_values", "display_name",
-#' "na_replace", and "default_replace".
-#'
-#' The list may also contain an item named drop_na. If the value of drop_na
-#' is True, all rows with na values will be droped.
-#'
-#'   config <- list(
-#'    "columns" = list(
-#'       list(
-#'         "name" = "consortium",
-#'         "display_name" = "Consortium",
-#'         "na_replace" = "Not Applicable",
-#'         "type" = "character"
-#'       ),
-#'      )
-#'     )
-#'
-#' @importFrom magrittr %>%
-#' @export
-format_plot_data_with_config <- function(data, config){
-  result <- data %>%
-    concatenate_df_list_columns_with_config(config) %>%
-    recode_df_with_config(config) %>%
-    truncate_df_cols_with_config(config) %>%
-    rename_df_columns_with_config(config)
 
-  if(!is.null(config$drop_na) && config$drop_na){
-    result <- tidyr::drop_na(result)
-  }
-  return(result)
-}
 
 #' Create Data Focus Tables
 #' This function creates a list of tables from on input tibble. The list will
@@ -228,7 +180,7 @@ safe_pluck_list <- function(lst, n){
 #' This function will select and rename columns based on the Config.
 #' Only columns in the Config will be selected. Columns with a display
 #' name, will be renamed that, otherwise stringr::str_to_title will be used on
-#' the anme.
+#' the name.
 #'
 #' @param tbl A tibble
 #'

@@ -32,16 +32,6 @@ test_that("filter_list_column",{
   )
 })
 
-
-test_that("format_date_columns", {
-  data1 <- dplyr::tibble("createdOn" = c(1.454526e+12, 1.454526e+12))
-  data2 <- dplyr::tibble("year" = 2001L, "month" = "January")
-  result1 <- format_date_columns(data1)
-  result2 <- format_date_columns(data2)
-  expect_named(result1, c("createdOn", "datetime", "date", "year", "month"))
-  expect_named(result2, c("year", "month"))
-})
-
 test_that("summarise_df_counts",{
   data1 <- dplyr::tibble(
     "group_col" = c(rep("g1", 5), rep("g2", 3)),
@@ -174,104 +164,6 @@ test_that("create_plot_count_df", {
     create_plot_count_df(data, "Lead", c("Lead", "Year")),
     expected_result1
   )
-})
-
-test_that("format_plot_data_with_config", {
-  config1 <- list(
-    "columns" = list(
-      list(
-        "name" = "consortium",
-        "display_name" = "Consortium",
-        "na_replace" = "Not Applicable",
-        "type" = "character",
-        "truncate" = 15
-      ),
-      list(
-        "name" = "year",
-        "display_name" = "Year",
-        "type" = "integer"
-      )
-    )
-  )
-  data1 <- dplyr::tribble(
-    ~consortium,                 ~year, ~month,
-    NA,                          2000L, NA,
-    "c1",                        2001L, "January",
-    "loooooooooooooooooooooong", 2001L, "January"
-  )
-  expected1 <- dplyr::tribble(
-    ~Consortium,       ~Year,
-    "Not Applicable",  2000L,
-    "c1",              2001L,
-    "looooooooooo...", 2001L
-  )
-  expect_equal(
-    format_plot_data_with_config(data1, config1),
-    expected1
-  )
-
-  config2 <- list(
-    "drop_na" = T,
-    "columns" = list(
-      list(
-        "name" = "consortium",
-        "display_name" = "Consortium",
-        "type" = "character",
-        "truncate" = 15
-      ),
-      list(
-        "name" = "year",
-        "display_name" = "Year",
-        "type" = "integer"
-      )
-    )
-  )
-  data2 <- dplyr::tribble(
-    ~consortium,                 ~year, ~month,
-    NA,                          2000L, NA,
-    "c1",                        2001L, "January",
-    "loooooooooooooooooooooong", 2001L, "January"
-  )
-  expected2 <- dplyr::tribble(
-    ~Consortium,       ~Year,
-    "c1",              2001L,
-    "looooooooooo...", 2001L
-  )
-  expect_equal(
-    format_plot_data_with_config(data2, config2),
-    expected2
-  )
-
-  config3 <- list(
-    "drop_na" = T,
-    "columns" = list(
-      list(
-        "name" = "consortium",
-        "display_name" = "Consortium",
-        "type" = "list:character"
-      ),
-      list(
-        "name" = "year",
-        "display_name" = "Year",
-        "type" = "integer"
-      )
-    )
-  )
-
-  data3 <- dplyr::tibble(
-    "consortium" = list(c("C1", "C2"), "C1", NA),
-    "year" = 2020L
-  )
-
-  expected3 <- dplyr::tibble(
-    "Consortium" = c("C1 | C2", "C1"),
-    "Year" = 2020L
-  )
-  expect_equal(
-    format_plot_data_with_config(data3, config3),
-    expected3
-  )
-
 })
 
 test_that("create_data_focus_tables", {

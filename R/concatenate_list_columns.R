@@ -1,8 +1,22 @@
+# Concatenate All Dataframe List Columns
+#' @param tbl A Tibble
+concatenate_all_list_columns <- function(tbl){
+  dplyr::mutate(
+    tbl,
+    dplyr::across(
+      where(purrr::is_list),
+      ~purrr::map_chr(.x, concatenate_list)
+    )
+  )
+}
+
+
+
 #' Concatenate Dataframe List Columns With Config
 #' This function will concatenate list columns into character columns.
 #' Any column of type "list:character" will be concatenated
 #'
-#' @param data A Tibble
+#' @param tbl A Tibble
 #'
 #'   data <- dplyr::tribble(
 #'    ~study,       ~month,
@@ -26,7 +40,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
-concatenate_df_list_columns_with_config <- function(data, config){
+concatenate_df_list_columns_with_config <- function(tbl, config){
   list_columns <- config %>%
     purrr::pluck("columns") %>%
     dplyr::tibble(
@@ -38,7 +52,7 @@ concatenate_df_list_columns_with_config <- function(data, config){
     dplyr::pull("name") %>%
     unname()
 
-  concatenate_list_columns(data, list_columns)
+  concatenate_list_columns(tbl, list_columns)
 }
 
 #' Concatenate List Columns
@@ -47,7 +61,6 @@ concatenate_df_list_columns_with_config <- function(data, config){
 #' @param tbl A Tibble
 #' @param columns A list of strings that are names of columns in data to
 #' be concatenated
-#' @importFrom magrittr %>%
 concatenate_list_columns <- function(tbl, columns){
   dplyr::mutate_at(
     tbl,

@@ -1,3 +1,35 @@
+test_that("concatenate_all_list_columns", {
+  tbl <- dplyr::tibble(
+    "cola" = list(c("a", "b"), "a", c("a", "c")),
+    "colb" = c("a", "b", "c"),
+    "colc" = c("a", "b", NA),
+    "cold" = list(c("a", "b"), "a", NA),
+    "colf" = list(c(NA, NA), NA, c("c", "a", NA)),
+    "colg" = list(c("a", "b"), "a", NULL),
+    "colh" = c(2018L, 2019L, 2020L),
+    "coli" = c(1.0, 2.0, 3.0),
+    "colj" = c(T,T,F),
+    "colk" = factor("A", "B")
+  )
+
+  expected <- dplyr::tibble(
+    "cola" = c("a | b", "a", "a | c"),
+    "colb" = c("a", "b", "c"),
+    "colc" = c("a", "b", NA),
+    "cold" = c("a | b", "a", NA),
+    "colf" = c(NA, NA, "a | c"),
+    "colg" = c("a | b", "a", NA),
+    "colh" = c(2018L, 2019L, 2020L),
+    "coli" = c(1.0, 2.0, 3.0),
+    "colj" = c(T,T,F),
+    "colk" = factor("A", "B")
+  )
+
+  expect_equal(concatenate_all_list_columns(tbl), expected)
+
+})
+
+
 test_that("concatenate_list_columns", {
   tbl1 <- dplyr::tibble(
     "cola" = list(c("a", "b"), "a", c("a", "c")),

@@ -184,12 +184,12 @@
       {
         "name": "studyLeads",
         "display_name": "Study Leads",
-        "na_replace": "Pending Annotation"
+        "recode": {"na_replace": "Pending Annotation"}
       },
       {
         "name": "assay",
         "display_name": "Assay",
-        "na_replace": "Pending Annotation"
+        "recode": {"na_replace": "Pending Annotation"}
       },
       {
         "name": "year",

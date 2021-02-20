@@ -70,7 +70,7 @@
       {
         "name": "assay",
         "display_name": "Assay",
-        "na_replace": "Not Annotated"
+        "recode": {"na_replace": "Not Annotated"}
       },
       {
         "name": "year",
@@ -108,22 +108,22 @@
       {
         "name": "assay",
         "display_name": "Assays Used",
-        "na_replace": "Not Annotated"
+        "recode": {"na_replace": "Not Annotated"}
       },
       {
         "name": "diagnosis",
         "display_name": "Diagnosis",
-        "na_replace": "Not Annotated"
+        "recode": {"na_replace": "Not Annotated"}
       },
       {
         "name": "species",
         "display_name": "Species",
-        "na_replace": "Not Annotated"
+        "recode": {"na_replace": "Not Annotated"}
       },
       {
         "name": "tumorType",
         "display_name": "Tumor Type",
-        "na_replace": "Not Annotated"
+        "recode": {"na_replace": "Not Annotated"}
       }
     ],
     "plot": {
@@ -148,12 +148,12 @@
       {
         "name": "consortium",
         "display_name": "Consortium",
-        "na_replace": "Pending Annotation"
+        "recode": {"na_replace": "Pending Annotation"}
       },
       {
         "name": "assay",
         "display_name": "Assay",
-        "na_replace": "Pending Annotation"
+        "recode": {"na_replace": "Pending Annotation"}
       },
       {
         "name": "year",

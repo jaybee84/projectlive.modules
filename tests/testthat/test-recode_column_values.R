@@ -59,28 +59,20 @@ test_that("recode_df_with_config", {
     "columns" = list(
       list(
         "name" = "col1",
-        "type" = "character",
-        "replace_values" = list(
-          "a" = "x"
+        "recode" = list(
+          "replace_values" = list("a" = "x")
         )
       ),
       list(
         "name" = "col2",
-        "type" = "character",
-        "replace_values" = list(
-          "c" = "z"
-        ),
-        "na_replace" = "M",
-        "default_replace" = "O"
+        "recode" = list(
+          "replace_values" = list("c" = "z"),
+          "na_replace" = "M",
+          "default_replace" = "O"
+        )
       ),
-      list(
-        "name" = "col3",
-        "type" = "integer"
-      ),
-      list(
-        "name" = "col4",
-        "type" = "logical"
-      )
+      list("name" = "col3"),
+      list("name" = "col4" )
     )
   )
   res1 <- recode_df_with_config(tbl1, config1)

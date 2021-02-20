@@ -38,12 +38,12 @@
       {
         "name": "consortium",
         "display_name": "Consortium",
-        "na_replace": "Not Applicable"
+        "recode": {"na_replace": "Not Applicable"}
       },
       {
         "name": "accessType",
         "display_name": "Access Type",
-        "na_replace": "NOT ANNOTATED"
+        "recode": {"na_replace": "Not Annotated"}
       }
     ],
     "plot": {
@@ -66,7 +66,7 @@
       {
         "name": "grantName",
         "display_name": "Grant Name",
-        "na_replace": "Not Applicable"
+        "recode": {"na_replace": "Not Applicable"}
       },
       {
         "name": "theme",
@@ -91,13 +91,13 @@
       {
         "name": "grantName",
         "display_name": "Grant Name",
-        "na_replace": "Pending Annotation",
+        "recode": {"na_replace": "Pending Annotation"},
         "truncate": 40
       },
       {
         "name": "assay",
         "display_name": "Assay",
-        "na_replace": "Pending Annotation"
+        "recode": {"na_replace": "Pending Annotation"}
       },
       {
         "name": "year",

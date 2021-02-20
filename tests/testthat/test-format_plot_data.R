@@ -4,8 +4,7 @@ test_that("format_plot_data_with_config1", {
       list(
         "name" = "consortium",
         "display_name" = "Consortium",
-        "na_replace" = "Not Applicable",
-        "type" = "character",
+        "recode" = list("na_replace" = "Not Annotated"),
         "truncate" = 15
       ),
       list(
@@ -23,7 +22,7 @@ test_that("format_plot_data_with_config1", {
   )
   expected1 <- dplyr::tribble(
     ~Consortium,       ~Year,
-    "Not Applicable",  2000L,
+    "Not Annotated",  2000L,
     "c1",              2001L,
     "looooooooooo...", 2001L
   )
@@ -74,8 +73,7 @@ test_that("format_plot_data_with_config3", {
     "columns" = list(
       list(
         "name" = "consortium",
-        "display_name" = "Consortium",
-        "type" = "list:character"
+        "display_name" = "Consortium"
       ),
       list(
         "name" = "year",
@@ -107,13 +105,11 @@ test_that("format_plot_data_with_config4", {
     "columns" = list(
       list(
         "name" = "consortium",
-        "display_name" = "Consortium",
-        "type" = "character"
+        "display_name" = "Consortium"
       ),
       list(
         "name" = "year",
-        "display_name" = "Year",
-        "type" = "integer"
+        "display_name" = "Year"
       )
     )
   )

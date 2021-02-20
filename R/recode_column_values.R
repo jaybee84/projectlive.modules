@@ -45,19 +45,21 @@
 #' @importFrom magrittr %>%
 #' @export
 recode_df_with_config <- function(tbl, config){
+
   column_config <- config %>%
     purrr::pluck("columns") %>%
     purrr::keep(
       .,
-      purrr::map(., purrr::pluck("type")) %in% c("character", "list:character")
+      !purrr::map_lgl(purrr::map(., purrr::pluck, "recode"), is.null)
     )
+
   for (config in column_config) {
     tbl <- recode_column_values(
       tbl,
       config$name,
-      config$replace_values,
-      .default = config$default_replace,
-      .missing = config$na_replace
+      config$recode$replace_values,
+      .default = config$recode$default_replace,
+      .missing = config$recode$na_replace
     )
   }
   return(tbl)

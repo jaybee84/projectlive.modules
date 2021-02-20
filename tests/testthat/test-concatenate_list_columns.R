@@ -4,13 +4,15 @@ test_that("concatenate_list_columns", {
     "colb" = c("a", "b", "c"),
     "colc" = c("a", "b", NA),
     "cold" = list(c("a", "b"), "a", NA),
-    "colf" = list(c(NA, NA), NA, c("c", "a", NA))
+    "colf" = list(c(NA, NA), NA, c("c", "a", NA)),
+    "colg" = list(c("a", "b"), "a", NULL)
   )
   col1 <- "cola"
   col2 <- "colb"
   col3 <- "colc"
   col4 <- "cold"
   col5 <- "colf"
+  col6 <- "colg"
 
   res1 <- concatenate_list_columns(tbl1, col1)
   expect_equal(
@@ -20,7 +22,8 @@ test_that("concatenate_list_columns", {
       "colb" = c("a", "b", "c"),
       "colc" = c("a", "b", NA),
       "cold" = list(c("a", "b"), "a", NA),
-      "colf" = list(c(NA, NA), NA, c("c", "a", NA))
+      "colf" = list(c(NA, NA), NA, c("c", "a", NA)),
+      "colg" = list(c("a", "b"), "a", NULL)
     )
   )
 
@@ -38,7 +41,8 @@ test_that("concatenate_list_columns", {
       "colb" = c("a", "b", "c"),
       "colc" = c("a", "b", NA),
       "cold" = c("a | b", "a", NA),
-      "colf" = list(c(NA, NA), NA, c("c", "a", NA))
+      "colf" = list(c(NA, NA), NA, c("c", "a", NA)),
+      "colg" = list(c("a", "b"), "a", NULL)
     )
   )
 
@@ -51,6 +55,20 @@ test_that("concatenate_list_columns", {
       "colc" = c("a", "b", NA),
       "cold" = list(c("a", "b"), "a", NA),
       "colf" = c(NA, NA, "a | c"),
+      "colg" = list(c("a", "b"), "a", NULL)
+    )
+  )
+
+  res6 <- concatenate_list_columns(tbl1, col6)
+  expect_equal(
+    res6,
+    dplyr::tibble(
+      "cola" = list(c("a", "b"), "a", c("a", "c")),
+      "colb" = c("a", "b", "c"),
+      "colc" = c("a", "b", NA),
+      "cold" = list(c("a", "b"), "a", NA),
+      "colf" = list(c(NA, NA), NA, c("c", "a", NA)),
+      "colg" = c("a | b", "a", NA),
     )
   )
 

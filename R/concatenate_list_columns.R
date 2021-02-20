@@ -57,6 +57,7 @@ concatenate_list_columns <- function(tbl, columns){
 }
 
 concatenate_list <- function(lst){
+  if(is.null(list)) return(NA)
   if(all(is.na(lst))) return(NA)
   lst %>%
     sort() %>%

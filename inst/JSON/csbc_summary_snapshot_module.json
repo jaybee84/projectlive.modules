@@ -32,8 +32,7 @@
     "columns": [
       {
         "name": "year",
-        "display_name": "Year",
-        "type": "integer"
+        "display_name": "Year"
       },
       {
         "name": "consortium",
@@ -60,8 +59,7 @@
     "columns": [
       {
         "name": "year",
-        "display_name": "Year",
-        "type": "integer"
+        "display_name": "Year"
       },
       {
         "name": "grantName",
@@ -101,7 +99,6 @@
       },
       {
         "name": "year",
-        "type": "integer",
         "display_name": "Year"
       }
     ],

@@ -84,8 +84,7 @@ csbc_files <-
   dplyr::inner_join(
     dplyr::select(csbc_studies, "theme", "grantName"),
     by = "grantName",
-  ) %>%
-  dplyr::slice(1:20000L)
+  )
 
 saveRDS(csbc_files, "inst/RDS/csbc_files.rds")
 

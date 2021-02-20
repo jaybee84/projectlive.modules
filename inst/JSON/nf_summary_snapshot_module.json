@@ -34,8 +34,7 @@
     "columns": [
       {
         "name": "year",
-        "display_name": "Year",
-        "type": "integer"
+        "display_name": "Year"
       },
       {
         "name": "initiative",
@@ -64,8 +63,7 @@
     "columns": [
       {
         "name": "year",
-        "display_name": "Year",
-        "type": "integer"
+        "display_name": "Year"
       },
       {
         "name": "studyName",
@@ -115,7 +113,6 @@
       },
       {
         "name": "year",
-        "type": "integer",
         "display_name": "Year"
       }
     ],

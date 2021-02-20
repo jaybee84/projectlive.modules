@@ -47,8 +47,7 @@
           },
           {
             "display_name": "Disease Focus",
-            "name": "diseaseFocus",
-            "type": "list:character"
+            "name": "diseaseFocus"
           },
           {
             "display_name": "Individuals",
@@ -114,13 +113,11 @@
       },
       {
         "name": "year",
-        "display_name": "Year",
-        "type": "integer"
+        "display_name": "Year"
       },
       {
         "name": "month",
-        "display_name": "Month",
-        "type": "factor"
+        "display_name": "Month"
       }
     ],
     "plot": {
@@ -193,8 +190,7 @@
       },
       {
         "name": "year",
-        "display_name": "Year",
-        "type": "integer"
+        "display_name": "Year"
       }
     ],
     "plot": {
@@ -216,8 +212,7 @@
     "columns": [
       {
         "name": "year",
-        "display_name": "Year",
-        "type": "integer"
+        "display_name": "Year"
       },
       {
         "name": "studyName",
@@ -229,9 +224,6 @@
       "fill": "Study Name"
     },
     "empty_table_message": "This study has no associated publications yet.",
-    "tooltips": [
-      "count",
-      "fill"
-    ]
+    "tooltips": ["count", "fill"]
   }
 }

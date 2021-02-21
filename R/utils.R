@@ -1,4 +1,4 @@
-utils::globalVariables(c("."))
+utils::globalVariables(c(".", "where"))
 
 get_system_path <- function(name, extension, folder){
   name %>%

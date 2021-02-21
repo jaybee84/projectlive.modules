@@ -1,4 +1,7 @@
 # Concatenate All Dataframe List Columns
+#
+#' This function will concatenate all list columns into character columns.
+#'
 #' @param tbl A Tibble
 concatenate_all_list_columns <- function(tbl){
   dplyr::mutate(
@@ -10,9 +13,8 @@ concatenate_all_list_columns <- function(tbl){
   )
 }
 
-
-
 #' Concatenate Dataframe List Columns With Config
+#'
 #' This function will concatenate list columns into character columns.
 #' Any column of type "list:character" will be concatenated
 #'

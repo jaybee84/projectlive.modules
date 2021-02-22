@@ -99,11 +99,12 @@ csbc_publications <-
     columns = c(
       "grantName",
       "publicationId",
-      "publicationYear"
+      "publicationYear",
+      "tissue"
     )
   ) %>%
   dplyr::mutate(
-    "publicationYear" = as.integer(.data$publicationYear)
+    "publicationYear" = as.factor(.data$publicationYear)
   )
 
 saveRDS(csbc_publications, "inst/RDS/csbc_publications.rds")

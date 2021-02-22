@@ -54,6 +54,7 @@ test_that("recode_df_with_config", {
     "col2" = c("c", "d", NA),
     "col3" = c(1L, 2L, NA),
     "col4" = c(T, F, F),
+    "col5" = c("", "", ""),
   )
   config1 <- list(
     "columns" = list(
@@ -72,7 +73,13 @@ test_that("recode_df_with_config", {
         )
       ),
       list("name" = "col3"),
-      list("name" = "col4" )
+      list("name" = "col4" ),
+      list(
+        "name" = "col5",
+        "recode" = list(
+          "na_replace" = "Blank"
+        )
+      )
     )
   )
   res1 <- recode_df_with_config(tbl1, config1)
@@ -83,6 +90,7 @@ test_that("recode_df_with_config", {
       "col2" = c("z", "O", "M"),
       "col3" = c(1L, 2L, NA),
       "col4" = c(T, F, F),
+      "col5" = c("Blank", "Blank", "Blank"),
     )
   )
 })

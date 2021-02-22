@@ -94,5 +94,10 @@ recode_column_values <- function(tbl, column, lst = NULL, ...){
   }
   if(is.null(lst)) lst <- list("0" = "0")
   col_var <- rlang::sym(column)
-  dplyr::mutate(tbl,  !!col_var := dplyr::recode(!!col_var, !!!lst, ...))
+  tbl <- dplyr::mutate(tbl, !!col_var := dplyr::if_else(
+    !!col_var == "",
+    NA_character_,
+    !!col_var
+  ))
+  dplyr::mutate(tbl, !!col_var := dplyr::recode(!!col_var, !!!lst, ...))
 }

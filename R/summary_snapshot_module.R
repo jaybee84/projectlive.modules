@@ -75,6 +75,26 @@ summary_snapshot_module_server <- function(id, data, config){
     function(input, output, session) {
       ns <- session$ns
 
+      config_is_valid <- shiny::reactive({
+        shiny::req(config())
+        valid <- all(
+          c(
+            "header_text",
+            "overview_boxes",
+            "initiative_activity",
+            "resources_generated",
+            "file_upload_timeline"
+          ) %in% names(config())
+        )
+
+        if(!valid) {
+          stop("Config missing needed items")
+        } else {
+          return(T)
+        }
+
+      })
+
       output$header_text <- shiny::renderText({
         shiny::req(config())
         glue::glue(config()$header_text)
@@ -82,7 +102,7 @@ summary_snapshot_module_server <- function(id, data, config){
 
       # plot boxes ----
       output$box1 <- shinydashboard::renderInfoBox({
-        shiny::req(config(), data())
+        shiny::req(config_is_valid(), data())
         config <- purrr::pluck(
           config(),
           "overview_boxes",
@@ -92,7 +112,7 @@ summary_snapshot_module_server <- function(id, data, config){
       })
 
       output$box2 <- shinydashboard::renderInfoBox({
-        shiny::req(config(), data())
+        shiny::req(config_is_valid(), data())
         config <- purrr::pluck(
           config(),
           "overview_boxes",
@@ -102,7 +122,7 @@ summary_snapshot_module_server <- function(id, data, config){
       })
 
       output$box3 <- shinydashboard::renderInfoBox({
-        shiny::req(config(), data())
+        shiny::req(config_is_valid(), data())
         config <- purrr::pluck(
           config(),
           "overview_boxes",
@@ -112,7 +132,7 @@ summary_snapshot_module_server <- function(id, data, config){
       })
 
       output$box4 <- shinydashboard::renderInfoBox({
-        shiny::req(config(), data())
+        shiny::req(config_is_valid(), data())
         config <- purrr::pluck(
           config(),
           "overview_boxes",

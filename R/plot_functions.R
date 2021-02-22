@@ -194,7 +194,6 @@ create_publication_disease_plot <- function(data, x, fill){
     viridis::scale_color_viridis(discrete = TRUE) +
     viridis::scale_fill_viridis(discrete = TRUE) +
     ggplot2::labs(title = "", y = "Number of publications") +
-    ggplot2::ylim(0, 10) +
     ggplot2::theme_bw() +
     ggplot2::theme(
       legend.text = ggplot2::element_blank(),

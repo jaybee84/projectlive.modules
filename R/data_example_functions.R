@@ -1,4 +1,4 @@
-nf_example_data <- function(){
+get_nf_data <- function(){
   list(
     "tables" = list(
       "files" = "nf_files" %>%
@@ -22,25 +22,25 @@ nf_example_data <- function(){
   )
 }
 
-nf_example_summary_snapshot_config <- function(){
+get_nf_summary_snapshot_config <- function(){
   "nf_summary_snapshot_module" %>%
     get_json_path() %>%
     jsonlite::read_json()
 }
 
-nf_example_study_summary_config <- function(){
+get_nf_study_summary_config <- function(){
   "nf_study_summary_module" %>%
     get_json_path() %>%
     jsonlite::read_json()
 }
 
-nf_example_publication_status_config <- function(){
+get_nf_publication_status_config <- function(){
   "nf_publication_status_module" %>%
     get_json_path() %>%
     jsonlite::read_json()
 }
 
-csbc_example_data <- function(){
+get_csbc_data <- function(){
   list(
     "tables" = list(
       "files" = "csbc_files" %>%
@@ -63,14 +63,20 @@ csbc_example_data <- function(){
   )
 }
 
-csbc_example_summary_snapshot_config <- function(){
+get_csbc_summary_snapshot_config <- function(){
   "csbc_summary_snapshot_module" %>%
     get_json_path() %>%
     jsonlite::read_json()
 }
 
-csbc_example_study_summary_config <- function(){
+get_csbc_study_summary_config <- function(){
   "csbc_study_summary_module" %>%
+    get_json_path() %>%
+    jsonlite::read_json()
+}
+
+get_csbc_publication_status_config <- function(){
+  "csbc_publication_status_module" %>%
     get_json_path() %>%
     jsonlite::read_json()
 }

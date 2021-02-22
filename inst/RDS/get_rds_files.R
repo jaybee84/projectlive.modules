@@ -44,7 +44,10 @@ nf_files <-
 
 saveRDS(nf_files, "inst/RDS/nf_files.rds")
 
-nf_publications <- get_synapse_tbl(syn, "syn16857542")
+nf_publications <-
+  get_synapse_tbl(syn, "syn16857542") %>%
+  dplyr::mutate("year" = as.factor(.data$year))
+
 saveRDS(nf_publications, "inst/RDS/nf_publications.rds")
 
 nf_tools <- get_synapse_tbl(syn, "syn16859448")
@@ -84,8 +87,7 @@ csbc_files <-
   dplyr::inner_join(
     dplyr::select(csbc_studies, "theme", "grantName"),
     by = "grantName",
-  ) %>%
-  dplyr::slice(1:20000L)
+  )
 
 saveRDS(csbc_files, "inst/RDS/csbc_files.rds")
 

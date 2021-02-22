@@ -1,6 +1,7 @@
 nf_data <- nf_example_data()
 nf_summary_snapshot_config <- nf_example_summary_snapshot_config()
 nf_study_summary_config <- nf_example_study_summary_config()
+nf_publication_status_config <- nf_example_publication_status_config()
 
 nf_gff_tables <- nf_data %>%
   purrr::pluck("tables") %>%

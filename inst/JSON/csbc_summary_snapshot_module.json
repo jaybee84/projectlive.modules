@@ -4,33 +4,25 @@
     "box1": {
       "title": "Studies",
       "table": "studies",
-      "columns": [
-        "grantId"
-      ],
+      "columns": ["grantId"],
       "icon": "university"
     },
     "box2": {
       "title": "Files",
       "table": "files",
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "icon": "file"
     },
     "box3": {
       "title": "Datasets",
       "table": "datasets",
-      "columns": [
-        "datasetId"
-      ],
+      "columns": ["datasetId"],
       "icon": "file"
     },
     "box4": {
       "title": "Publications",
       "table": "publications",
-      "columns": [
-        "publicationId"
-      ],
+      "columns": ["publicationId"],
       "icon": "pencil"
     }
   },
@@ -40,19 +32,17 @@
     "columns": [
       {
         "name": "year",
-        "display_name": "Year",
-        "type": "integer"
+        "display_name": "Year"
       },
       {
         "name": "consortium",
         "display_name": "Consortium",
-        "na_replace": "Not Applicable"
+        "recode": {"na_replace": "Not Applicable"}
       },
       {
         "name": "accessType",
         "display_name": "Access Type",
-        "na_replace": "NOT ANNOTATED",
-        "type": "character"
+        "recode": {"na_replace": "Not Annotated"}
       }
     ],
     "plot": {
@@ -60,10 +50,7 @@
       "fill": "Access Type",
       "facet": "Year"
     },
-    "tooltips": [
-      "count",
-      "fill"
-    ]
+    "tooltips": [ "count", "fill"]
   },
   "resources_generated": {
     "table": "files",
@@ -72,19 +59,16 @@
     "columns": [
       {
         "name": "year",
-        "display_name": "Year",
-        "type": "integer"
+        "display_name": "Year"
       },
       {
         "name": "grantName",
         "display_name": "Grant Name",
-        "type": "list:character",
-        "na_replace": "Not Applicable"
+        "recode": {"na_replace": "Not Applicable"}
       },
       {
         "name": "theme",
-        "display_name": "Theme",
-        "type": "list:character"
+        "display_name": "Theme"
       }
     ],
     "plot": {
@@ -105,19 +89,16 @@
       {
         "name": "grantName",
         "display_name": "Grant Name",
-        "type": "list:character",
-        "na_replace": "pendingAnnotation",
+        "recode": {"na_replace": "Pending Annotation"},
         "truncate": 40
       },
       {
         "name": "assay",
         "display_name": "Assay",
-        "type": "list:character",
-        "na_replace": "pendingAnnotation"
+        "recode": {"na_replace": "Pending Annotation"}
       },
       {
         "name": "year",
-        "type": "integer",
         "display_name": "Year"
       }
     ],

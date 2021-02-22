@@ -35,8 +35,7 @@
           },
           {
             "display_name": "Leads",
-            "name": "studyLeads",
-            "type": "list:character"
+            "name": "studyLeads"
           },
           {
             "display_name": "Study Status",
@@ -48,8 +47,7 @@
           },
           {
             "display_name": "Disease Focus",
-            "name": "diseaseFocus",
-            "type": "list:character"
+            "name": "diseaseFocus"
           },
           {
             "display_name": "Individuals",
@@ -82,26 +80,21 @@
     "columns": [
       {
         "name": "studyId",
-        "type": "character",
         "display_name": "Unique Study ID"
       },
       {
         "name": "studyStatus",
-        "type": "character",
         "display_name": "Study Status"
       },
       {
         "name": "dataStatus",
-        "type": "character",
         "display_name": "Data Status"
       },
       {
-        "name": "summary",
-        "type": "character"
+        "name": "summary"
       },
       {
         "name": "diseaseFocus",
-        "type": "list:character",
         "display_name": "Disease Focus"
       }
     ]
@@ -112,23 +105,19 @@
     "columns": [
       {
         "name": "studyName",
-        "display_name": "Study Name",
-        "type": "character"
+        "display_name": "Study Name"
       },
       {
         "name": "resourceType",
-        "display_name": "Resource Type",
-        "type": "character"
+        "display_name": "Resource Type"
       },
       {
         "name": "year",
-        "display_name": "Year",
-        "type": "integer"
+        "display_name": "Year"
       },
       {
         "name": "month",
-        "display_name": "Month",
-        "type": "factor"
+        "display_name": "Month"
       }
     ],
     "plot": {
@@ -151,28 +140,23 @@
     "columns": [
       {
         "name": "studyName",
-        "display_name": "Study Name",
-        "type": "character"
+        "display_name": "Study Name"
       },
       {
         "name": "assay",
-        "display_name": "Assays Used",
-        "type": "character"
+        "display_name": "Assays Used"
       },
       {
         "name": "resourceType",
-        "display_name": "Resource Added",
-        "type": "character"
+        "display_name": "Resource Added"
       },
       {
         "name": "species",
-        "display_name": "Species Used",
-        "type": "character"
+        "display_name": "Species Used"
       },
       {
         "name": "tumorType",
-        "display_name": "Tumor Types Investigated",
-        "type": "character"
+        "display_name": "Tumor Types Investigated"
       }
     ],
     "plot": {
@@ -197,19 +181,16 @@
       {
         "name": "studyLeads",
         "display_name": "Study Leads",
-        "type": "list:character",
-        "na_replace": "pendingAnnotation"
+        "recode": {"na_replace": "Pending Annotation"}
       },
       {
         "name": "assay",
         "display_name": "Assay",
-        "type": "character",
-        "na_replace": "pendingAnnotation"
+        "recode": {"na_replace": "Pending Annotation"}
       },
       {
         "name": "year",
-        "display_name": "Year",
-        "type": "integer"
+        "display_name": "Year"
       }
     ],
     "plot": {
@@ -227,16 +208,15 @@
   "publication_status_plot": {
     "table": "publications",
     "filter_column": "studyName",
+    "unnest_columns" : "studyName",
     "columns": [
       {
         "name": "year",
-        "display_name": "Year",
-        "type": "integer"
+        "display_name": "Year"
       },
       {
         "name": "studyName",
-        "display_name": "Study Name",
-        "type": "list:character"
+        "display_name": "Study Name"
       }
     ],
     "plot": {
@@ -244,9 +224,6 @@
       "fill": "Study Name"
     },
     "empty_table_message": "This study has no associated publications yet.",
-    "tooltips": [
-      "count",
-      "fill"
-    ]
+    "tooltips": ["count", "fill"]
   }
 }

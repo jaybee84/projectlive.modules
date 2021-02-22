@@ -37,5 +37,5 @@ list(
 This function will select and rename columns based on the Config.
 Only columns in the Config will be selected. Columns with a display
 name, will be renamed that, otherwise stringr::str_to_title will be used on
-the anme.
+the name.
 }

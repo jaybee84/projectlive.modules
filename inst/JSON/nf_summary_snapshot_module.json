@@ -12,26 +12,19 @@
     "box2": {
       "title": "Files",
       "table": "files",
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "icon": "file"
     },
     "box3": {
       "title": "Samples",
       "table": "files",
-      "columns": [
-        "individualID",
-        "specimenID"
-      ],
+      "columns": [ "individualID", "specimenID"],
       "icon": "file"
     },
     "box4": {
       "title": "Publications",
       "table": "publications",
-      "columns": [
-        "title"
-      ],
+      "columns": ["title" ],
       "icon": "pencil"
     }
   },
@@ -41,20 +34,17 @@
     "columns": [
       {
         "name": "year",
-        "display_name": "Year",
-        "type": "integer"
+        "display_name": "Year"
       },
       {
         "name": "initiative",
         "display_name": "Initiative",
-        "na_replace": "Not Applicable",
-        "type": "character"
+        "recode": {"na_replace": "Not Applicable"}
       },
       {
         "name": "accessType",
         "display_name": "Access Type",
-        "na_replace": "NOT ANNOTATED",
-        "type": "character"
+        "recode": {"na_replace": "Not Annotated"}
       }
     ],
     "plot": {
@@ -73,30 +63,29 @@
     "columns": [
       {
         "name": "year",
-        "display_name": "Year",
-        "type": "integer"
+        "display_name": "Year"
       },
       {
         "name": "studyName",
         "display_name": "Study Name",
-        "type": "character",
-        "na_replace": "Not Applicable"
+        "recode": {"na_replace": "Not Applicable"}
       },
       {
         "name": "dataType",
         "display_name": "Data Type",
-        "type": "character",
-        "replace_values": {
-          "drugScreen": "Drug Screening",
-          "drugCombinationScreen": "Drug Screening",
-          "immunofluorescence": "Immunofluorescence",
-          "genomicVariants": "Genomic Variants",
-          "geneExpression": "Gene Expression",
-          "cellularPhysiology": "Cellular Physiology",
-          "chromatinActivity": "Chromatin Activity"
-        },
-        "na_replace": "Other",
-        "default_replace": "Other"
+        "recode": {
+          "replace_values": {
+            "drugScreen": "Drug Screening",
+            "drugCombinationScreen": "Drug Screening",
+            "immunofluorescence": "Immunofluorescence",
+            "genomicVariants": "Genomic Variants",
+            "geneExpression": "Gene Expression",
+            "cellularPhysiology": "Cellular Physiology",
+            "chromatinActivity": "Chromatin Activity"
+          },
+          "na_replace": "Other",
+          "default_replace": "Other"
+        }
       }
     ],
     "plot": {
@@ -104,10 +93,7 @@
       "fill": "Study Name",
       "facet": "Year"
     },
-    "tooltips": [
-      "count",
-      "fill"
-    ]
+    "tooltips": [ "count", "fill"]
   },
   "file_upload_timeline": {
     "empty_table_message": "The studies have not uploaded any files yet. Please check back later.",
@@ -117,19 +103,16 @@
       {
         "name": "studyName",
         "display_name": "Study Name",
-        "type": "character",
-        "na_replace": "pendingAnnotation",
+        "recode": {"na_replace": "Pending Annotation"},
         "truncate": 40
       },
       {
         "name": "resourceType",
         "display_name": "Resource Type",
-        "type": "character",
-        "na_replace": "pendingAnnotation"
+        "recode": {"na_replace": "Pending Annotation"}
       },
       {
         "name": "year",
-        "type": "integer",
         "display_name": "Year"
       }
     ],
@@ -139,9 +122,6 @@
       "fill": "Resource Type",
       "facet": "Year"
     },
-    "tooltips": [
-      "Count",
-      "fill"
-    ]
+    "tooltips": ["Count", "fill"]
   }
 }

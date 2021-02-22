@@ -24,3 +24,16 @@ test_that("summary_snapshot_module_server", {
     }
   )
 })
+
+test_that("summary_snapshot_module_server_error", {
+  shiny::testServer(
+    summary_snapshot_module_server,
+    args = list(
+      "data" = shiny::reactiveVal(nf_data),
+      "config" = shiny::reactiveVal(list())
+    ),
+    {
+      expect_error(config_is_valid())
+    }
+  )
+})

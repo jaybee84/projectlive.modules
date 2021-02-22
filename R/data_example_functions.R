@@ -34,6 +34,12 @@ nf_example_study_summary_config <- function(){
     jsonlite::read_json()
 }
 
+nf_example_publication_status_config <- function(){
+  "nf_publication_status_module" %>%
+    get_json_path() %>%
+    jsonlite::read_json()
+}
+
 csbc_example_data <- function(){
   list(
     "tables" = list(

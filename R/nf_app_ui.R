@@ -8,6 +8,11 @@ nf_ui <- function() {
         icon = shiny::icon("chart-area")
       ),
       shiny::tabPanel(
+        "Publications",
+        publication_status_module_ui("publication_status_module"),
+        icon = shiny::icon("chart-area")
+      ),
+      shiny::tabPanel(
         "Studies",
         study_summary_module_ui("study_summary_module"),
         icon = shiny::icon("chart-area")

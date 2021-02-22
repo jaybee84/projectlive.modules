@@ -1,6 +1,6 @@
 Package: projectlive.modules
 Title: Modules for Project Live shiny apps
-Version: 0.1.10
+Version: 0.2.0
 Authors@R: 
     person(given = "Andrew",
            family = "Lamb",

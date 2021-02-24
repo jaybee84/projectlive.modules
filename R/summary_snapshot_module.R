@@ -36,16 +36,7 @@ summary_snapshot_module_ui <- function(id){
           ),
           plot_module_ui(ns("initiative_activity"), "Initiative Activity"),
           plot_module_ui(ns("resources_generated"), "Resources Generated"),
-          shinydashboard::box(
-            title = "File Upload Timeline",
-            status = "primary",
-            solidHeader = TRUE,
-            width = 12,
-            height = 1000,
-            collapsible = FALSE,
-            shiny::uiOutput(ns("file_upload_timeline_filter_ui")),
-            plotly::plotlyOutput(ns('file_upload_timeline'))
-          )
+          file_upload_timeline_module_ui(ns("file_upload_timeline"))
         )
       )
     )
@@ -155,68 +146,11 @@ summary_snapshot_module_server <- function(id, data, config){
         plot_func = shiny::reactive("create_resources_generated_plot")
       )
 
-      # file_upload_timeline ----
-      file_upload_timeline_filter_choices <- shiny::reactive({
-        shiny::req(config(), data())
-
-        config <- config()$file_upload_timeline
-        column <- config$filter_column
-
-        choices <- data() %>%
-          purrr::pluck("tables", config$table) %>%
-          dplyr::pull(column) %>%
-          unlist(.) %>%
-          unique() %>%
-          sort() %>%
-          c("All", .)
-      })
-
-      output$file_upload_timeline_filter_ui <- shiny::renderUI({
-        shiny::req(file_upload_timeline_filter_choices())
-        shiny::selectInput(
-          inputId = ns("file_upload_timeline_filter_value"),
-          label   = "Select an initiative",
-          choices = file_upload_timeline_filter_choices()
-        )
-      })
-
-      file_upload_timeline_data <- shiny::reactive({
-        shiny::req(data(), config(), input$file_upload_timeline_filter_value)
-        config <- config()$file_upload_timeline
-        data <- data()$tables[[config$table]]
-
-        if (input$file_upload_timeline_filter_value != "All"){
-          data <- data %>%
-            filter_list_column(
-              config$filter_column,
-              input$file_upload_timeline_filter_value
-            )
-        }
-
-        data <- data %>%
-          format_plot_data_with_config(config) %>%
-          create_plot_count_df_with_config(config)
-
-        shiny::validate(shiny::need(
-          sum(data$Count) > 0,
-          config$empty_table_message
-        ))
-
-        return(data)
-      })
-
-      output$file_upload_timeline <- plotly::renderPlotly({
-
-        shiny::req(file_upload_timeline_data(), config())
-        config <- config()$file_upload_timeline
-
-        create_plot_with_config(
-          data = file_upload_timeline_data(),
-          config = config()$file_upload_timeline,
-          plot_func =  "create_file_upload_timeline_plot",
-          height = 870
-        )
-      })
+      file_upload_timeline_module_server(
+        id = "file_upload_timeline",
+        data = data,
+        config = shiny::reactive(purrr::pluck(config(), "file_upload_timeline"))
+      )
 
     }
   )

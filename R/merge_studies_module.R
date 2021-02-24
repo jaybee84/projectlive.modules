@@ -11,6 +11,7 @@ merge_studies_module_ui <- function(id){
 
   shiny::tagList(
     shinydashboard::box(
+      shiny::uiOutput(ns("filter_ui")),
       DT::dataTableOutput(ns("study_table")),
       title = "Participating Studies",
       status = "primary",
@@ -42,9 +43,46 @@ merge_studies_module_server <- function(id, data, config){
     function(input, output, session) {
       ns <- session$ns
 
-      study_table <- shiny::reactive({
+      filter_choices <- shiny::reactive({
+        shiny::req(config(), data())
+        column <- purrr::pluck(config(), "study_table", "filter_column")
 
-        shiny::req(data(), config())
+        choices <- data() %>%
+          purrr::pluck("tables", "studies") %>%
+          dplyr::pull(column) %>%
+          unlist(.) %>%
+          unique() %>%
+          sort() %>%
+          c("All", .)
+      })
+
+      output$filter_ui <- shiny::renderUI({
+        shiny::req(filter_choices())
+        shiny::selectInput(
+          inputId = ns("filter_value"),
+          label   = "Select an initiative",
+          choices = filter_choices()
+        )
+      })
+
+      filtered_table <- shiny::reactive({
+        shiny::req(data(), config(), input$filter_value)
+
+        column <- purrr::pluck(config(), "study_table", "filter_column")
+        table <- purrr::pluck(data(), "tables", "studies")
+
+        if (input$filter_value != "All"){
+          table <- table %>%
+            filter_list_column(
+              column,
+              input$filter_value
+            )
+        }
+        return(table)
+      })
+
+      study_table <- shiny::reactive({
+        shiny::req(data(), config(), filtered_table())
 
         config <- purrr::pluck(config(), "study_table")
 
@@ -60,8 +98,7 @@ merge_studies_module_server <- function(id, data, config){
           columns = config$tables$tools$columns
         )
 
-        data() %>%
-          purrr::pluck("tables", "studies") %>%
+        filtered_table() %>%
           dplyr::select(dplyr::all_of(
             unlist(config$tables$studies$columns)
           )) %>%

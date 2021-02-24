@@ -22,6 +22,30 @@ get_nf_data <- function(){
   )
 }
 
+get_nf_ntap_data <- function(){
+  nf_data <- get_nf_data()
+
+  nf_ntap_tables <- nf_data %>%
+    purrr::pluck("tables") %>%
+    purrr::map(filter_list_column, "fundingAgency", "NTAP")
+
+  nf_ntap_data <-  nf_data
+  nf_ntap_data$tables <- nf_ntap_tables
+  return(nf_ntap_data)
+}
+
+get_nf_gff_data <- function(){
+  nf_data <- get_nf_data()
+
+  nf_gff_tables <- nf_data %>%
+    purrr::pluck("tables") %>%
+    purrr::map(filter_list_column, "fundingAgency", "GFF")
+
+  nf_gff_data <-  nf_data
+  nf_gff_data$tables <- nf_gff_tables
+  return(nf_gff_data)
+}
+
 get_nf_summary_snapshot_config <- function(){
   "nf_summary_snapshot_module" %>%
     get_json_path() %>%

@@ -37,6 +37,23 @@ test_that("plot_module_server_nf2", {
   )
 })
 
+test_that("plot_module_server_nf3", {
+  shiny::testServer(
+    plot_module_server,
+    args = list(
+      "data" = shiny::reactiveVal(nf_ntap_data),
+      "config" = nf_publication_status_config %>%
+        purrr::pluck("publication_status") %>%
+        shiny::reactiveVal(),
+      "plot_func" = shiny::reactiveVal("create_publication_status_plot")
+    ),
+    {
+      expect_type(plot_data(), "list")
+      expect_type(output$plot, "character")
+    }
+  )
+})
+
 test_that("plot_module_server_csbc1", {
   shiny::testServer(
     plot_module_server,

@@ -55,7 +55,7 @@ plot_module_server <- function(id, data, config, plot_func, ...){
         return(data)
       })
 
-      output$plot <- plotly::renderPlotly({
+      plot_obj <- shiny::reactive({
         shiny::req(config(), plot_data())
         create_plot_with_config(
           data = plot_data(),
@@ -63,6 +63,11 @@ plot_module_server <- function(id, data, config, plot_func, ...){
           plot_func = plot_func(),
           ...
         )
+      })
+
+      output$plot <- plotly::renderPlotly({
+        shiny::req(plot_obj())
+        plot_obj()
       })
     }
   )

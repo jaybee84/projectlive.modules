@@ -171,10 +171,7 @@ study_summary_module_server <- function(id, data, config){
           purrr::pluck("tables", config$table) %>%
           filter_list_column(config$filter_column, data2()$selected_study) %>%
           format_plot_data_with_config(config) %>%
-          create_plot_count_df(
-            factor_columns   = config$plot$x,
-            complete_columns = c(config$plot$x, config$plot$facet)
-          )
+          create_plot_count_df_with_config(config)
 
         shiny::validate(shiny::need(sum(data$Count) > 0, config$empty_table_message))
 

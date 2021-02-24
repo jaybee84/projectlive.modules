@@ -193,6 +193,10 @@
         "display_name": "Year"
       }
     ],
+    "complete_count": {
+      "factor_columns": ["Study Leads"],
+      "complete_columns": ["Study Leads", "Year"]
+    },
     "plot": {
       "x": "Study Leads",
       "y": "Count",

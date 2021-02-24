@@ -144,6 +144,10 @@
         "display_name": "Year"
       }
     ],
+    "complete_count": {
+      "factor_columns": ["Consortium"],
+      "complete_columns": ["Consortium", "Year"]
+    },
     "plot": {
       "x": "Consortium",
       "y": "Count",

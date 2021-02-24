@@ -102,6 +102,10 @@
         "display_name": "Year"
       }
     ],
+    "complete_count": {
+      "factor_columns": ["Grant Name"],
+      "complete_columns": ["Grant Name", "Year"]
+    },
     "plot": {
       "x": "Grant Name",
       "y": "Count",

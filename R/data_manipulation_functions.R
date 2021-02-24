@@ -105,35 +105,6 @@ replace_values_if_col_value_in_list <- function(
   )
 }
 
-#' Create Plot Count Dataframe
-#' This function is used to create counts for histogram style plots if the
-#' counting has to be done in a way that preserves certain groups that have a
-#' count of 0.
-#'
-#' @param data A tibble
-#' @param factor_columns A list of strings that are columns in the data. This
-#' should be the aesthetic that is intended to be present in the plot even if
-#' it has zero counts such as the x-axis, or possibly a facet.
-#' @param complete_columns A list of strings that are columns in the data.
-#' This should be all columns except the color/fill columns.
-#' @importFrom magrittr %>%
-#' @importFrom rlang !!!
-create_plot_count_df <- function(data, factor_columns, complete_columns){
-  data %>%
-    dplyr::mutate(dplyr::across(factor_columns, forcats::as_factor)) %>%
-    tidyr::drop_na() %>%
-    dplyr::group_by_all() %>%
-    dplyr::tally(., name = "Count") %>%
-    dplyr::ungroup() %>%
-    tidyr::complete(
-      !!!rlang::syms(complete_columns),
-      fill = list("Count" = 0L)
-    )
-}
-
-
-
-
 #' Create Data Focus Tables
 #' This function creates a list of tables from on input tibble. The list will
 #' have one table per column listed in the fill_columns list. This function is

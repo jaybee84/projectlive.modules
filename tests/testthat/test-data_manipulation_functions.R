@@ -139,33 +139,6 @@ test_that("replace_values_if_col_value_in_list", {
   )
 })
 
-test_that("create_plot_count_df", {
-  data <- dplyr::tribble(
-    ~Lead,  ~fill,  ~Year,
-    "a",    "a",    2000L,
-    "a",    "a",    2000L,
-    "a",    "a",    2001L,
-    "b",    "a",    2001L,
-    "c",    NA,     NA
-  )
-
-  expected_result1 <- dplyr::tribble(
-    ~Lead,  ~Year,  ~fill, ~Count,
-    "a",    2000L,  "a",   2L,
-    "a",    2001L,  "a",   1L,
-    "b",    2000L,  NA,    0L,
-    "b",    2001L,  "a",   1L,
-    "c",    2000L,  NA,    0L,
-    "c",    2001L,  NA,    0L
-  ) %>%
-    dplyr::mutate("Lead" = forcats::as_factor(.data$Lead))
-
-  expect_equal(
-    create_plot_count_df(data, "Lead", c("Lead", "Year")),
-    expected_result1
-  )
-})
-
 test_that("create_data_focus_tables", {
   data <- dplyr::tribble(
     ~Study,  ~Assay, ~Resource, ~Year,

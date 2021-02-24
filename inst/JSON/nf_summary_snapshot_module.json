@@ -116,6 +116,10 @@
         "display_name": "Year"
       }
     ],
+    "complete_count": {
+      "factor_columns": ["Study Name"],
+      "complete_columns": ["Study Name", "Year"]
+    },
     "plot": {
       "x": "Study Name",
       "y": "Count",

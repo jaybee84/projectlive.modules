@@ -137,14 +137,23 @@ merge_studies_module_server <- function(id, data, config){
         )
       })
 
-      data2 <- shiny::reactive({
-        shiny::req(data(), selected_study_name())
+      filtered_data <- shiny::reactive({
+        shiny::req(config(), data(), selected_study_name())
+        column <- config()$study_table$join_column
         data <- data()
+        filtered_tables <- data %>%
+          purrr::pluck("tables") %>%
+          purrr::map(
+            dplyr::filter,
+            !!rlang::sym(column) == selected_study_name()
+          )
+
+        data$tables         <- filtered_tables
         data$selected_study <- selected_study_name()
         return(data)
       })
 
-      return(data2)
+      return(filtered_data)
 
     }
   )

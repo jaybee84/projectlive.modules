@@ -129,6 +129,10 @@
   "annotation_activity_plot": {
     "table": "files",
     "filter_column": "grantName",
+    "count_column": {
+      "name": "Count",
+      "complete_columns": ["consortium", "year"]
+    },
     "columns": [
       {
         "name": "consortium",
@@ -145,10 +149,6 @@
         "display_name": "Year"
       }
     ],
-    "complete_count": {
-      "factor_columns": ["Consortium"],
-      "complete_columns": ["Consortium", "Year"]
-    },
     "plot": {
       "x": "Consortium",
       "y": "Count",

@@ -129,3 +129,53 @@ test_that("format_plot_data_with_config4", {
   )
 
 })
+
+test_that("format_plot_data_with_config5", {
+  tbl <- dplyr::tribble(
+    ~col1,  ~col2,  ~year,
+    "a",    "x",    2000L,
+    "a",    "x",    2000L,
+    "a",    "x",    2001L,
+    "b",    "x",    2001L,
+    "c",    NA,     NA
+  )
+
+  config <- list(
+    "count_column" = list(
+      "name" = "Count",
+      "complete_columns" = list("col1", "year")
+    ),
+    "columns" = list(
+      list(
+        "name" = "col1",
+        "display_name" = "Col1"
+      ),
+      list(
+        "name" = "col2",
+        "display_name" = "Col2"
+      ),
+      list(
+        "name" = "year",
+        "display_name" = "Year"
+      )
+    )
+  )
+
+  actual <- format_plot_data_with_config(tbl, config)
+  expected <- dplyr::tribble(
+    ~Col1,  ~Year,  ~Col2, ~Count,
+    "a",    2000L,  "x",   2L,
+    "a",    2001L,  "x",   1L,
+    "b",    2000L,  NA,    0L,
+    "b",    2001L,  "x",   1L,
+    "c",    2000L,  NA,    0L,
+    "c",    2001L,  NA,    0L
+  ) %>%
+    dplyr::mutate(
+      "Col1" = forcats::as_factor(.data$Col1),
+      "Year" = forcats::as_factor(.data$Year)
+    )
+
+  expect_equal(actual, expected)
+
+})

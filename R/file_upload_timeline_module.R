@@ -71,8 +71,7 @@ file_upload_timeline_module_server <- function(id, data, config){
         }
 
         data <- data %>%
-          format_plot_data_with_config(config()) %>%
-          create_plot_count_df_with_config(config())
+          format_plot_data_with_config(config())
 
         shiny::validate(shiny::need(
           sum(data$Count) > 0,

@@ -174,45 +174,6 @@ test_that("safe_pluck_list", {
   expect_equal(res2, c("Column1", NA))
 })
 
-test_that("rename_df_columns_with_config", {
-  tbl1 <- dplyr::tibble("col1" = c(), "col2" = c(), "colNum3" = c())
-  config1 <- list(
-    "columns" = list(
-      "col1" = list("name" = "col1", "display_name" = "Column1", "type" = "x"),
-      "col2" = list("name" = "col2", "type" = "x"),
-      "col3" = list("name" = "colNum3", "type" = "x")
-    )
-  )
-  config2 <- list(
-    "columns" = list(
-      "col1" = list("name" = "col1", "display_name" = "Column1", "type" = "x"),
-      list("name" = "col2", "type" = "x", "display_name" = "Column2"),
-      list("name" = "colNum3", "type" = "x", "display_name" = "Column3")
-    )
-  )
-  config3 <- list(
-    "columns" = list(
-      "col2" = list("name" = "col2", "type" = "x"),
-      "col3" = list("name" = "colNum3", "type" = "x")
-    )
-  )
-  res1 <- rename_df_columns_with_config(tbl1, config1)
-  res2 <- rename_df_columns_with_config(tbl1, config2)
-  res3 <- rename_df_columns_with_config(tbl1, config3)
-  expect_equal(
-    res1,
-    dplyr::tibble("Column1" = c(), "Col2" = c(), "Colnum3" = c())
-  )
-  expect_equal(
-    res2,
-    dplyr::tibble("Column1" = c(), "Column2" = c(), "Column3" = c())
-  )
-  expect_equal(
-    res3,
-    dplyr::tibble("Col2" = c(), "Colnum3" = c())
-  )
-})
-
 test_that("truncate_df_cols_with_config", {
   tbl1 <- dplyr::tibble(
     "col1" = c("aaaaaaaaaaaaaaaaaaaaaaa", "a", NA),

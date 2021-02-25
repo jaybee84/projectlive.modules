@@ -1,4 +1,4 @@
-test_that("create_plot_count_df", {
+test_that("create_count_column", {
   tbl <- dplyr::tribble(
     ~Lead,  ~fill,  ~Year,
     "a",    "x",    2000L,
@@ -23,12 +23,24 @@ test_that("create_plot_count_df", {
     )
 
   expect_equal(
-    create_plot_count_df(tbl, c("Lead", "Year")),
+    create_count_column(tbl, complete_columns = c("Lead", "Year")),
     expected_result1
   )
+
+
+  result2 <- create_count_column(tbl)
+
+  expected2 <- dplyr::tribble(
+    ~Lead,  ~fill, ~Year,  ~Count,
+    "a",    "x",   2000L,  2L,
+    "a",    "x",   2001L,  1L,
+    "b",    "x",   2001L,  1L
+  )
+
+  expect_equal(result2, expected2)
 })
 
-test_that("create_plot_count_df_with_config", {
+test_that("create_count_column_with_config", {
   tbl <- dplyr::tribble(
     ~Lead,  ~fill,  ~Year,
     "a",    "x",    2000L,
@@ -39,7 +51,7 @@ test_that("create_plot_count_df_with_config", {
   )
 
   config <- list(
-    "complete_count" = list(
+    "count_column" = list(
       "complete_columns" = list("Lead", "Year")
     )
   )
@@ -59,8 +71,7 @@ test_that("create_plot_count_df_with_config", {
     )
 
   expect_equal(
-    create_plot_count_df_with_config(tbl, config),
+    create_count_column_with_config(tbl, config),
     expected_result1
   )
 })
-

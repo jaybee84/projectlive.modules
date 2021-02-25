@@ -129,15 +129,9 @@
     "plot": {
       "x": "Study Name",
       "fill": "Resource Type",
-      "facet": [
-        "Year",
-        "Month"
-      ]
+      "facet": ["Year", "Month"]
     },
-    "tooltips": [
-      "count",
-      "fill"
-    ],
+    "tooltips": ["count","fill"],
     "empty_table_message": "The investigator/investigators has/have not uploaded any files yet. Please check back later."
   },
   "data_focus_plot": {
@@ -174,15 +168,16 @@
         "Tumor Types Investigated"
       ]
     },
-    "tooltips": [
-      "count",
-      "fill"
-    ],
+    "tooltips": ["count", "fill"],
     "empty_table_message": "The investigators have not uploaded data for this study yet. Please check back later."
   },
   "annotation_activity_plot": {
     "table": "files",
     "filter_column": "studyName",
+    "count_column": {
+      "name": "Count",
+      "complete_columns": ["studyLeads", "year"]
+    },
     "columns": [
       {
         "name": "studyLeads",
@@ -199,10 +194,6 @@
         "display_name": "Year"
       }
     ],
-    "complete_count": {
-      "factor_columns": ["Study Leads"],
-      "complete_columns": ["Study Leads", "Year"]
-    },
     "plot": {
       "x": "Study Leads",
       "y": "Count",

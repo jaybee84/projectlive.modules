@@ -99,6 +99,10 @@
     "empty_table_message": "The studies have not uploaded any files yet. Please check back later.",
     "table": "files",
     "filter_column": "initiative",
+    "count_column": {
+      "name": "Count",
+      "complete_columns": ["studyName", "year"]
+    },
     "columns": [
       {
         "name": "studyName",
@@ -116,10 +120,6 @@
         "display_name": "Year"
       }
     ],
-    "complete_count": {
-      "factor_columns": ["Study Name"],
-      "complete_columns": ["Study Name", "Year"]
-    },
     "plot": {
       "x": "Study Name",
       "y": "Count",

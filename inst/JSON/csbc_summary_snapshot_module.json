@@ -85,6 +85,10 @@
     "empty_table_message": "The studies have not uploaded any files yet. Please check back later.",
     "table": "files",
     "filter_column": "consortium",
+    "count_column": {
+      "name": "Count",
+      "complete_columns": ["grantName", "year"]
+    },
     "columns": [
       {
         "name": "grantName",
@@ -102,10 +106,6 @@
         "display_name": "Year"
       }
     ],
-    "complete_count": {
-      "factor_columns": ["Grant Name"],
-      "complete_columns": ["Grant Name", "Year"]
-    },
     "plot": {
       "x": "Grant Name",
       "y": "Count",

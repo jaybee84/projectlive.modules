@@ -45,10 +45,11 @@ format_plot_data_with_config <- function(tbl, config){
     concatenate_all_list_columns() %>%
     recode_df_with_config(config) %>%
     truncate_df_cols_with_config(config) %>%
-    rename_df_columns_with_config(config)
+    create_count_column_with_config(config)
 
   if(!is.null(config$drop_na) && config$drop_na){
     result <- tidyr::drop_na(result)
   }
-  return(result)
+
+  rename_df_columns_with_config(result, config)
 }

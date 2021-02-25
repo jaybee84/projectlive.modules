@@ -108,6 +108,7 @@
   "study_timeline_plot": {
     "table": "files",
     "filter_column": "studyName",
+    "drop_na": true,
     "columns": [
       {
         "name": "studyName",

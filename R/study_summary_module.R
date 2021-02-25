@@ -32,14 +32,7 @@ study_summary_module_ui <- function(id){
             width = 12,
             collapsible = FALSE
           ),
-          shinydashboard::box(
-            plotly::plotlyOutput(ns('study_timeline_plot')),
-            title = "Study Timeline",
-            status = "primary",
-            solidHeader = TRUE,
-            width = 12,
-            collapsible = FALSE
-          ),
+          plot_module_ui(ns("study_timeline_plot"), "Study Timeline"),
           shinydashboard::box(
             plotly::plotlyOutput(ns('data_focus_plot')),
             title = "Data Focus",
@@ -56,14 +49,7 @@ study_summary_module_ui <- function(id){
             width = 12,
             collapsible = FALSE
           ),
-          shinydashboard::box(
-            plotly::plotlyOutput(ns('publication_status_plot')),
-            title = "Publication Status",
-            status = "primary",
-            solidHeader = TRUE,
-            width = 12,
-            collapsible = FALSE
-          )
+          plot_module_ui(ns("publication_status_plot"), "Publication Status")
         )
       )
     )
@@ -130,22 +116,12 @@ study_summary_module_server <- function(id, data, config){
           kableExtra::kable_styling("striped", full_width = T)
       })
 
-      output$study_timeline_plot <- plotly::renderPlotly({
-        shiny::req(filtered_data(), config())
-
-        config <- purrr::pluck(config(), "study_timeline_plot")
-
-        data <- filtered_data() %>%
-          purrr::pluck("tables", config$table) %>%
-          format_plot_data_with_config(config) %>%
-          tidyr::drop_na()
-
-        shiny::validate(shiny::need(nrow(data) > 0 , config$empty_table_message))
-
-        create_plot_with_config(
-          data, config, "create_study_timeline_plot"
-        )
-      })
+      plot_module_server(
+        id = "study_timeline_plot",
+        data = filtered_data,
+        config = shiny::reactive(purrr::pluck(config(), "study_timeline_plot")),
+        plot_func = shiny::reactive("create_study_timeline_plot")
+      )
 
       output$data_focus_plot <- plotly::renderPlotly({
         shiny::req(filtered_data(), config())
@@ -177,27 +153,14 @@ study_summary_module_server <- function(id, data, config){
         )
       })
 
-      output$publication_status_plot <- plotly::renderPlotly({
-
-        shiny::req(filtered_data(), config())
-
-        config <- purrr::pluck(config(), "publication_status_plot")
-
-        data <- filtered_data() %>%
-          purrr::pluck("tables", config$table)
-
-        shiny::validate(shiny::need(nrow(data) > 0 , config$empty_table_message))
-
-        data <- data %>%
-          format_plot_data_with_config(config)
-
-        create_plot_with_config(
-          data,
-          config,
-          "create_publication_status_plot"
-        )
-      })
-
+      plot_module_server(
+        id = "publication_status_plot",
+        data = filtered_data,
+        config = shiny::reactive(
+          purrr::pluck(config(), "publication_status_plot")
+        ),
+        plot_func = shiny::reactive("create_publication_status_plot")
+      )
     }
   )
 }

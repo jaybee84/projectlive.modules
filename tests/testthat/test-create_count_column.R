@@ -40,6 +40,26 @@ test_that("create_count_column", {
   expect_equal(result2, expected2)
 })
 
+test_that("create_count_column2", {
+  tbl <- dplyr::tibble(
+    "Lead" = character(),
+    "Year" = integer(),
+    "Col" = character()
+  )
+
+  tbl <- dplyr::tibble(
+    "Lead" = factor(),
+    "Year" = factor(),
+    "Col" = character(),
+    "Count" = integer()
+  )
+
+  actual <- create_count_column(tbl, complete_columns = c("Lead", "Year"))
+
+  expect_equal(actual, tbl)
+
+})
+
 test_that("create_count_column_with_config", {
   tbl <- dplyr::tribble(
     ~Lead,  ~fill,  ~Year,

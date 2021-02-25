@@ -12,8 +12,8 @@ test_that("nf_study_summary_module_server", {
     ),
     {
       expect_type(output$header_text, "character")
+      session$setInputs("merge_studies-filter_value" = "All")
       session$setInputs("merge_studies-study_table_rows_selected" = 3)
-
       expect_type(output$study_summary, "character")
       expect_type(output$study_timeline_plot, "character")
       expect_type(output$data_focus_plot, "character")
@@ -33,6 +33,7 @@ test_that("nf_gff_study_summary_module_server", {
     ),
     {
       expect_type(output$header_text, "character")
+      session$setInputs("merge_studies-filter_value" = "All")
       session$setInputs("merge_studies-study_table_rows_selected" = 3)
       expect_type(output$study_summary, "character")
       expect_error(
@@ -66,6 +67,7 @@ test_that("csbc_study_summary_module_server", {
     ),
     {
       expect_type(output$header_text, "character")
+      session$setInputs("merge_studies-filter_value" = "All")
       session$setInputs("merge_studies-study_table_rows_selected" = 34)
       expect_equal(
         data2()$selected_study,

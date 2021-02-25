@@ -1,11 +1,11 @@
 
-test_that("merge_studies_module_ui", {
-  expect_type(merge_studies_module_ui("id"), "list")
+test_that("study_selection_module_ui", {
+  expect_type(study_selection_module_ui("id"), "list")
 })
 
-test_that("nf_merge_studies_module_server1", {
+test_that("nf_study_selection_module_server1", {
   shiny::testServer(
-    merge_studies_module_server,
+    study_selection_module_server,
     args = list(
       "data" = shiny::reactiveVal(nf_data),
       "config" = shiny::reactiveVal(nf_study_summary_config)
@@ -27,9 +27,9 @@ test_that("nf_merge_studies_module_server1", {
   )
 })
 
-test_that("nf_merge_studies_module_server2", {
+test_that("nf_study_selection_module_server2", {
   shiny::testServer(
-    merge_studies_module_server,
+    study_selection_module_server,
     args = list(
       "data" = shiny::reactiveVal(nf_data),
       "config" = shiny::reactiveVal(nf_study_summary_config)
@@ -52,9 +52,9 @@ test_that("nf_merge_studies_module_server2", {
 })
 
 
-test_that("nf_gff_merge_studies_module_server", {
+test_that("nf_gff_study_selection_module_server", {
   shiny::testServer(
-    merge_studies_module_server,
+    study_selection_module_server,
     args = list(
       "data" = shiny::reactive(nf_gff_data),
       "config" = shiny::reactive(nf_study_summary_config)
@@ -73,9 +73,9 @@ test_that("nf_gff_merge_studies_module_server", {
   )
 })
 
-test_that("csbc_merge_studies_module_server", {
+test_that("csbc_study_selection_module_server", {
   shiny::testServer(
-    merge_studies_module_server,
+    study_selection_module_server,
     args = list(
       "data" = shiny::reactiveVal(csbc_data),
       "config" = shiny::reactiveVal(csbc_study_summary_config)

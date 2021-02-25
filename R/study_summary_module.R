@@ -23,7 +23,7 @@ study_summary_module_ui <- function(id){
             solidHeader = T,
             status = "primary"
           ),
-          merge_studies_module_ui(ns("merge_studies")),
+          study_selection_module_ui(ns("study_summary")),
           shinydashboard::box(
             shiny::htmlOutput(ns('study_summary')),
             title = "Study Summary",
@@ -97,17 +97,18 @@ study_summary_module_server <- function(id, data, config){
         glue::glue(config()$header_text)
       })
 
-      data2 <- merge_studies_module_server("merge_studies", data, config)
+      filtered_data <- study_selection_module_server(
+        "study_summary", data, config
+      )
 
       output$study_summary <- shiny::renderText({
 
-        shiny::req(data2(), config())
+        shiny::req(filtered_data(), config())
 
         config <- purrr::pluck(config(), "study_summary")
 
-        data <- data2() %>%
+        data <- filtered_data() %>%
           purrr::pluck("tables", config$table) %>%
-          filter_list_column(config$filter_column, data2()$selected_study) %>%
           format_plot_data_with_config(config) %>%
           dplyr::distinct() %>%
           dplyr::mutate("Unique Study ID" = stringr::str_c(
@@ -130,13 +131,12 @@ study_summary_module_server <- function(id, data, config){
       })
 
       output$study_timeline_plot <- plotly::renderPlotly({
-        shiny::req(data2(), config())
+        shiny::req(filtered_data(), config())
 
         config <- purrr::pluck(config(), "study_timeline_plot")
 
-        data <- data2() %>%
+        data <- filtered_data() %>%
           purrr::pluck("tables", config$table) %>%
-          filter_list_column(config$filter_column, data2()$selected_study) %>%
           format_plot_data_with_config(config) %>%
           tidyr::drop_na()
 
@@ -148,13 +148,12 @@ study_summary_module_server <- function(id, data, config){
       })
 
       output$data_focus_plot <- plotly::renderPlotly({
-        shiny::req(data2(), config())
+        shiny::req(filtered_data(), config())
 
         config <- purrr::pluck(config(), "data_focus_plot")
 
-        data_list <- data2() %>%
+        data_list <- filtered_data() %>%
           purrr::pluck("tables", config$table) %>%
-          filter_list_column(config$filter_column, data2()$selected_study) %>%
           format_plot_data_with_config(config) %>%
           create_data_focus_tables(config$plot$x, config$plot$fill)
 
@@ -164,12 +163,11 @@ study_summary_module_server <- function(id, data, config){
       })
 
       output$annotation_activity_plot <- plotly::renderPlotly({
-        shiny::req(data2(), config())
+        shiny::req(filtered_data(), config())
         config <- purrr::pluck(config(), "annotation_activity_plot")
 
-        data <- data2() %>%
+        data <- filtered_data() %>%
           purrr::pluck("tables", config$table) %>%
-          filter_list_column(config$filter_column, data2()$selected_study) %>%
           format_plot_data_with_config(config)
 
         shiny::validate(shiny::need(sum(data$Count) > 0, config$empty_table_message))
@@ -181,13 +179,12 @@ study_summary_module_server <- function(id, data, config){
 
       output$publication_status_plot <- plotly::renderPlotly({
 
-        shiny::req(data2(), config())
+        shiny::req(filtered_data(), config())
 
         config <- purrr::pluck(config(), "publication_status_plot")
 
-        data <- data2() %>%
-          purrr::pluck("tables", config$table) %>%
-          filter_list_column(config$filter_column, data2()$selected_study)
+        data <- filtered_data() %>%
+          purrr::pluck("tables", config$table)
 
         shiny::validate(shiny::need(nrow(data) > 0 , config$empty_table_message))
 

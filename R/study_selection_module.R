@@ -1,12 +1,12 @@
-# Merge Studies Module UI
+# Study Selection Module UI
 
-#' @title merge_studies_module_ui and merge_studies_module_server
+#' @title study_selection_module_ui and study_selection_module_server
 #' @description  A shiny Module.
 #'
 #' @param id shiny id
 #'
-#' @rdname merge_studies_module
-merge_studies_module_ui <- function(id){
+#' @rdname study_selection_module
+study_selection_module_ui <- function(id){
   ns <- shiny::NS(id)
 
   shiny::tagList(
@@ -31,13 +31,13 @@ merge_studies_module_ui <- function(id){
 
 }
 
-# Merge Studies Module Server
+# Study Selection Module Server
 
-#' @rdname merge_studies_module
+#' @rdname study_selection_module
 #' @keywords internal
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
-merge_studies_module_server <- function(id, data, config){
+study_selection_module_server <- function(id, data, config){
   shiny::moduleServer(
     id,
     function(input, output, session) {
@@ -139,17 +139,21 @@ merge_studies_module_server <- function(id, data, config){
 
       filtered_data <- shiny::reactive({
         shiny::req(config(), data(), selected_study_name())
-        column <- config()$study_table$join_column
-        data <- data()
+
+        column     <- config()$study_table$join_column
+        study_name <- selected_study_name()
+        data       <- data()
+
         filtered_tables <- data %>%
           purrr::pluck("tables") %>%
           purrr::map(
-            dplyr::filter,
-            !!rlang::sym(column) == selected_study_name()
+            filter_list_column,
+            column,
+            study_name
           )
 
         data$tables         <- filtered_tables
-        data$selected_study <- selected_study_name()
+        data$selected_study <- study_name
         return(data)
       })
 

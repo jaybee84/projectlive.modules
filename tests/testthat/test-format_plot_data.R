@@ -101,7 +101,7 @@ test_that("format_plot_data_with_config3", {
 
 test_that("format_plot_data_with_config4", {
   config <- list(
-    "unnest_cols" = "consortium",
+    "unlist_columns" = list("consortium"),
     "columns" = list(
       list(
         "name" = "consortium",

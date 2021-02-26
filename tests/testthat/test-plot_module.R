@@ -87,3 +87,21 @@ test_that("plot_module_server_csbc2", {
     }
   )
 })
+
+test_that("plot_module_server_csbc3", {
+  shiny::testServer(
+    plot_module_server,
+    args = list(
+      "data" = shiny::reactiveVal(csbc_data),
+      "config" = csbc_summary_snapshot_config %>%
+        purrr::pluck("resources_generated") %>%
+        shiny::reactiveVal(),
+      "plot_func" = shiny::reactiveVal("create_resources_generated_plot")
+    ),
+    {
+      expect_type(plot_data(), "list")
+      expect_type(output$plot, "character")
+    }
+  )
+})
+

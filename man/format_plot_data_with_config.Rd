@@ -25,8 +25,8 @@ and "type" field. Optional fields include "replace_values", "display_name",
 The list may also contain an item named drop_na. If the value of drop_na
 is True, all rows with na values will be droped.
 
-The list may also contain an item named unnest_cols. All columns in this
-list will be unnest with tidyr::unnest()
+The list may also contain an item named unlist_columns. All columns in this
+list will be un-listed with tidyr::unnest()
 
 config <- list(
 "columns" = list(

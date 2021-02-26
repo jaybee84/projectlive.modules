@@ -22,8 +22,8 @@
 #' The list may also contain an item named drop_na. If the value of drop_na
 #' is True, all rows with na values will be droped.
 #'
-#' The list may also contain an item named unnest_cols. All columns in this
-#' list will be unnest with tidyr::unnest()
+#' The list may also contain an item named unlist_columns. All columns in this
+#' list will be un-listed with tidyr::unnest()
 #'
 #'   config <- list(
 #'    "columns" = list(
@@ -41,7 +41,7 @@
 format_plot_data_with_config <- function(tbl, config){
   result <- tbl %>%
     select_df_columns_with_config(config) %>%
-    tidyr::unnest(config$unnest_cols) %>%
+    tidyr::unnest(unlist(config$unlist_columns)) %>%
     concatenate_all_list_columns() %>%
     recode_df_with_config(config) %>%
     truncate_df_cols_with_config(config) %>%

@@ -41,14 +41,7 @@ study_summary_module_ui <- function(id){
             width = 12,
             collapsible = FALSE
           ),
-          shinydashboard::box(
-            plotly::plotlyOutput(ns('annotation_activity_plot')),
-            title = "Annotation Activity",
-            status = "primary",
-            solidHeader = TRUE,
-            width = 12,
-            collapsible = FALSE
-          ),
+          plot_module_ui(ns("annotation_activity_plot"), "Annotation Activity"),
           plot_module_ui(ns("publication_status_plot"), "Publication Status")
         )
       )
@@ -138,20 +131,14 @@ study_summary_module_server <- function(id, data, config){
         create_data_focus_plots(data_list, config)
       })
 
-      output$annotation_activity_plot <- plotly::renderPlotly({
-        shiny::req(filtered_data(), config())
-        config <- purrr::pluck(config(), "annotation_activity_plot")
-
-        data <- filtered_data() %>%
-          purrr::pluck("tables", config$table) %>%
-          format_plot_data_with_config(config)
-
-        shiny::validate(shiny::need(sum(data$Count) > 0, config$empty_table_message))
-
-        create_plot_with_config(
-          data, config, "create_annotation_activity_plot"
-        )
-      })
+      plot_module_server(
+        id = "annotation_activity_plot",
+        data = filtered_data,
+        config = shiny::reactive(
+          purrr::pluck(config(), "annotation_activity_plot")
+        ),
+        plot_func = shiny::reactive("create_annotation_activity_plot")
+      )
 
       plot_module_server(
         id = "publication_status_plot",

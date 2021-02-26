@@ -55,6 +55,7 @@
   "resources_generated": {
     "table": "files",
     "empty_table_message": "The investigator/investigators has/have not uploaded any files yet. Please check back later.",
+    "unlist_columns": ["theme"],
     "drop_na": true,
     "columns": [
       {
@@ -76,10 +77,7 @@
       "fill": "Grant Name",
       "facet": "Year"
     },
-    "tooltips": [
-      "count",
-      "fill"
-    ]
+    "tooltips": ["count", "fill"]
   },
   "file_upload_timeline": {
     "empty_table_message": "The studies have not uploaded any files yet. Please check back later.",
@@ -112,9 +110,6 @@
       "fill": "Assay",
       "facet": "Year"
     },
-    "tooltips": [
-      "Count",
-      "fill"
-    ]
+    "tooltips": ["Count", "fill"]
   }
 }

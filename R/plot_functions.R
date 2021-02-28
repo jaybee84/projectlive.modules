@@ -71,13 +71,12 @@ create_initiative_activity_plot <- function(data, x, fill, facet){
       show.legend = FALSE
     ) +
     ggplot2::coord_flip() +
-    viridis::scale_color_viridis(discrete = TRUE) +
-    viridis::scale_fill_viridis(discrete = TRUE) +
     ggplot2::labs(
       title = "",
       y = "Number of files"
     ) +
-    ggplot2::theme_bw() +
+    sagethemes::theme_sage() +
+    ggplot2::facet_grid(cols = ggplot2::vars(!!!rlang::syms(unlist(facet)))) +
     ggplot2::theme(
       legend.text = ggplot2::element_text(size = 8),
       axis.text.x  = ggplot2::element_blank(),
@@ -86,8 +85,8 @@ create_initiative_activity_plot <- function(data, x, fill, facet){
       strip.text.x = ggplot2::element_text(size = 10),
       legend.position = "right",
       panel.grid.major.y = ggplot2::element_blank(),
-      panel.background = ggplot2::element_rect(fill = "grey95")) +
-    ggplot2::facet_grid(cols = ggplot2::vars(!!!rlang::syms(unlist(facet))))
+      panel.background = ggplot2::element_rect(fill = "grey95")
+    )
 }
 
 #' Create Resources Generated Plot
@@ -115,13 +114,12 @@ create_resources_generated_plot <- function(data, x, fill, facet){
       na.rm = TRUE
     ) +
     ggplot2::coord_flip() +
-    viridis::scale_color_viridis(discrete = TRUE) +
-    viridis::scale_fill_viridis(discrete = TRUE) +
     ggplot2::labs(
       title = "",
       y = "Number of files per resource"
     ) +
-    ggplot2::theme_bw() +
+    sagethemes::theme_sage() +
+    ggplot2::facet_grid(cols = ggplot2::vars(!!!rlang::syms(unlist(facet)))) +
     ggplot2::theme(
       legend.text = ggplot2::element_text(size = 8),
       axis.text.x  = ggplot2::element_blank(),
@@ -130,8 +128,9 @@ create_resources_generated_plot <- function(data, x, fill, facet){
       strip.text.x = ggplot2::element_text(size = 10),
       legend.position = "none",
       panel.grid.major.y = ggplot2::element_blank(),
-      panel.background = ggplot2::element_rect(fill = "grey95")) +
-    ggplot2::facet_grid(cols = ggplot2::vars(!!!rlang::syms(unlist(facet))))
+      panel.background = ggplot2::element_rect(fill = "grey95")
+    )
+
 }
 
 #' Create Publication Status Plot
@@ -155,10 +154,8 @@ create_publication_status_plot <- function(data, x, fill){
       alpha = 0.8,
       position = "stack"
     ) +
-    viridis::scale_color_viridis(discrete = TRUE) +
-    viridis::scale_fill_viridis(discrete = TRUE) +
     ggplot2::labs(title = "", y = "Number of publications") +
-    ggplot2::theme_bw() +
+    sagethemes::theme_sage() +
     ggplot2::theme(
       legend.text = ggplot2::element_blank(),
       axis.text.x  = ggplot2::element_text(size = 10),
@@ -191,10 +188,8 @@ create_publication_disease_plot <- function(data, x, fill){
       alpha = 0.8,
       position = "stack"
     ) +
-    viridis::scale_color_viridis(discrete = TRUE) +
-    viridis::scale_fill_viridis(discrete = TRUE) +
     ggplot2::labs(title = "", y = "Number of publications") +
-    ggplot2::theme_bw() +
+    sagethemes::theme_sage() +
     ggplot2::theme(
       legend.text = ggplot2::element_blank(),
       axis.text.x  = ggplot2::element_text(size = 10),
@@ -231,10 +226,12 @@ create_file_upload_timeline_plot <- function(data, x, y, fill, facet){
       position = "stack"
     ) +
     ggplot2::coord_flip() +
-    viridis::scale_color_viridis(discrete = TRUE) +
-    viridis::scale_fill_viridis(discrete = TRUE) +
     ggplot2::labs(title = "", y = "Number of files uploaded") +
-    ggplot2::theme_bw() +
+    sagethemes::theme_sage() +
+    ggplot2::facet_grid(
+      cols = ggplot2::vars(!!!rlang::syms(unlist(facet))),
+      scales = "free"
+    ) +
     ggplot2::theme(
       legend.text = ggplot2::element_blank(),
       axis.text.x  = ggplot2::element_text(size = 10, angle = 45),
@@ -243,10 +240,7 @@ create_file_upload_timeline_plot <- function(data, x, y, fill, facet){
       strip.text.x = ggplot2::element_text(size = 10),
       legend.position = "right",
       panel.grid.major.y = ggplot2::element_blank(),
-      panel.background = ggplot2::element_rect(fill = "grey95")) +
-    ggplot2::facet_grid(
-      cols = ggplot2::vars(!!!rlang::syms(unlist(facet))),
-      scales = "free"
+      panel.background = ggplot2::element_rect(fill = "grey95")
     )
 }
 
@@ -276,10 +270,12 @@ create_annotation_activity_plot <- function(data, x, y, fill, facet){
       position = "stack"
     ) +
     ggplot2::coord_flip() +
-    viridis::scale_color_viridis(discrete = TRUE) +
-    viridis::scale_fill_viridis(discrete = TRUE) +
     ggplot2::labs(title = "", y = "Number of experimental data files") +
-    ggplot2::theme_bw() +
+    sagethemes::theme_sage() +
+    ggplot2::facet_grid(
+      cols = ggplot2::vars(!!!rlang::syms(unlist(facet))),
+      scales = "fixed"
+    ) +
     ggplot2::theme(
       legend.text = ggplot2::element_blank(),
       axis.text.x  = ggplot2::element_text(size = 10, angle = 90),
@@ -288,10 +284,7 @@ create_annotation_activity_plot <- function(data, x, y, fill, facet){
       strip.text.x = ggplot2::element_text(size = 10),
       legend.position = "right",
       panel.grid.major.y = ggplot2::element_blank(),
-      panel.background = ggplot2::element_rect(fill = "grey95")) +
-    ggplot2::facet_grid(
-      cols = ggplot2::vars(!!!rlang::syms(unlist(facet))),
-      scales = "fixed"
+      panel.background = ggplot2::element_rect(fill = "grey95")
     )
 }
 
@@ -361,12 +354,10 @@ create_data_focus_plot <- function(data, x, fill){
       alpha = 0.8,
       position = "stack"
     ) +
-    viridis::scale_color_viridis(discrete = TRUE) +
-    viridis::scale_fill_viridis(discrete = TRUE) +
     ggplot2::labs(
       title = "", y = "Number of files uploaded", x = fill
     ) +
-    ggplot2::theme_bw() +
+    sagethemes::theme_sage() +
     ggplot2::theme(
       legend.text = ggplot2::element_blank(),
       axis.text.x  = ggplot2::element_blank(),
@@ -401,10 +392,9 @@ create_study_timeline_plot <- function(data, x, fill, facet){
       alpha = 0.8,
       position = "stack"
     ) +
-    viridis::scale_color_viridis(discrete = TRUE) +
-    viridis::scale_fill_viridis(discrete = TRUE) +
     ggplot2::labs(title = "", y = "Number of files uploaded") +
-    ggplot2::theme_bw() +
+    sagethemes::theme_sage() +
+    ggplot2::facet_grid(cols = ggplot2::vars(!!!rlang::syms(unlist(facet)))) +
     ggplot2::theme(
       legend.text = ggplot2::element_blank(),
       axis.ticks.x = ggplot2::element_blank(),
@@ -415,6 +405,5 @@ create_study_timeline_plot <- function(data, x, fill, facet){
       legend.position = "left",
       panel.grid = ggplot2::element_blank(),
       panel.background = ggplot2::element_rect(fill = "grey95")
-    ) +
-    ggplot2::facet_grid(cols = ggplot2::vars(!!!rlang::syms(unlist(facet))))
+    )
 }

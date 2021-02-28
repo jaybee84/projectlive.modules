@@ -31,6 +31,7 @@ get_nf_ntap_data <- function(){
 
   nf_ntap_data <-  nf_data
   nf_ntap_data$tables <- nf_ntap_tables
+  nf_ntap_data$selected_group <- "NTAP"
   return(nf_ntap_data)
 }
 
@@ -43,7 +44,21 @@ get_nf_gff_data <- function(){
 
   nf_gff_data <-  nf_data
   nf_gff_data$tables <- nf_gff_tables
+  nf_gff_data$selected_group <- "GFF"
   return(nf_gff_data)
+}
+
+get_nf_ctf_data <- function(){
+  nf_data <- get_nf_data()
+
+  nf_ctf_tables <- nf_data %>%
+    purrr::pluck("tables") %>%
+    purrr::map(filter_list_column, "fundingAgency", "CTF")
+
+  nf_ctf_data <-  nf_data
+  nf_ctf_data$tables <- nf_ctf_tables
+  nf_ctf_data$selected_group <- "CTF"
+  return(nf_ctf_data)
 }
 
 get_nf_summary_snapshot_config <- function(){

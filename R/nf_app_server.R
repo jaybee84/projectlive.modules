@@ -1,6 +1,6 @@
 nf_server <- function(input, output, session) {
 
-  data <- shiny::reactive(get_nf_ntap_data())
+  data <- shiny::reactive(get_nf_ctf_data())
 
   summary_snapshot_module_server(
     id = "summary_snapshot_module",

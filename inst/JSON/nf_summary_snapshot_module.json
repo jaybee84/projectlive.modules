@@ -33,8 +33,13 @@
     "empty_table_message": "The investigator/investigators has/have not uploaded any files yet. Please check back later.",
     "columns": [
       {
-        "name": "year",
-        "display_name": "Year"
+        "name": "species",
+        "display_name": "Species",
+        "recode": {
+          "top_values": 3,
+          "na_replace": "Missing",
+          "default_replace": "Other"
+        }
       },
       {
         "name": "initiative",
@@ -50,7 +55,7 @@
     "plot": {
       "x": "Initiative",
       "fill": "Access Type",
-      "facet": "Year",
+      "facet": "Species",
       "y_axis_text": {
         "size": 10
       }

@@ -19,50 +19,95 @@
 #'  )
 #'
 #' @param config A list with a named list named "columns" that has an entry
-#' for each column needed in the tibble. Each column must have a "name",
-#' and "type" field. Optional fields include "replace_values", "display_name",
-#' "na_replace", and "deafult_replace".
+#' for each column needed in the tibble. Each column must have a "name", field.
+#' If the config has a "recode" field, this function will be used. The recode
+#' field should be a named list with the following optional fields:
 #'
-#'   config1 <- list(
+#' - "replace_values"
+#' - "na_replace"
+#' - "deafult_replace"
+#'
+#'   config <- list(
 #'    "columns" = list(
 #'      "col1" = list(
 #'        "name" = "col1",
 #'        "type" = "character",
-#'        "replace_values" = list(
-#'          "a" = "A"
+#'        "recode" = list(
+#'          "replace_values" = list("a" = "A")
 #'        )
 #'      ),
 #'      "col2" = list(
 #'        "name" = "col2",
 #'        "type" = "character",
-#'        "replace_values" = list(
-#'          "c" = "C"
-#'         ),
-#'        "na_replace" = "Missing",
-#'        "default_replace" = "Other"
+#'        "recode" = list(
+#'          "replace_values" = list("c" = "C"),
+#'          "na_replace" = "Missing",
+#'          "default_replace" = "Other"
+#'        )
 #'      )
 #'     )
 #' @importFrom magrittr %>%
 #' @export
 recode_df_with_config <- function(tbl, config){
 
-  column_config <- config %>%
+  column_configs <- config %>%
     purrr::pluck("columns") %>%
     purrr::keep(
       .,
       !purrr::map_lgl(purrr::map(., purrr::pluck, "recode"), is.null)
     )
 
-  for (config in column_config) {
-    tbl <- recode_column_values(
-      tbl,
-      config$name,
-      config$recode$replace_values,
-      .default = config$recode$default_replace,
-      .missing = config$recode$na_replace
-    )
+  for (config in column_configs) {
+    tbl <- recode_column_with_config(tbl, config)
   }
   return(tbl)
+}
+
+#' Recode Column With Config
+#'
+#' @param tbl A Tibble
+#' @param config A named list
+#'
+#' @importFrom magrittr %>%
+recode_column_with_config <- function(tbl, config){
+  top_values <- config$recode$top_values
+  replace_values <- config$recode$replace_values
+
+  if(all(!is.null(top_values), !is.null(replace_values))){
+    stop("Can not recode column with both fields top_values and repalce_values")
+  }
+  if(!is.null(top_values)){
+    replace_values <- tbl %>%
+      get_n_most_common_values(config$name, config$recode$top_values) %>%
+      purrr::set_names(., .) %>%
+      as.list()
+  }
+  recode_column_values(
+    tbl,
+    config$name,
+    replace_values,
+    .default = config$recode$default_replace,
+    .missing = config$recode$na_replace
+  )
+}
+
+#' Get N Most Common Values
+#'
+#' @param tbl A tibble
+#' @param column A string, that is a column in the tbl
+#' @param n an integer
+#'
+#' @importFrom magrittr %>%
+#' @importFrom rlang .data
+get_n_most_common_values <- function(tbl, column, n = 5){
+  col <- rlang::sym(column)
+
+  tbl %>%
+    dplyr::group_by(!!col) %>%
+    dplyr::summarise("count" = dplyr::n()) %>%
+    dplyr::arrange(dplyr::desc(.data$count), !!col) %>%
+    dplyr::slice(1:n) %>%
+    dplyr::pull(column)
 }
 
 #' Recode Column Values
@@ -89,8 +134,12 @@ recode_df_with_config <- function(tbl, config){
 #'
 #' @param ... Other arguments to dplyr::recode
 recode_column_values <- function(tbl, column, lst = NULL, ...){
-  if(typeof(tbl[[column]]) == "list"){
+  column_type <- typeof(tbl[[column]])
+  if(column_type == "list"){
     stop("Cannot recode list column: ", column)
+  }
+  if(column_type != "character"){
+    stop("Cannot recode non-character column: ", column)
   }
   if(is.null(lst)) lst <- list("0" = "0")
   col_var <- rlang::sym(column)
@@ -101,3 +150,6 @@ recode_column_values <- function(tbl, column, lst = NULL, ...){
   ))
   dplyr::mutate(tbl, !!col_var := dplyr::recode(!!col_var, !!!lst, ...))
 }
+
+
+

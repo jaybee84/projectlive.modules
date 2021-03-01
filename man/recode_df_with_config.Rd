@@ -22,29 +22,34 @@ data <-  dplyr::tribble(
 )}
 
 \item{config}{A list with a named list named "columns" that has an entry
-for each column needed in the tibble. Each column must have a "name",
-and "type" field. Optional fields include "replace_values", "display_name",
-"na_replace", and "deafult_replace".
+for each column needed in the tibble. Each column must have a "name", field.
+If the config has a "recode" field, this function will be used. The recode
+field should be a named list with the following optional fields:
+\itemize{
+\item "replace_values"
+\item "na_replace"
+\item "deafult_replace"
 
-config1 <- list(
+config <- list(
 "columns" = list(
 "col1" = list(
 "name" = "col1",
 "type" = "character",
-"replace_values" = list(
-"a" = "A"
+"recode" = list(
+"replace_values" = list("a" = "A")
 )
 ),
 "col2" = list(
 "name" = "col2",
 "type" = "character",
-"replace_values" = list(
-"c" = "C"
-),
+"recode" = list(
+"replace_values" = list("c" = "C"),
 "na_replace" = "Missing",
 "default_replace" = "Other"
 )
-)}
+)
+)
+}}
 }
 \description{
 It is assumed that this table has been run through

@@ -4,7 +4,7 @@
 \alias{create_data_focus_plot}
 \title{Create Data Focus Plot}
 \usage{
-create_data_focus_plot(data, x, fill)
+create_data_focus_plot(data, x, fill, y_axis_text = NULL)
 }
 \arguments{
 \item{data}{A Tibble}
@@ -12,6 +12,9 @@ create_data_focus_plot(data, x, fill)
 \item{x}{A string that is the name of a column in the data}
 
 \item{fill}{A string that is the name of a column in the data}
+
+\item{y_axis_text}{A list of parameters to
+axis.text.y = ggplot2::element_text()}
 }
 \description{
 Create Data Focus Plot

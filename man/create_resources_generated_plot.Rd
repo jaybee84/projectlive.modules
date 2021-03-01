@@ -4,7 +4,7 @@
 \alias{create_resources_generated_plot}
 \title{Create Resources Generated Plot}
 \usage{
-create_resources_generated_plot(data, x, fill, facet)
+create_resources_generated_plot(data, x, fill, facet, y_axis_text = NULL)
 }
 \arguments{
 \item{data}{A Tibble}
@@ -14,6 +14,9 @@ create_resources_generated_plot(data, x, fill, facet)
 \item{fill}{A string that is the name of a column in the data}
 
 \item{facet}{A list of string that are names of columns in the data}
+
+\item{y_axis_text}{A list of parameters to
+axis.text.y = ggplot2::element_text()}
 }
 \description{
 Create Resources Generated Plot

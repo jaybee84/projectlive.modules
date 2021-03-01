@@ -24,7 +24,7 @@
     "box4": {
       "title": "Publications",
       "table": "publications",
-      "columns": ["title" ],
+      "columns": ["title"],
       "icon": "pencil"
     }
   },
@@ -50,7 +50,10 @@
     "plot": {
       "x": "Initiative",
       "fill": "Access Type",
-      "facet": "Year"
+      "facet": "Year",
+      "y_axis_text": {
+        "size": 10
+      }
     },
     "tooltips": [
       "count",
@@ -91,7 +94,10 @@
     "plot": {
       "x": "Data Type",
       "fill": "Study Name",
-      "facet": "Year"
+      "facet": "Year",
+      "y_axis_text": {
+        "size": 10
+      }
     },
     "tooltips": [ "count", "fill"]
   },
@@ -124,7 +130,13 @@
       "x": "Study Name",
       "y": "Count",
       "fill": "Resource Type",
-      "facet": "Year"
+      "facet": "Year",
+      "x_axis_text": {
+        "size": 10
+      },
+      "y_axis_text": {
+        "size": 10
+      }
     },
     "tooltips": ["Count", "fill"]
   }

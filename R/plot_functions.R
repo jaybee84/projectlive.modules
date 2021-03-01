@@ -51,11 +51,18 @@ create_plot_with_config <- function(data, config, plot_func, ...){
 #' @param x A string that is the name of a column in the data
 #' @param fill A string that is the name of a column in the data
 #' @param facet A list of string that are names of columns in the data
+#' @param y_axis_text A list of parameters to
+#' axis.text.y = ggplot2::element_text()
 #'
 #' @importFrom magrittr %>%
 #' @importFrom rlang !!! !!
-create_initiative_activity_plot <- function(data, x, fill, facet){
-
+create_initiative_activity_plot <- function(
+  data,
+  x,
+  fill,
+  facet,
+  y_axis_text = NULL
+){
   data %>%
     ggplot2::ggplot() +
     ggplot2::geom_bar(
@@ -80,7 +87,7 @@ create_initiative_activity_plot <- function(data, x, fill, facet){
     ggplot2::theme(
       legend.text = ggplot2::element_text(size = 8),
       axis.text.x  = ggplot2::element_blank(),
-      axis.text.y = ggplot2::element_text(size = 10),
+      axis.text.y = rlang::exec(ggplot2::element_text, !!!y_axis_text),
       text = ggplot2::element_text(size = 10),
       strip.text.x = ggplot2::element_text(size = 10),
       legend.position = "right",
@@ -95,10 +102,18 @@ create_initiative_activity_plot <- function(data, x, fill, facet){
 #' @param x A string that is the name of a column in the data
 #' @param fill A string that is the name of a column in the data
 #' @param facet A list of string that are names of columns in the data
+#' @param y_axis_text A list of parameters to
+#' axis.text.y = ggplot2::element_text()
 #'
 #' @importFrom magrittr %>%
 #' @importFrom rlang !!! !!
-create_resources_generated_plot <- function(data, x, fill, facet){
+create_resources_generated_plot <- function(
+  data,
+  x,
+  fill,
+  facet,
+  y_axis_text = NULL
+  ){
 
   data %>%
     ggplot2::ggplot() +
@@ -123,80 +138,11 @@ create_resources_generated_plot <- function(data, x, fill, facet){
     ggplot2::theme(
       legend.text = ggplot2::element_text(size = 8),
       axis.text.x  = ggplot2::element_blank(),
-      axis.text.y = ggplot2::element_text(size = 10),
+      axis.text.y = rlang::exec(ggplot2::element_text, !!!y_axis_text),
       text = ggplot2::element_text(size = 10),
       strip.text.x = ggplot2::element_text(size = 10),
       legend.position = "none",
       panel.grid.major.y = ggplot2::element_blank(),
-      panel.background = ggplot2::element_rect(fill = "grey95")
-    )
-
-}
-
-#' Create Publication Status Plot
-#'
-#' @param data A Tibble
-#' @param x A string that is the name of a column in the data
-#' @param fill A string that is the name of a column in the data
-#'
-#' @importFrom magrittr %>%
-#' @importFrom rlang !!
-create_publication_status_plot <- function(data, x, fill){
-
-  data %>%
-    ggplot2::ggplot() +
-    ggplot2::geom_bar(
-      ggplot2::aes(
-        x = !!rlang::sym(x),
-        fill = !!rlang::sym(fill),
-        color = !!rlang::sym(fill)
-      ),
-      alpha = 0.8,
-      position = "stack"
-    ) +
-    ggplot2::labs(title = "", y = "Number of publications") +
-    sagethemes::theme_sage() +
-    ggplot2::theme(
-      legend.text = ggplot2::element_blank(),
-      axis.text.x  = ggplot2::element_text(size = 10),
-      axis.text.y = ggplot2::element_text(size = 10),
-      text = ggplot2::element_text(size = 10),
-      legend.position = "none",
-      panel.grid = ggplot2::element_blank(),
-      panel.background = ggplot2::element_rect(fill = "grey95")
-    )
-}
-
-#' Create Publication Disease Plot
-#'
-#' @param data A Tibble
-#' @param x A string that is the name of a column in the data
-#' @param fill A string that is the name of a column in the data
-#'
-#' @importFrom magrittr %>%
-#' @importFrom rlang !!
-create_publication_disease_plot <- function(data, x, fill){
-
-  data %>%
-    ggplot2::ggplot() +
-    ggplot2::geom_bar(
-      ggplot2::aes(
-        x = !!rlang::sym(x),
-        fill = !!rlang::sym(fill),
-        color = !!rlang::sym(fill)
-      ),
-      alpha = 0.8,
-      position = "stack"
-    ) +
-    ggplot2::labs(title = "", y = "Number of publications") +
-    sagethemes::theme_sage() +
-    ggplot2::theme(
-      legend.text = ggplot2::element_blank(),
-      axis.text.x  = ggplot2::element_text(size = 10),
-      axis.text.y = ggplot2::element_text(size = 10),
-      text = ggplot2::element_text(size = 10),
-      legend.position = "bottom",
-      panel.grid = ggplot2::element_blank(),
       panel.background = ggplot2::element_rect(fill = "grey95")
     )
 }
@@ -208,10 +154,23 @@ create_publication_disease_plot <- function(data, x, fill){
 #' @param y A string that is the name of a column in the data
 #' @param fill A string that is the name of a column in the data
 #' @param facet A list of string that are names of columns in the data
+#' @param x_axis_text A list of parameters to
+#' axis.text.x = ggplot2::element_text()
+#' @param y_axis_text A list of parameters to
+#' axis.text.y = ggplot2::element_text()
 #'
 #' @importFrom magrittr %>%
 #' @importFrom rlang !!! !!
-create_file_upload_timeline_plot <- function(data, x, y, fill, facet){
+create_file_upload_timeline_plot <- function(
+  data,
+  x,
+  y,
+  fill,
+  facet,
+  x_axis_text = NULL,
+  y_axis_text = NULL
+  ){
+
   data %>%
     ggplot2::ggplot() +
     ggplot2::geom_bar(
@@ -234,8 +193,8 @@ create_file_upload_timeline_plot <- function(data, x, y, fill, facet){
     ) +
     ggplot2::theme(
       legend.text = ggplot2::element_blank(),
-      axis.text.x  = ggplot2::element_text(size = 10, angle = 45),
-      axis.text.y = ggplot2::element_text(size = 10),
+      axis.text.x = rlang::exec(ggplot2::element_text, !!!x_axis_text),
+      axis.text.y = rlang::exec(ggplot2::element_text, !!!y_axis_text),
       text = ggplot2::element_text(size = 10),
       strip.text.x = ggplot2::element_text(size = 10),
       legend.position = "right",
@@ -244,46 +203,137 @@ create_file_upload_timeline_plot <- function(data, x, y, fill, facet){
     )
 }
 
-#' Create Annotation Activity Plot
+#' Create Publication Status Plot
 #'
 #' @param data A Tibble
 #' @param x A string that is the name of a column in the data
-#' @param y A string that is the name of a column in the data
 #' @param fill A string that is the name of a column in the data
-#' @param facet A list of string that are names of columns in the data
+#' @param x_axis_text A list of parameters to
+#' axis.text.x = ggplot2::element_text()
+#' @param y_axis_text A list of parameters to
+#' axis.text.y = ggplot2::element_text()
 #'
 #' @importFrom magrittr %>%
-#' @importFrom rlang !!! !!
-create_annotation_activity_plot <- function(data, x, y, fill, facet){
+#' @importFrom rlang !!
+create_publication_status_plot <- function(
+  data,
+  x,
+  fill,
+  x_axis_text = NULL,
+  y_axis_text = NULL
+){
 
   data %>%
     ggplot2::ggplot() +
     ggplot2::geom_bar(
       ggplot2::aes(
         x = !!rlang::sym(x),
-        y = !!rlang::sym(y),
         fill = !!rlang::sym(fill),
         color = !!rlang::sym(fill)
       ),
-      stat = "identity",
       alpha = 0.8,
       position = "stack"
     ) +
-    ggplot2::coord_flip() +
-    ggplot2::labs(title = "", y = "Number of experimental data files") +
+    ggplot2::labs(title = "", y = "Number of publications") +
     sagethemes::theme_sage() +
-    ggplot2::facet_grid(
-      cols = ggplot2::vars(!!!rlang::syms(unlist(facet))),
-      scales = "fixed"
-    ) +
     ggplot2::theme(
       legend.text = ggplot2::element_blank(),
-      axis.text.x  = ggplot2::element_text(size = 10, angle = 90),
-      axis.text.y = ggplot2::element_text(size = 10),
+      axis.text.x = rlang::exec(ggplot2::element_text, !!!x_axis_text),
+      axis.text.y = rlang::exec(ggplot2::element_text, !!!y_axis_text),
+      text = ggplot2::element_text(size = 10),
+      legend.position = "none",
+      panel.grid = ggplot2::element_blank(),
+      panel.background = ggplot2::element_rect(fill = "grey95")
+    )
+}
+
+#' Create Publication Disease Plot
+#'
+#' @param data A Tibble
+#' @param x A string that is the name of a column in the data
+#' @param fill A string that is the name of a column in the data
+#' @param x_axis_text A list of parameters to
+#' axis.text.x = ggplot2::element_text()
+#' @param y_axis_text A list of parameters to
+#' axis.text.y = ggplot2::element_text()
+#'
+#' @importFrom magrittr %>%
+#' @importFrom rlang !!
+create_publication_disease_plot <- function(
+  data,
+  x,
+  fill,
+  x_axis_text = NULL,
+  y_axis_text = NULL
+  ){
+
+  data %>%
+    ggplot2::ggplot() +
+    ggplot2::geom_bar(
+      ggplot2::aes(
+        x = !!rlang::sym(x),
+        fill = !!rlang::sym(fill),
+        color = !!rlang::sym(fill)
+      ),
+      alpha = 0.8,
+      position = "stack"
+    ) +
+    ggplot2::labs(title = "", y = "Number of publications") +
+    sagethemes::theme_sage() +
+    ggplot2::theme(
+      legend.text = ggplot2::element_blank(),
+      axis.text.x = rlang::exec(ggplot2::element_text, !!!x_axis_text),
+      axis.text.y = rlang::exec(ggplot2::element_text, !!!y_axis_text),
+      text = ggplot2::element_text(size = 10),
+      legend.position = "bottom",
+      panel.grid = ggplot2::element_blank(),
+      panel.background = ggplot2::element_rect(fill = "grey95")
+    )
+}
+
+#' Create Study Timeline Plot
+#'
+#' @param data A Tibble
+#' @param x A string that is the name of a column in the data
+#' @param fill A string that is the name of a column in the data
+#' @param facet A list of string that are names of columns in the data
+#' @param y_axis_text A list of parameters to
+#' axis.text.y = ggplot2::element_text()
+#'
+#' @importFrom magrittr %>%
+#' @importFrom rlang !!! !!
+create_study_timeline_plot <- function(
+  data,
+  x,
+  fill,
+  facet,
+  y_axis_text = NULL
+  ){
+
+  data %>%
+    ggplot2::ggplot() +
+    ggplot2::geom_bar(
+      ggplot2::aes(
+        x = !!rlang::sym(x),
+        fill = !!rlang::sym(fill),
+        color = !!rlang::sym(fill)
+      ),
+      stat = "count",
+      alpha = 0.8,
+      position = "stack"
+    ) +
+    ggplot2::labs(title = "", y = "Number of files uploaded") +
+    sagethemes::theme_sage() +
+    ggplot2::facet_grid(cols = ggplot2::vars(!!!rlang::syms(unlist(facet)))) +
+    ggplot2::theme(
+      legend.text = ggplot2::element_blank(),
+      axis.ticks.x = ggplot2::element_blank(),
+      axis.text.x  = ggplot2::element_blank(),
+      axis.text.y = rlang::exec(ggplot2::element_text, !!!y_axis_text),
       text = ggplot2::element_text(size = 10),
       strip.text.x = ggplot2::element_text(size = 10),
-      legend.position = "right",
-      panel.grid.major.y = ggplot2::element_blank(),
+      legend.position = "left",
+      panel.grid = ggplot2::element_blank(),
       panel.background = ggplot2::element_rect(fill = "grey95")
     )
 }
@@ -326,7 +376,8 @@ create_data_focus_plots <- function(data_list, config){
       ~ create_data_focus_plot(
         data = .x,
         x = config$plot$x,
-        fill = .y
+        fill = .y,
+        y_axis_text = config$plot$y_axis_text
       )
     ) %>%
     purrr::map(plotly::ggplotly, tooltip = config$tooltips) %>%
@@ -338,10 +389,18 @@ create_data_focus_plots <- function(data_list, config){
 #' @param data A Tibble
 #' @param x A string that is the name of a column in the data
 #' @param fill A string that is the name of a column in the data
+#' @param y_axis_text A list of parameters to
+#' axis.text.y = ggplot2::element_text()
 #'
 #' @importFrom magrittr %>%
 #' @importFrom rlang !!
-create_data_focus_plot <- function(data, x, fill){
+create_data_focus_plot <- function(
+  data,
+  x,
+  fill,
+  y_axis_text = NULL
+  ){
+
   data %>%
     ggplot2::ggplot() +
     ggplot2::geom_bar(
@@ -361,7 +420,7 @@ create_data_focus_plot <- function(data, x, fill){
     ggplot2::theme(
       legend.text = ggplot2::element_blank(),
       axis.text.x  = ggplot2::element_blank(),
-      axis.text.y = ggplot2::element_text(size = 10),
+      axis.text.y = rlang::exec(ggplot2::element_text, !!!y_axis_text),
       text = ggplot2::element_text(size = 10),
       strip.text.x = ggplot2::element_text(size = 10),
       legend.position = "none",
@@ -370,40 +429,58 @@ create_data_focus_plot <- function(data, x, fill){
     )
 }
 
-#' Create Study Timeline Plot
+#' Create Annotation Activity Plot
 #'
 #' @param data A Tibble
 #' @param x A string that is the name of a column in the data
+#' @param y A string that is the name of a column in the data
 #' @param fill A string that is the name of a column in the data
 #' @param facet A list of string that are names of columns in the data
+#' @param x_axis_text A list of parameters to
+#' axis.text.x = ggplot2::element_text()
+#' @param y_axis_text A list of parameters to
+#' axis.text.y = ggplot2::element_text()
 #'
 #' @importFrom magrittr %>%
 #' @importFrom rlang !!! !!
-create_study_timeline_plot <- function(data, x, fill, facet){
+create_annotation_activity_plot <- function(
+  data,
+  x,
+  y,
+  fill,
+  facet,
+  x_axis_text = NULL,
+  y_axis_text = NULL
+  ){
+
   data %>%
     ggplot2::ggplot() +
     ggplot2::geom_bar(
       ggplot2::aes(
         x = !!rlang::sym(x),
+        y = !!rlang::sym(y),
         fill = !!rlang::sym(fill),
         color = !!rlang::sym(fill)
       ),
-      stat = "count",
+      stat = "identity",
       alpha = 0.8,
       position = "stack"
     ) +
-    ggplot2::labs(title = "", y = "Number of files uploaded") +
+    ggplot2::coord_flip() +
+    ggplot2::labs(title = "", y = "Number of experimental data files") +
     sagethemes::theme_sage() +
-    ggplot2::facet_grid(cols = ggplot2::vars(!!!rlang::syms(unlist(facet)))) +
+    ggplot2::facet_grid(
+      cols = ggplot2::vars(!!!rlang::syms(unlist(facet))),
+      scales = "fixed"
+    ) +
     ggplot2::theme(
       legend.text = ggplot2::element_blank(),
-      axis.ticks.x = ggplot2::element_blank(),
-      axis.text.x  = ggplot2::element_blank(),
-      axis.text.y = ggplot2::element_text(size = 10),
+      axis.text.x = rlang::exec(ggplot2::element_text, !!!x_axis_text),
+      axis.text.y = rlang::exec(ggplot2::element_text, !!!y_axis_text),
       text = ggplot2::element_text(size = 10),
       strip.text.x = ggplot2::element_text(size = 10),
-      legend.position = "left",
-      panel.grid = ggplot2::element_blank(),
+      legend.position = "right",
+      panel.grid.major.y = ggplot2::element_blank(),
       panel.background = ggplot2::element_rect(fill = "grey95")
     )
 }

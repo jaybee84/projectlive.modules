@@ -130,7 +130,10 @@
     "plot": {
       "x": "Study Name",
       "fill": "Resource Type",
-      "facet": ["Year", "Month"]
+      "facet": ["Year", "Month"],
+      "y_axis_text": {
+        "size": 10
+      }
     },
     "tooltips": ["count","fill"],
     "empty_table_message": "The investigator/investigators has/have not uploaded any files yet. Please check back later."
@@ -167,7 +170,10 @@
         "Resource Added",
         "Species Used",
         "Tumor Types Investigated"
-      ]
+      ],
+      "y_axis_text": {
+        "size": 10
+      }
     },
     "tooltips": ["count", "fill"],
     "empty_table_message": "The investigators have not uploaded data for this study yet. Please check back later."
@@ -199,7 +205,14 @@
       "x": "Study Leads",
       "y": "Count",
       "fill": "Assay",
-      "facet": "Year"
+      "facet": "Year",
+      "x_axis_text": {
+        "size": 10,
+        "angle": 90
+      },
+      "y_axis_text": {
+        "size": 10
+      }
     },
     "empty_table_message": "The investigators have not uploaded any files yet. Please check back later.",
     "tooltips": [

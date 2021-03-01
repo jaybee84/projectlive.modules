@@ -15,7 +15,13 @@
       ],
       "plot": {
         "x": "Year",
-        "fill": "Study Name"
+        "fill": "Study Name",
+        "x_axis_text": {
+          "size": 10
+        },
+        "y_axis_text": {
+          "size": 10
+        }
       },
       "tooltips": ["count", "fill"]
     },
@@ -34,7 +40,15 @@
       ],
       "plot": {
         "x": "Year",
-        "fill": "Manifestation"
+        "fill": "Manifestation",
+        "x_axis_text": {
+          "size": 10
+
+        },
+        "y_axis_text": {
+          "size": 10
+
+        }
       },
       "tooltips": ["count", "fill"]
     }

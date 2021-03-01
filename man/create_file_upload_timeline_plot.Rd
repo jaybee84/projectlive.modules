@@ -4,7 +4,15 @@
 \alias{create_file_upload_timeline_plot}
 \title{Create File Upload Timeline Plot}
 \usage{
-create_file_upload_timeline_plot(data, x, y, fill, facet)
+create_file_upload_timeline_plot(
+  data,
+  x,
+  y,
+  fill,
+  facet,
+  x_axis_text = NULL,
+  y_axis_text = NULL
+)
 }
 \arguments{
 \item{data}{A Tibble}
@@ -16,6 +24,12 @@ create_file_upload_timeline_plot(data, x, y, fill, facet)
 \item{fill}{A string that is the name of a column in the data}
 
 \item{facet}{A list of string that are names of columns in the data}
+
+\item{x_axis_text}{A list of parameters to
+axis.text.x = ggplot2::element_text()}
+
+\item{y_axis_text}{A list of parameters to
+axis.text.y = ggplot2::element_text()}
 }
 \description{
 Create File Upload Timeline Plot

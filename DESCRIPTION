@@ -1,6 +1,6 @@
 Package: projectlive.modules
 Title: Modules for Project Live shiny apps
-Version: 0.2.3
+Version: 0.3.0
 Authors@R: 
     person(given = "Andrew",
            family = "Lamb",
@@ -11,7 +11,10 @@ Description: Modules for Project Live shiny apps.
 License: MIT + file LICENSE
 Suggests: 
     testthat,
-    renv
+    renv,
+    devtools,
+    reticulate,
+    usethis
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
@@ -20,8 +23,8 @@ RoxygenNote: 7.1.1
 Depends: R (>= 4.0)
 Imports:
   dplyr (>= 1.0),
-  forcats (>= 0.5),
   DT (>= 0.1),
+  forcats (>= 0.5),
   ggplot2 (>= 3.3),
   glue (>= 1.0),
   jsonlite (>= 1.0),
@@ -34,9 +37,11 @@ Imports:
   readr (>= 1.0),
   reticulate (>= 1.0),
   rlang (>= 0.4),
+  sagethemes,
   shiny (>= 1.4),
   shinydashboard (>= 0.7),
   stringr (>= 1.0),
   tibble (>= 3.0),
-  tidyr (>= 1.0),
-  viridis (>= 0.5)
+  tidyr (>= 1.0)
+Remotes:
+  Sage-Bionetworks/sagethemes@main

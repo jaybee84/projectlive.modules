@@ -4,7 +4,13 @@
 \alias{create_publication_status_plot}
 \title{Create Publication Status Plot}
 \usage{
-create_publication_status_plot(data, x, fill)
+create_publication_status_plot(
+  data,
+  x,
+  fill,
+  x_axis_text = NULL,
+  y_axis_text = NULL
+)
 }
 \arguments{
 \item{data}{A Tibble}
@@ -12,6 +18,12 @@ create_publication_status_plot(data, x, fill)
 \item{x}{A string that is the name of a column in the data}
 
 \item{fill}{A string that is the name of a column in the data}
+
+\item{x_axis_text}{A list of parameters to
+axis.text.x = ggplot2::element_text()}
+
+\item{y_axis_text}{A list of parameters to
+axis.text.y = ggplot2::element_text()}
 }
 \description{
 Create Publication Status Plot

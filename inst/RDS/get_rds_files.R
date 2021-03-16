@@ -141,7 +141,8 @@ csbc_publications <-
       "grantName",
       "publicationId",
       "publicationYear",
-      "tissue"
+      "tissue",
+      "theme"
     )
   ) %>%
   dplyr::mutate(

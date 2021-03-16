@@ -42,7 +42,23 @@ study_summary_module_ui <- function(id){
             collapsible = FALSE
           ),
           plot_module_ui(ns("annotation_activity_plot"), "Annotation Activity"),
-          plot_module_ui(ns("publication_status_plot"), "Publication Status")
+          plot_module_ui(ns("publication_status_plot"), "Publication Status"),
+          shinydashboard::box(
+            title = "test",
+            status = "primary",
+            solidHeader = TRUE,
+            width = 12,
+            collapsible = FALSE,
+            DT::dataTableOutput(ns("dt")),
+            shiny::numericInput(
+              inputId = ns("days_choice"),
+              label = "Select Amount of Days",
+              value = 1000L,
+              min = 0L,
+              step = 1L
+            ),
+            plotly::plotlyOutput(ns("plot"))
+          )
         )
       )
     )
@@ -148,6 +164,102 @@ study_summary_module_server <- function(id, data, config){
         ),
         plot_func = shiny::reactive("create_publication_status_plot")
       )
+
+      files_tbl <- shiny::reactive({
+        shiny::req(filtered_data(), config())
+        config <- purrr::pluck(config(), "milestone_reporting_plot", "files_table")
+        tbl <- purrr::pluck(filtered_data(), "tables", config$name)
+        format_plot_data_with_config(tbl, config)
+      })
+
+
+      id_tbl <- shiny::reactive({
+        shiny::req(filtered_data(), config())
+        config <- purrr::pluck(config(), "milestone_reporting_plot", "incoming_data_table")
+        tbl <- purrr::pluck(filtered_data(), "tables", config$name)
+        format_plot_data_with_config(tbl, config)
+      })
+
+      dt_tbl <- shiny::reactive({
+        id_tbl() %>%
+          dplyr::select(Milestone, `Date Estimate`) %>%
+          dplyr::distinct()
+      })
+
+      output$dt <- DT::renderDataTable(
+        base::as.data.frame(dt_tbl()),
+        server = TRUE,
+        selection = 'single'
+      )
+
+      dt_row <- shiny::reactive({
+        dt_tbl() %>%
+          dplyr::slice(input$dt_rows_selected)
+      })
+
+      date_tbl <- shiny::reactive({
+        dt_row() %>%
+          dplyr::select(`Date Estimate`) %>%
+          dplyr::mutate(
+            "min_date" = `Date Estimate` - lubridate::duration(input$days_choice, 'days'),
+            "max_date" = `Date Estimate` + lubridate::duration(input$days_choice, 'days')
+          ) %>%
+          dplyr::select("min_date", "max_date")
+      })
+
+      filtered_id_tbl <- shiny::reactive({
+        id_tbl() %>%
+          dplyr::inner_join(dt_row()) %>%
+          dplyr::select(Format, Milestone, Expected)
+      })
+
+      filtered_files_tbl <- shiny::reactive({
+        files_tbl() %>%
+          print() %>%
+          dplyr::filter(
+            `Date Created` < date_tbl()$max_date,
+            `Date Created` > date_tbl()$min_date
+          ) %>%
+          dplyr::group_by(Format) %>%
+          dplyr::summarise("Actual" = dplyr::n())
+      })
+
+      merged_table <- shiny::reactive({
+        filtered_id_tbl() %>%
+          dplyr::full_join(filtered_files_tbl()) %>%
+          dplyr::mutate(
+            "Actual" = dplyr::if_else(
+              is.na(.data$Actual),
+              0L,
+              .data$Actual
+            )
+          ) %>%
+          dplyr::select(Format, Expected, Actual) %>%
+          tidyr::pivot_longer(-"Format")
+      })
+
+      plot_obj <- shiny::reactive({
+        merged_table() %>%
+          ggplot2::ggplot() +
+          ggplot2::geom_bar(
+            ggplot2::aes(
+              x = !!rlang::sym("Format"),
+              y = !!rlang::sym("value"),
+              fill = !!rlang::sym("name")
+            ),
+            stat = "identity",
+            alpha = 0.8,
+            na.rm = TRUE,
+            show.legend = FALSE,
+            position = ggplot2::position_dodge()
+          )
+      })
+
+      output$plot <- plotly::renderPlotly({
+        shiny::req(plot_obj())
+        plot_obj()
+      })
+
     }
   )
 }

@@ -2,11 +2,52 @@ syn <- create_synapse_login()
 
 # nf ----
 
-incoming_data <- get_synapse_tbl(syn, "syn23364404")
-saveRDS(incoming_data, "inst/RDS/nf_incoming_data.rds")
 
 nf_studies <-get_synapse_tbl(syn, "syn16787123")
 saveRDS(nf_studies, "inst/RDS/nf_studies.rds")
+
+incoming_data <-
+  get_synapse_tbl(
+    syn,
+    "syn23364404",
+    columns = c(
+      "fileFormat",
+      "date_uploadestimate",
+      "reportMilestone",
+      "estimatedMinNumSamples",
+      "fundingAgency",
+      "projectSynID"
+    )
+  ) %>%
+  dplyr::left_join(
+    dplyr::select(nf_studies, "studyName", "studyId"),
+    by = c("projectSynID" = "studyId")
+  ) %>%
+  dplyr::mutate(
+    "date_uploadestimate" = lubridate::mdy(date_uploadestimate),
+    "estimatedMinNumSamples" = as.integer(.data$estimatedMinNumSamples)
+  ) %>%
+  dplyr::select(-c("ROW_ID", "ROW_VERSION", "projectSynID")) %>%
+  dplyr::filter(!is.na(.data$date_uploadestimate)) %>%
+  tidyr::unnest("fileFormat") %>%
+  dplyr::group_by(
+    .data$fileFormat,
+    .data$date_uploadestimate,
+    .data$reportMilestone,
+    .data$fundingAgency,
+    .data$studyName
+  ) %>%
+  dplyr::summarise("estimatedMinNumSamples" = sum(.data$estimatedMinNumSamples)) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(
+    "estimatedMinNumSamples" = dplyr::if_else(
+      is.na(.data$estimatedMinNumSamples),
+      0L,
+      .data$estimatedMinNumSamples
+    )
+  )
+
+saveRDS(incoming_data, "inst/RDS/nf_incoming_data.rds")
 
 nf_files <-
   get_synapse_tbl(
@@ -21,7 +62,6 @@ nf_files <-
       "dataType",
       "fileFormat",
       "resourceType",
-      "studyName",
       "accessType",
       "initiative",
       "tumorType",
@@ -37,9 +77,10 @@ nf_files <-
       nf_studies,
       "studyName",
       "studyLeads",
-      "fundingAgency"
+      "fundingAgency",
+      "studyId"
     ),
-    by = "studyName"
+    by = c("projectId" = "studyId")
   )
 
 saveRDS(nf_files, "inst/RDS/nf_files.rds")

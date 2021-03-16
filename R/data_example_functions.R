@@ -16,6 +16,10 @@ get_nf_data <- function(){
       "tools" = "nf_tools" %>%
         get_rds_path() %>%
         readRDS() %>%
+        dplyr::as_tibble(),
+      "incoming_data" = "nf_incoming_data" %>%
+        get_rds_path() %>%
+        readRDS() %>%
         dplyr::as_tibble()
     ),
     "selected_group" = "Example Group"

@@ -12,8 +12,10 @@ create_synapse_login <- function(){
 #' @param table_id A synapse table id
 #' @param columns A vector of columns to get from the syanpse table
 #' @param limit An integer, limits the number of rows in the table
+#' @param ... Argument list to readr::read_csv()
+#'
 #' @export
-get_synapse_tbl <- function(syn, table_id, columns = NULL, limit = NULL){
+get_synapse_tbl <- function(syn, table_id, columns = NULL, limit = NULL, ...){
   list_columns <- table_id %>%
     syn$getTableColumns() %>%
     reticulate::iterate(.) %>%
@@ -42,10 +44,9 @@ get_synapse_tbl <- function(syn, table_id, columns = NULL, limit = NULL){
     )
   }
   query_string %>%
-    syn$tableQuery() %>%
+    syn$tableQuery(includeRowIdAndRowVersion = F) %>%
     purrr::pluck("filepath") %>%
-    readr::read_csv(.) %>%
-    dplyr::select(!dplyr::contains("depr")) %>%
+    readr::read_csv(., ...) %>%
     dplyr::mutate_at(
       list_columns, ~stringr::str_remove_all(.x, '[\\"\\[\\]\\\\]')
     ) %>%

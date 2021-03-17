@@ -2,11 +2,57 @@ syn <- create_synapse_login()
 
 # nf ----
 
-incoming_data <- get_synapse_tbl(syn, "syn23364404")
-saveRDS(incoming_data, "inst/RDS/nf_incoming_data.rds")
 
 nf_studies <-get_synapse_tbl(syn, "syn16787123")
 saveRDS(nf_studies, "inst/RDS/nf_studies.rds")
+
+incoming_data <-
+  get_synapse_tbl(
+    syn,
+    "syn23364404",
+    columns = c(
+      "fileFormat",
+      "date_uploadestimate",
+      "reportMilestone",
+      "estimatedMinNumSamples",
+      "fundingAgency",
+      "projectSynID"
+    ),
+    col_types = readr::cols(
+      "estimatedMinNumSamples" = readr::col_integer(),
+      "reportMilestone" = readr::col_integer()
+    )
+  ) %>%
+  dplyr::left_join(
+    dplyr::select(nf_studies, "studyName", "studyId"),
+    by = c("projectSynID" = "studyId")
+  ) %>%
+  dplyr::mutate(
+    "date_uploadestimate" = lubridate::mdy(date_uploadestimate),
+  ) %>%
+  dplyr::select(-"projectSynID") %>%
+  dplyr::filter(
+    !is.na(.data$date_uploadestimate) | !is.na(.data$reportMilestone)
+  ) %>%
+  tidyr::unnest("fileFormat") %>%
+  dplyr::group_by(
+    .data$fileFormat,
+    .data$date_uploadestimate,
+    .data$reportMilestone,
+    .data$fundingAgency,
+    .data$studyName
+  ) %>%
+  dplyr::summarise("estimatedMinNumSamples" = sum(.data$estimatedMinNumSamples)) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(
+    "estimatedMinNumSamples" = dplyr::if_else(
+      is.na(.data$estimatedMinNumSamples),
+      0L,
+      .data$estimatedMinNumSamples
+    )
+  )
+
+saveRDS(incoming_data, "inst/RDS/nf_incoming_data.rds")
 
 nf_files <-
   get_synapse_tbl(
@@ -21,25 +67,30 @@ nf_files <-
       "dataType",
       "fileFormat",
       "resourceType",
-      "studyName",
       "accessType",
       "initiative",
       "tumorType",
       "species",
       "projectId",
+      "reportMilestone",
       "createdOn"
+    ),
+    col_types = readr::cols(
+      "consortium" = readr::col_character(),
+      "reportMilestone" = readr::col_integer()
     )
   ) %>%
   format_date_columns() %>%
-  dplyr::select(-c("createdOn", "ROW_ID", "ROW_VERSION", "ROW_ETAG")) %>%
+  dplyr::select(-c("createdOn")) %>%
   dplyr::inner_join(
     dplyr::select(
       nf_studies,
       "studyName",
       "studyLeads",
-      "fundingAgency"
+      "fundingAgency",
+      "studyId"
     ),
-    by = "studyName"
+    by = c("projectId" = "studyId")
   )
 
 saveRDS(nf_files, "inst/RDS/nf_files.rds")
@@ -100,7 +151,8 @@ csbc_publications <-
       "grantName",
       "publicationId",
       "publicationYear",
-      "tissue"
+      "tissue",
+      "theme"
     )
   ) %>%
   dplyr::mutate(

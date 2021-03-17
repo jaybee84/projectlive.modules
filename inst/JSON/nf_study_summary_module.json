@@ -253,6 +253,10 @@
         {
           "name": "date",
           "display_name": "Date Created"
+        },
+        {
+          "name": "reportMilestone",
+          "display_name": "Milestone"
         }
       ]
     },
@@ -278,6 +282,12 @@
           "display_name": "Expected"
         }
       ]
-    }
+    },
+    "format_column": "Format",
+    "milestone_column": "Milestone",
+    "date_created_column": "Date Created",
+    "date_estimate_column": "Date Estimate",
+    "expected_files_column": "Expected",
+    "actual_files_column": "Actual"
   }
 }

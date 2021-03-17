@@ -17,6 +17,10 @@ incoming_data <-
       "estimatedMinNumSamples",
       "fundingAgency",
       "projectSynID"
+    ),
+    col_types = readr::cols(
+      "estimatedMinNumSamples" = readr::col_integer(),
+      "reportMilestone" = readr::col_integer()
     )
   ) %>%
   dplyr::left_join(
@@ -25,10 +29,11 @@ incoming_data <-
   ) %>%
   dplyr::mutate(
     "date_uploadestimate" = lubridate::mdy(date_uploadestimate),
-    "estimatedMinNumSamples" = as.integer(.data$estimatedMinNumSamples)
   ) %>%
-  dplyr::select(-c("ROW_ID", "ROW_VERSION", "projectSynID")) %>%
-  dplyr::filter(!is.na(.data$date_uploadestimate)) %>%
+  dplyr::select(-"projectSynID") %>%
+  dplyr::filter(
+    !is.na(.data$date_uploadestimate) | !is.na(.data$reportMilestone)
+  ) %>%
   tidyr::unnest("fileFormat") %>%
   dplyr::group_by(
     .data$fileFormat,
@@ -67,11 +72,16 @@ nf_files <-
       "tumorType",
       "species",
       "projectId",
+      "reportMilestone",
       "createdOn"
+    ),
+    col_types = readr::cols(
+      "consortium" = readr::col_character(),
+      "reportMilestone" = readr::col_integer()
     )
   ) %>%
   format_date_columns() %>%
-  dplyr::select(-c("createdOn", "ROW_ID", "ROW_VERSION", "ROW_ETAG")) %>%
+  dplyr::select(-c("createdOn")) %>%
   dplyr::inner_join(
     dplyr::select(
       nf_studies,

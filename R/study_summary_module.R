@@ -235,7 +235,7 @@ study_summary_module_server <- function(id, data, config){
         date_column        <- rlang::sym(config$date_estimate_column)
         milestone_column   <- rlang::sym(config$milestone_column)
 
-        tbl <- id_tbl()
+        tbl <- id_tbl() %>%
           dplyr::filter(!is.na(!!date_column)) %>%
           dplyr::select(!!milestone_column, !!date_column) %>%
           dplyr::arrange(!!date_column) %>%

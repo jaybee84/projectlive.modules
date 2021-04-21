@@ -12,11 +12,19 @@ milestone_reporting_module_ui <- function(id){
 
   shiny::tagList(
     shinydashboard::box(
-      title = "Internal milestone tracker",
+      title = "Milestone tracking",
       status = "primary",
       solidHeader = TRUE,
       width = 12,
       collapsible = FALSE,
+      shiny::p("Plots used for tracking file upload milestones."),
+      shiny::fluidRow(
+        shiny::column(
+          width = 12,
+          shiny::uiOutput(ns("join_column_choice_ui"))
+        )
+      ),
+      shiny::h1("Internal tracking"),
       shiny::fluidRow(
         shiny::column(
           width = 4,
@@ -39,14 +47,8 @@ milestone_reporting_module_ui <- function(id){
           width = 12,
           plotly::plotlyOutput(ns("plot1"))
         )
-      )
-    ),
-    shinydashboard::box(
-      title = "Researcher reported milestone upload",
-      status = "primary",
-      solidHeader = TRUE,
-      width = 12,
-      collapsible = FALSE,
+      ),
+      shiny::h1("Researcher reported milestone upload"),
       shiny::fluidRow(
         shiny::column(
           width = 12,
@@ -80,6 +82,19 @@ milestone_reporting_module_server <- function(id, data, config){
     function(input, output, session) {
       ns <- session$ns
 
+      join_column_choices <- shiny::reactive({
+        shiny::req(config())
+        choices <- unlist(config()$join_columns)
+      })
+
+      output$join_column_choice_ui <- shiny::renderUI({
+        shiny::req(join_column_choices())
+        shiny::selectInput(
+          inputId = ns("join_column_choice"),
+          label = "Choose Column to Join tables",
+          choices = join_column_choices()
+        )
+      })
 
       files_tbl <- shiny::reactive({
         shiny::req(data(), config())
@@ -120,18 +135,12 @@ milestone_reporting_module_server <- function(id, data, config){
           dplyr::select(!!milestone_column, !!date_column) %>%
           dplyr::arrange(!!date_column) %>%
           dplyr::distinct()
-          # dplyr::mutate(
-          #   "Date Range Start" =
-          #     !!date_column - lubridate::duration(input$days_choice, 'days'),
-          #   "Date Range End" =
-          #     !!date_column + lubridate::duration(input$days_choice, 'days')
-          # )
       })
 
       output$dt <- DT::renderDataTable(
         base::as.data.frame(dt_tbl()),
         server = TRUE,
-        selection = 'single'
+        selection = list(mode = 'single', selected = 1)
       )
 
       dt_row <- shiny::reactive({
@@ -167,7 +176,7 @@ milestone_reporting_module_server <- function(id, data, config){
       output$date_range_string  <- shiny::renderText(date_range_string())
 
       filtered_id_tbl1 <- shiny::reactive({
-        shiny::req(id_tbl(), dt_row(), config())
+        shiny::req(id_tbl(), dt_row(), config(), input$join_column_choice)
         config <- config()
 
         id_tbl() %>%
@@ -176,18 +185,24 @@ milestone_reporting_module_server <- function(id, data, config){
             by = c(config$milestone_column, config$date_estimate_column)
           ) %>%
           dplyr::select(
-            config$format_column,
+            input$join_column_choice,
             config$milestone_column,
             config$expected_files_column
           )
       })
 
       filtered_files_tbl1 <- shiny::reactive({
-        shiny::req(files_tbl(), config(), date_range_start(), date_range_end())
+        shiny::req(
+          files_tbl(),
+          config(),
+          date_range_start(),
+          date_range_end(),
+          input$join_column_choice
+        )
         config <- config()
 
-        date_column <- rlang::sym(config$date_created_column)
-        format_column <- rlang::sym(config$format_column)
+        date_column   <- rlang::sym(config$date_created_column)
+        join_column   <- rlang::sym(input$join_column_choice)
         actual_column <- rlang::sym(config$actual_files_column)
 
         files_tbl() %>%
@@ -195,7 +210,7 @@ milestone_reporting_module_server <- function(id, data, config){
             !!date_column < date_range_end(),
             !!date_column > date_range_start()
           ) %>%
-          dplyr::group_by(!!format_column) %>%
+          dplyr::group_by(!!join_column) %>%
           dplyr::summarise(!!actual_column := dplyr::n())
       })
 
@@ -204,13 +219,13 @@ milestone_reporting_module_server <- function(id, data, config){
         shiny::req(filtered_id_tbl1(), filtered_files_tbl1(), config())
         config <- config()
 
-        date_column     <- rlang::sym(config$date_created_column)
-        actual_column   <- rlang::sym(config$actual_files_column)
-        format_column   <- rlang::sym(config$format_column)
-        expected_column <- rlang::sym(config$expected_files_column)
+        date_column      <- rlang::sym(config$date_created_column)
+        actual_column    <- rlang::sym(config$actual_files_column)
+        join_column      <- rlang::sym(input$join_column_choice)
+        expected_column  <- rlang::sym(config$expected_files_column)
 
         filtered_id_tbl1() %>%
-          dplyr::full_join(filtered_files_tbl1(), by = config$format_column) %>%
+          dplyr::full_join(filtered_files_tbl1(), by = input$join_column_choice) %>%
           dplyr::mutate(
             !!actual_column := dplyr::if_else(
               is.na(!!actual_column),
@@ -218,9 +233,9 @@ milestone_reporting_module_server <- function(id, data, config){
               !!actual_column
             )
           ) %>%
-          dplyr::select(!!format_column, !!expected_column, !!actual_column) %>%
+          dplyr::select(!!join_column, !!expected_column, !!actual_column) %>%
           tidyr::pivot_longer(
-            cols = -c(!!format_column),
+            cols = -c(!!input$join_column_choice),
             names_to = "Types of Files",
             values_to = "Number of Files"
           ) %>%
@@ -235,9 +250,9 @@ milestone_reporting_module_server <- function(id, data, config){
       })
 
       plot_obj1 <- shiny::reactive({
-        shiny::req(merged_tbl1(), config())
+        shiny::req(merged_tbl1(), config(), input$join_column_choice)
         config <- config()
-        format_column   <- rlang::sym(config$format_column)
+        join_column <- rlang::sym(input$join_column_choice)
 
         p <- merged_tbl1() %>%
           ggplot2::ggplot() +
@@ -254,7 +269,7 @@ milestone_reporting_module_server <- function(id, data, config){
             position = ggplot2::position_dodge()
           ) +
           sagethemes::theme_sage() +
-          ggplot2::facet_grid(cols = ggplot2::vars(!!rlang::sym(format_column))) +
+          ggplot2::facet_grid(cols = ggplot2::vars(!!rlang::sym(join_column))) +
           ggplot2::theme(
             legend.text = ggplot2::element_text(size = 8),
             axis.text.x  = ggplot2::element_blank(),
@@ -298,30 +313,40 @@ milestone_reporting_module_server <- function(id, data, config){
       })
 
       filtered_files_tbl2 <- shiny::reactive({
-        shiny::req(files_tbl(), input$milestone_choice, config())
+        shiny::req(
+          files_tbl(),
+          input$milestone_choice,
+          config(),
+          input$join_column_choice
+        )
         config <- config()
 
-        format_column <- rlang::sym(config$format_column)
+        join_column <- rlang::sym(input$join_column_choice)
         actual_column <- rlang::sym(config$actual_files_column)
         milestone_column <- rlang::sym(config$milestone_column)
 
         files_tbl() %>%
           dplyr::filter(!!milestone_column == input$milestone_choice) %>%
-          dplyr::group_by(!!format_column) %>%
+          dplyr::group_by(!!join_column) %>%
           dplyr::summarise(!!actual_column := dplyr::n())
       })
 
       filtered_id_tbl2 <- shiny::reactive({
-        shiny::req(id_tbl(), input$milestone_choice, config())
+        shiny::req(
+          id_tbl(),
+          input$milestone_choice,
+          config(),
+          input$join_column_choice
+        )
         config <- config()
         milestone_column <- rlang::sym(config$milestone_column)
         expected_column  <- rlang::sym(config$expected_files_column)
-        format_column    <- rlang::sym(config$format_column)
+        join_column      <- rlang::sym(input$join_column_choice)
 
         id_tbl() %>%
           dplyr::filter(!!milestone_column == input$milestone_choice) %>%
           dplyr::select(
-            !!format_column,
+            !!join_column,
             !!milestone_column,
             !!expected_column
           )
@@ -329,16 +354,21 @@ milestone_reporting_module_server <- function(id, data, config){
 
       merged_tbl2 <- shiny::reactive({
 
-        shiny::req(filtered_id_tbl2(), filtered_files_tbl2(), config())
+        shiny::req(
+          filtered_id_tbl2(),
+          filtered_files_tbl2(),
+          config(),
+          input$join_column_choice
+        )
         config <- config()
 
         date_column     <- rlang::sym(config$date_created_column)
         actual_column   <- rlang::sym(config$actual_files_column)
-        format_column   <- rlang::sym(config$format_column)
+        join_column     <- rlang::sym(input$join_column_choice)
         expected_column <- rlang::sym(config$expected_files_column)
 
         filtered_id_tbl2() %>%
-          dplyr::full_join(filtered_files_tbl2(), by = config$format_column) %>%
+          dplyr::full_join(filtered_files_tbl2(), by = input$join_column_choice) %>%
           dplyr::mutate(
             !!actual_column := dplyr::if_else(
               is.na(!!actual_column),
@@ -346,9 +376,9 @@ milestone_reporting_module_server <- function(id, data, config){
               !!actual_column
             )
           ) %>%
-          dplyr::select(!!format_column, !!expected_column, !!actual_column) %>%
+          dplyr::select(!!join_column, !!expected_column, !!actual_column) %>%
           tidyr::pivot_longer(
-            cols = -c(!!format_column),
+            cols = -c(!!join_column),
             names_to = "Types of Files",
             values_to = "Number of Files"
           ) %>%
@@ -363,9 +393,9 @@ milestone_reporting_module_server <- function(id, data, config){
       })
 
       plot_obj2 <- shiny::reactive({
-        shiny::req(merged_tbl2(), config())
+        shiny::req(merged_tbl2(), config(), input$join_column_choice)
         config <- config()
-        format_column   <- rlang::sym(config$format_column)
+        join_column <- rlang::sym(input$join_column_choice)
 
         p <- merged_tbl2() %>%
           ggplot2::ggplot() +
@@ -382,7 +412,7 @@ milestone_reporting_module_server <- function(id, data, config){
             position = ggplot2::position_dodge()
           ) +
           sagethemes::theme_sage() +
-          ggplot2::facet_grid(cols = ggplot2::vars(!!rlang::sym(format_column))) +
+          ggplot2::facet_grid(cols = ggplot2::vars(!!rlang::sym(join_column))) +
           ggplot2::theme(
             legend.text = ggplot2::element_text(size = 8),
             axis.text.x  = ggplot2::element_blank(),

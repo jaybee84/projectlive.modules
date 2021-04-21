@@ -13,13 +13,18 @@ test_that("milestone_reporting_module_server", {
       )
     ),
     {
+      expect_type(join_column_choices(), "character")
+      expect_equal(join_column_choices(), c("Format", "Data Type"))
+      expect_type(output$join_column_choice_ui, "list")
+      session$setInputs("join_column_choice" = "Format")
+
       expect_type(files_tbl(), "list")
       expect_type(id_tbl(), "list")
-      session$setInputs("days_choice" = 1000)
 
+      session$setInputs("days_choice" = 1000)
+      session$setInputs("dt_rows_selected" = 2)
       expect_type(dt_tbl(), "list")
       expect_type(output$dt, "character")
-      session$setInputs("dt_rows_selected" = 2)
       expect_type(dt_row(), "list")
       expect_type(date_range_start(), "double")
       expect_type(date_range_end(), "double")

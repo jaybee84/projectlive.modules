@@ -251,6 +251,11 @@
           "recode": {"na_replace": "Unspecified"}
         },
         {
+          "name": "dataType",
+          "display_name": "Data Type",
+          "recode": {"na_replace": "Unspecified"}
+        },
+        {
           "name": "date",
           "display_name": "Date Created"
         },
@@ -270,6 +275,11 @@
           "recode": {"na_replace": "Unspecified"}
         },
         {
+          "name": "dataType",
+          "display_name": "Data Type",
+          "recode": {"na_replace": "Unspecified"}
+        },
+        {
           "name": "date_uploadestimate",
           "display_name": "Date Estimate"
         },
@@ -283,7 +293,7 @@
         }
       ]
     },
-    "format_column": "Format",
+    "join_columns": ["Format", "Data Type"],
     "milestone_column": "Milestone",
     "date_created_column": "Date Created",
     "date_estimate_column": "Date Estimate",

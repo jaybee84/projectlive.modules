@@ -54,12 +54,8 @@ milestone_reporting_module_ui <- function(id){
       ),
       shiny::fluidRow(
         shiny::column(
-          width = 6,
-          plotly::plotlyOutput(ns("plot2a"))
-        ),
-        shiny::column(
-          width = 6,
-          plotly::plotlyOutput(ns("plot2b"))
+          width = 12,
+          plotly::plotlyOutput(ns("plot2"))
         )
       )
     )
@@ -211,7 +207,7 @@ milestone_reporting_module_server <- function(id, data, config){
       })
 
       plot_obj1 <- shiny::reactive({
-        shiny::req(filtered_id_tbl1(), filtered_files_tbl1(), config())
+        shiny::req(merged_tbl1(), config())
         config <- config()
         format_column   <- rlang::sym(config$format_column)
 
@@ -273,6 +269,20 @@ milestone_reporting_module_server <- function(id, data, config){
         )
       })
 
+      filtered_files_tbl2 <- shiny::reactive({
+        shiny::req(files_tbl(), input$milestone_choice, config())
+        config <- config()
+
+        format_column <- rlang::sym(config$format_column)
+        actual_column <- rlang::sym(config$actual_files_column)
+        milestone_column <- rlang::sym(config$milestone_column)
+
+        files_tbl() %>%
+          dplyr::filter(!!milestone_column == input$milestone_choice) %>%
+          dplyr::group_by(!!format_column) %>%
+          dplyr::summarise(!!actual_column := dplyr::n())
+      })
+
       filtered_id_tbl2 <- shiny::reactive({
         shiny::req(id_tbl(), input$milestone_choice, config())
         config <- config()
@@ -289,20 +299,53 @@ milestone_reporting_module_server <- function(id, data, config){
           )
       })
 
-      plot_obj2a <- shiny::reactive({
-        shiny::req(filtered_id_tbl2(), config())
+      merged_tbl2 <- shiny::reactive({
+
+        shiny::req(filtered_id_tbl2(), filtered_files_tbl2(), config())
         config <- config()
 
-        expected_column  <- rlang::sym(config$expected_files_column)
-        format_column    <- rlang::sym(config$format_column)
+        date_column     <- rlang::sym(config$date_created_column)
+        actual_column   <- rlang::sym(config$actual_files_column)
+        format_column   <- rlang::sym(config$format_column)
+        expected_column <- rlang::sym(config$expected_files_column)
 
-        p <- filtered_id_tbl2() %>%
+        filtered_id_tbl2() %>%
+          dplyr::full_join(filtered_files_tbl2(), by = config$format_column) %>%
+          dplyr::mutate(
+            !!actual_column := dplyr::if_else(
+              is.na(!!actual_column),
+              0L,
+              !!actual_column
+            )
+          ) %>%
+          dplyr::select(!!format_column, !!expected_column, !!actual_column) %>%
+          tidyr::pivot_longer(
+            cols = -c(!!format_column),
+            names_to = "Types of Files",
+            values_to = "Number of Files"
+          ) %>%
+          dplyr::mutate(
+            "Types of Files" = base::factor(
+              .data$`Types of Files`,
+              levels = c(
+                config$expected_files_column, config$actual_files_column
+              )
+            )
+          )
+      })
+
+      plot_obj2 <- shiny::reactive({
+        shiny::req(merged_tbl2(), config())
+        config <- config()
+        format_column   <- rlang::sym(config$format_column)
+
+        p <- merged_tbl2() %>%
           ggplot2::ggplot() +
           ggplot2::geom_bar(
             ggplot2::aes(
-              x = !!format_column,
-              y = !!expected_column,
-              fill = !!format_column
+              x = !!rlang::sym("Types of Files"),
+              y = !!rlang::sym("Number of Files"),
+              fill = !!rlang::sym("Types of Files")
             ),
             stat = "identity",
             alpha = 0.8,
@@ -311,6 +354,7 @@ milestone_reporting_module_server <- function(id, data, config){
             position = ggplot2::position_dodge()
           ) +
           sagethemes::theme_sage() +
+          ggplot2::facet_grid(cols = ggplot2::vars(!!rlang::sym(format_column))) +
           ggplot2::theme(
             legend.text = ggplot2::element_text(size = 8),
             axis.text.x  = ggplot2::element_blank(),
@@ -319,78 +363,13 @@ milestone_reporting_module_server <- function(id, data, config){
             legend.position = "right",
             panel.grid.major.y = ggplot2::element_blank(),
             panel.background = ggplot2::element_rect(fill = "grey95")
-          ) +
-          ggplot2::labs(
-            x = "Files expected for this milestone",
-            y = "Number of files"
           )
       })
 
-      output$plot2a <- plotly::renderPlotly({
-        shiny::req(plot_obj2a())
+      output$plot2 <- plotly::renderPlotly({
+        shiny::req(plot_obj2())
 
-        plotly::ggplotly(plot_obj2a()) %>%
-          plotly::layout(
-            autosize = T
-          )
-      })
-
-      filtered_files_tbl2 <- shiny::reactive({
-        shiny::req(files_tbl(), input$milestone_choice, config())
-        config <- config()
-
-        format_column <- rlang::sym(config$format_column)
-        actual_column <- rlang::sym(config$actual_files_column)
-        milestone_column <- rlang::sym(config$milestone_column)
-
-        files_tbl() %>%
-          dplyr::filter(!!milestone_column == input$milestone_choice) %>%
-          dplyr::group_by(!!format_column) %>%
-          dplyr::summarise(!!actual_column := dplyr::n())
-      })
-
-      plot_obj2b <- shiny::reactive({
-        shiny::req(filtered_files_tbl2(), config())
-        config <- config()
-
-        format_column    <- rlang::sym(config$format_column)
-        actual_column    <- rlang::sym(config$actual_files_column)
-        milestone_column <- rlang::sym(config$milestone_column)
-
-        p <- filtered_files_tbl2() %>%
-          ggplot2::ggplot() +
-          ggplot2::geom_bar(
-            ggplot2::aes(
-              x = !!format_column,
-              y = !!actual_column,
-              fill = !!format_column
-            ),
-            stat = "identity",
-            alpha = 0.8,
-            na.rm = TRUE,
-            show.legend = FALSE,
-            position = ggplot2::position_dodge()
-          ) +
-          sagethemes::theme_sage() +
-          ggplot2::theme(
-            legend.text = ggplot2::element_text(size = 8),
-            axis.text.x  = ggplot2::element_blank(),
-            text = ggplot2::element_text(size = 10),
-            strip.text.x = ggplot2::element_text(size = 10),
-            legend.position = "right",
-            panel.grid.major.y = ggplot2::element_blank(),
-            panel.background = ggplot2::element_rect(fill = "grey95")
-          ) +
-          ggplot2::labs(
-            x = "Files annotated with this milestone",
-            y = "Number of files"
-          )
-      })
-
-      output$plot2b <- plotly::renderPlotly({
-        shiny::req(plot_obj2b())
-
-        plotly::ggplotly(plot_obj2b()) %>%
+        plotly::ggplotly(plot_obj2()) %>%
           plotly::layout(
             autosize = T
           )

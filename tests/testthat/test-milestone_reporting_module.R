@@ -30,9 +30,9 @@ test_that("milestone_reporting_module_server", {
       expect_type(output$milestone_choice_ui, "list")
       session$setInputs("milestone_choice" = 2)
       expect_type(filtered_id_tbl2(), "list")
-      expect_type(plot_obj2a(), "list")
       expect_type(filtered_files_tbl2(), "list")
-      expect_type(plot_obj2b(), "list")
+      expect_type(merged_tbl2(), "list")
+      expect_type(plot_obj2(), "list")
     }
   )
 })

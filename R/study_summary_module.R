@@ -43,7 +43,7 @@ study_summary_module_ui <- function(id){
           ),
           plot_module_ui(ns("annotation_activity_plot"), "Annotation Activity"),
           plot_module_ui(ns("publication_status_plot"), "Publication Status"),
-          milestone_reporting_module_ui("milestone_reporting")
+          milestone_reporting_module_ui(ns("milestone_reporting_plot"))
         )
       )
     )
@@ -151,7 +151,7 @@ study_summary_module_server <- function(id, data, config){
       )
 
       milestone_reporting_module_server(
-       id =  "milestone_reporting",
+       id =  "milestone_reporting_plot",
        data = filtered_data,
        config = shiny::reactive(
          purrr::pluck(config(), "milestone_reporting_plot")

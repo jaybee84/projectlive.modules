@@ -8,7 +8,9 @@ test_that("milestone_reporting_module_server", {
     milestone_reporting_module_server,
     args = list(
       "data" = shiny::reactiveVal(nf_data),
-      "config" = shiny::reactiveVal(nf_study_summary_config)
+      "config" = shiny::reactiveVal(
+        nf_study_summary_config$milestone_reporting_plot
+      )
     ),
     {
       expect_type(files_tbl(), "list")

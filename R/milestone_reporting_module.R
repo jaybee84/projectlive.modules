@@ -87,10 +87,10 @@ milestone_reporting_module_server <- function(id, data, config){
       files_tbl <- shiny::reactive({
         shiny::req(data(), config())
         shiny::validate(shiny::need(
-          !is.null(purrr::pluck(config(), "milestone_reporting_plot")),
+          !is.null(config()),
           "Not Tracking Milestones"
         ))
-        config <- purrr::pluck(config(), "milestone_reporting_plot", "files_table")
+        config <- purrr::pluck(config(), "files_table")
         tbl <- purrr::pluck(data(), "tables", config$name)
         format_plot_data_with_config(tbl, config)
       })
@@ -98,10 +98,10 @@ milestone_reporting_module_server <- function(id, data, config){
       id_tbl <- shiny::reactive({
         shiny::req(data(), config())
         shiny::validate(shiny::need(
-          !is.null(purrr::pluck(config(), "milestone_reporting_plot")),
+          !is.null(config()),
           "Not Tracking Milestones"
         ))
-        config <- purrr::pluck(config(), "milestone_reporting_plot", "incoming_data_table")
+        config <- purrr::pluck(config(), "incoming_data_table")
         tbl <- purrr::pluck(data(), "tables", config$name)
         shiny::validate(shiny::need(
           nrow(tbl) > 0,
@@ -114,7 +114,7 @@ milestone_reporting_module_server <- function(id, data, config){
 
       dt_tbl1 <- shiny::reactive({
         shiny::req(id_tbl(), config())
-        config <- purrr::pluck(config(), "milestone_reporting_plot")
+        config <- config()
         date_column        <- rlang::sym(config$date_estimate_column)
         milestone_column   <- rlang::sym(config$milestone_column)
 
@@ -144,7 +144,7 @@ milestone_reporting_module_server <- function(id, data, config){
 
       filtered_id_tbl1 <- shiny::reactive({
         shiny::req(id_tbl(), dt_row1(), config())
-        config <- purrr::pluck(config(), "milestone_reporting_plot")
+        config <- config()
 
         id_tbl() %>%
           dplyr::inner_join(
@@ -160,7 +160,7 @@ milestone_reporting_module_server <- function(id, data, config){
 
       filtered_files_tbl1 <- shiny::reactive({
         shiny::req(files_tbl(), dt_row1(), config())
-        config <- purrr::pluck(config(), "milestone_reporting_plot")
+        config <- config()
 
         date_column <- rlang::sym(config$date_created_column)
         format_column <- rlang::sym(config$format_column)
@@ -178,7 +178,7 @@ milestone_reporting_module_server <- function(id, data, config){
       merged_tbl1 <- shiny::reactive({
 
         shiny::req(filtered_id_tbl1(), filtered_files_tbl1(), config())
-        config <- purrr::pluck(config(), "milestone_reporting_plot")
+        config <- config()
 
         date_column     <- rlang::sym(config$date_created_column)
         actual_column   <- rlang::sym(config$actual_files_column)
@@ -212,7 +212,7 @@ milestone_reporting_module_server <- function(id, data, config){
 
       plot_obj1 <- shiny::reactive({
         shiny::req(filtered_id_tbl1(), filtered_files_tbl1(), config())
-        config <- purrr::pluck(config(), "milestone_reporting_plot")
+        config <- config()
         format_column   <- rlang::sym(config$format_column)
 
         p <- merged_tbl1() %>%
@@ -255,7 +255,7 @@ milestone_reporting_module_server <- function(id, data, config){
 
       milestone_choices <- shiny::reactive({
         shiny::req(id_tbl(), config())
-        config <- purrr::pluck(config(), "milestone_reporting_plot")
+        config <- config()
         milestone_column   <- rlang::sym(config$milestone_column)
 
         id_tbl() %>%
@@ -275,7 +275,7 @@ milestone_reporting_module_server <- function(id, data, config){
 
       filtered_id_tbl2 <- shiny::reactive({
         shiny::req(id_tbl(), input$milestone_choice, config())
-        config <- purrr::pluck(config(), "milestone_reporting_plot")
+        config <- config()
         milestone_column <- rlang::sym(config$milestone_column)
         expected_column  <- rlang::sym(config$expected_files_column)
         format_column    <- rlang::sym(config$format_column)
@@ -291,7 +291,7 @@ milestone_reporting_module_server <- function(id, data, config){
 
       plot_obj2a <- shiny::reactive({
         shiny::req(filtered_id_tbl2(), config())
-        config <- purrr::pluck(config(), "milestone_reporting_plot")
+        config <- config()
 
         expected_column  <- rlang::sym(config$expected_files_column)
         format_column    <- rlang::sym(config$format_column)
@@ -337,7 +337,7 @@ milestone_reporting_module_server <- function(id, data, config){
 
       filtered_files_tbl2 <- shiny::reactive({
         shiny::req(files_tbl(), input$milestone_choice, config())
-        config <- purrr::pluck(config(), "milestone_reporting_plot")
+        config <- config()
 
         format_column <- rlang::sym(config$format_column)
         actual_column <- rlang::sym(config$actual_files_column)
@@ -351,7 +351,7 @@ milestone_reporting_module_server <- function(id, data, config){
 
       plot_obj2b <- shiny::reactive({
         shiny::req(filtered_files_tbl2(), config())
-        config <- purrr::pluck(config(), "milestone_reporting_plot")
+        config <- config()
 
         format_column    <- rlang::sym(config$format_column)
         actual_column    <- rlang::sym(config$actual_files_column)

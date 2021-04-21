@@ -24,34 +24,16 @@ milestone_reporting_module_ui <- function(id){
           shiny::uiOutput(ns("join_column_choice_ui"))
         )
       ),
-      shiny::h1("Internal tracking"),
-      shiny::fluidRow(
-        shiny::column(
-          width = 4,
-          DT::dataTableOutput(ns("dt"))
-        ),
-        shiny::column(
-          width = 4,
-          shiny::numericInput(
-            inputId = ns("days_choice"),
-            label = "Select Amount of Days",
-            value = 60L,
-            min = 0L,
-            step = 1L
-          )
-        ),
-        shiny::column(width = 4, shiny::textOutput(ns("date_range_string")))
-      ),
-      shiny::fluidRow(
-        shiny::column(
-          width = 12,
-          plotly::plotlyOutput(ns("plot1"))
-        )
-      ),
+      # ----
       shiny::h1("Researcher reported milestone upload"),
+      shiny::p(stringr::str_c(
+        "Select a milestone from the dropdown below.",
+        "All files will be selected with the annotated milestone.",
+        sep = " "
+      )),
       shiny::fluidRow(
         shiny::column(
-          width = 12,
+          width = 2,
           shiny::uiOutput(ns("milestone_choice_ui"))
         )
       ),
@@ -59,6 +41,37 @@ milestone_reporting_module_ui <- function(id){
         shiny::column(
           width = 12,
           plotly::plotlyOutput(ns("plot2"))
+        )
+      ),
+      # ----
+      shiny::h1("Internal milestone tracking"),
+      shiny::p(stringr::str_c(
+        "Click on a designated upload date from the table below,",
+        "and select a number of days from the slider blow.",
+        "All files will be selected in a window of that many days before and after the designated upload date.",
+        sep = " "
+      )),
+      shiny::fluidRow(
+        shiny::column(
+          width = 2,
+          DT::dataTableOutput(ns("dt"))
+        ),
+        shiny::column(
+          width = 4,
+          shiny::sliderInput(
+            inputId = ns("days_choice"),
+            label = "Select Amount of Days",
+            step = 1L,
+            min = 30L,
+            max = 365L,
+            value = 60L
+          )
+        )
+      ),
+      shiny::fluidRow(
+        shiny::column(
+          width = 12,
+          plotly::plotlyOutput(ns("plot1"))
         )
       )
     )
@@ -91,7 +104,7 @@ milestone_reporting_module_server <- function(id, data, config){
         shiny::req(join_column_choices())
         shiny::selectInput(
           inputId = ns("join_column_choice"),
-          label = "Choose Column to Join tables",
+          label = "Choose paramater to visualize.",
           choices = join_column_choices()
         )
       })
@@ -127,20 +140,14 @@ milestone_reporting_module_server <- function(id, data, config){
       dt_tbl <- shiny::reactive({
         shiny::req(id_tbl(), config())
         config <- config()
-        date_column        <- rlang::sym(config$date_estimate_column)
-        milestone_column   <- rlang::sym(config$milestone_column)
-
-        tbl <- id_tbl() %>%
-          dplyr::filter(!is.na(!!date_column)) %>%
-          dplyr::select(!!milestone_column, !!date_column) %>%
-          dplyr::arrange(!!date_column) %>%
-          dplyr::distinct()
+        create_internal_tracking_datatable(id_tbl(), config())
       })
 
       output$dt <- DT::renderDataTable(
         base::as.data.frame(dt_tbl()),
         server = TRUE,
-        selection = list(mode = 'single', selected = 1)
+        selection = list(mode = 'single', selected = 1),
+        rownames = FALSE
       )
 
       dt_row <- shiny::reactive({
@@ -165,7 +172,7 @@ milestone_reporting_module_server <- function(id, data, config){
       date_range_string <- shiny::reactive({
         shiny::req(date_range_start(), date_range_end())
         stringr::str_c(
-          "Selecting files with date estimates between ",
+          "You are now viewing files uploaded between ",
           as.character(date_range_start()),
           ", and ",
           as.character(date_range_end()),
@@ -173,22 +180,9 @@ milestone_reporting_module_server <- function(id, data, config){
         )
       })
 
-      output$date_range_string  <- shiny::renderText(date_range_string())
-
       filtered_id_tbl1 <- shiny::reactive({
-        shiny::req(id_tbl(), dt_row(), config(), input$join_column_choice)
-        config <- config()
-
-        id_tbl() %>%
-          dplyr::inner_join(
-            dt_row(),
-            by = c(config$milestone_column, config$date_estimate_column)
-          ) %>%
-          dplyr::select(
-            input$join_column_choice,
-            config$milestone_column,
-            config$expected_files_column
-          )
+        shiny::req(id_tbl(),  config(), dt_row(), input$join_column_choice)
+        filter_internal_data_tbl(id_tbl(),config(), dt_row(), input$join_column_choice)
       })
 
       filtered_files_tbl1 <- shiny::reactive({
@@ -199,58 +193,33 @@ milestone_reporting_module_server <- function(id, data, config){
           date_range_end(),
           input$join_column_choice
         )
-        config <- config()
-
-        date_column   <- rlang::sym(config$date_created_column)
-        join_column   <- rlang::sym(input$join_column_choice)
-        actual_column <- rlang::sym(config$actual_files_column)
-
-        files_tbl() %>%
-          dplyr::filter(
-            !!date_column < date_range_end(),
-            !!date_column > date_range_start()
-          ) %>%
-          dplyr::group_by(!!join_column) %>%
-          dplyr::summarise(!!actual_column := dplyr::n())
+        filter_files_tbl(
+          files_tbl(),
+          config(),
+          date_range_start(),
+          date_range_end(),
+          input$join_column_choice
+        )
       })
 
       merged_tbl1 <- shiny::reactive({
+        shiny::req(
+          filtered_id_tbl1(),
+          filtered_files_tbl1(),
+          config(),
+          input$join_column_choice
+        )
 
-        shiny::req(filtered_id_tbl1(), filtered_files_tbl1(), config())
-        config <- config()
-
-        date_column      <- rlang::sym(config$date_created_column)
-        actual_column    <- rlang::sym(config$actual_files_column)
-        join_column      <- rlang::sym(input$join_column_choice)
-        expected_column  <- rlang::sym(config$expected_files_column)
-
-        filtered_id_tbl1() %>%
-          dplyr::full_join(filtered_files_tbl1(), by = input$join_column_choice) %>%
-          dplyr::mutate(
-            !!actual_column := dplyr::if_else(
-              is.na(!!actual_column),
-              0L,
-              !!actual_column
-            )
-          ) %>%
-          dplyr::select(!!join_column, !!expected_column, !!actual_column) %>%
-          tidyr::pivot_longer(
-            cols = -c(!!input$join_column_choice),
-            names_to = "Types of Files",
-            values_to = "Number of Files"
-          ) %>%
-          dplyr::mutate(
-            "Types of Files" = base::factor(
-              .data$`Types of Files`,
-              levels = c(
-                config$expected_files_column, config$actual_files_column
-              )
-            )
-          )
+        merge_tbls(
+          filtered_id_tbl1(),
+          filtered_files_tbl1(),
+          config(),
+          input$join_column_choice
+        )
       })
 
       plot_obj1 <- shiny::reactive({
-        shiny::req(merged_tbl1(), config(), input$join_column_choice)
+        shiny::req(merged_tbl1(), config(), input$join_column_choice, date_range_string())
         config <- config()
         join_column <- rlang::sym(input$join_column_choice)
 
@@ -270,6 +239,7 @@ milestone_reporting_module_server <- function(id, data, config){
           ) +
           sagethemes::theme_sage() +
           ggplot2::facet_grid(cols = ggplot2::vars(!!rlang::sym(join_column))) +
+          ggplot2::ggtitle(date_range_string()) +
           ggplot2::theme(
             legend.text = ggplot2::element_text(size = 8),
             axis.text.x  = ggplot2::element_blank(),

@@ -19,7 +19,11 @@ milestone_reporting_module_ui <- function(id){
       collapsible = FALSE,
       shiny::fluidRow(
         shiny::column(
-          width = 6,
+          width = 4,
+          DT::dataTableOutput(ns("dt"))
+        ),
+        shiny::column(
+          width = 4,
           shiny::numericInput(
             inputId = ns("days_choice"),
             label = "Select Amount of Days",
@@ -28,10 +32,7 @@ milestone_reporting_module_ui <- function(id){
             step = 1L
           )
         ),
-        shiny::column(
-          width = 6,
-          DT::dataTableOutput(ns("dt1"))
-        )
+        shiny::column(width = 4, shiny::textOutput(ns("date_range_string")))
       ),
       shiny::fluidRow(
         shiny::column(
@@ -108,7 +109,7 @@ milestone_reporting_module_server <- function(id, data, config){
 
       # plot1 ----
 
-      dt_tbl1 <- shiny::reactive({
+      dt_tbl <- shiny::reactive({
         shiny::req(id_tbl(), config())
         config <- config()
         date_column        <- rlang::sym(config$date_estimate_column)
@@ -118,33 +119,60 @@ milestone_reporting_module_server <- function(id, data, config){
           dplyr::filter(!is.na(!!date_column)) %>%
           dplyr::select(!!milestone_column, !!date_column) %>%
           dplyr::arrange(!!date_column) %>%
-          dplyr::distinct() %>%
-          dplyr::mutate(
-            "Date Range Start" =
-              !!date_column - lubridate::duration(input$days_choice, 'days'),
-            "Date Range End" =
-              !!date_column + lubridate::duration(input$days_choice, 'days')
-          )
+          dplyr::distinct()
+          # dplyr::mutate(
+          #   "Date Range Start" =
+          #     !!date_column - lubridate::duration(input$days_choice, 'days'),
+          #   "Date Range End" =
+          #     !!date_column + lubridate::duration(input$days_choice, 'days')
+          # )
       })
 
-      output$dt1 <- DT::renderDataTable(
-        base::as.data.frame(dt_tbl1()),
+      output$dt <- DT::renderDataTable(
+        base::as.data.frame(dt_tbl()),
         server = TRUE,
         selection = 'single'
       )
 
-      dt_row1 <- shiny::reactive({
-        shiny::req(dt_tbl1(), input$dt1_rows_selected)
-        dplyr::slice(dt_tbl1(), input$dt1_rows_selected)
+      dt_row <- shiny::reactive({
+        shiny::req(dt_tbl(), input$dt_rows_selected)
+        dplyr::slice(dt_tbl(), input$dt_rows_selected)
       })
 
+      date_range_start <- shiny::reactive({
+        shiny::req(input$days_choice, dt_row(), config())
+        date_column <- rlang::sym(config()$date_estimate_column)
+        date <- dplyr::pull(dt_row(), !!date_column)
+        date - lubridate::duration(input$days_choice, 'days')
+      })
+
+      date_range_end <- shiny::reactive({
+        shiny::req(input$days_choice, dt_row(), config())
+        date_column <- rlang::sym(config()$date_estimate_column)
+        date <- dplyr::pull(dt_row(), !!date_column)
+        date + lubridate::duration(input$days_choice, 'days')
+      })
+
+      date_range_string <- shiny::reactive({
+        shiny::req(date_range_start(), date_range_end())
+        stringr::str_c(
+          "Selecting files with date estimates between ",
+          as.character(date_range_start()),
+          ", and ",
+          as.character(date_range_end()),
+          "."
+        )
+      })
+
+      output$date_range_string  <- shiny::renderText(date_range_string())
+
       filtered_id_tbl1 <- shiny::reactive({
-        shiny::req(id_tbl(), dt_row1(), config())
+        shiny::req(id_tbl(), dt_row(), config())
         config <- config()
 
         id_tbl() %>%
           dplyr::inner_join(
-            dt_row1(),
+            dt_row(),
             by = c(config$milestone_column, config$date_estimate_column)
           ) %>%
           dplyr::select(
@@ -155,7 +183,7 @@ milestone_reporting_module_server <- function(id, data, config){
       })
 
       filtered_files_tbl1 <- shiny::reactive({
-        shiny::req(files_tbl(), dt_row1(), config())
+        shiny::req(files_tbl(), config(), date_range_start(), date_range_end())
         config <- config()
 
         date_column <- rlang::sym(config$date_created_column)
@@ -164,8 +192,8 @@ milestone_reporting_module_server <- function(id, data, config){
 
         files_tbl() %>%
           dplyr::filter(
-            !!date_column < dt_row1()[["Date Range End"]],
-            !!date_column > dt_row1()[["Date Range Start"]]
+            !!date_column < date_range_end(),
+            !!date_column > date_range_start()
           ) %>%
           dplyr::group_by(!!format_column) %>%
           dplyr::summarise(!!actual_column := dplyr::n())

@@ -16,7 +16,8 @@ incoming_data <-
       "reportMilestone",
       "estimatedMinNumSamples",
       "fundingAgency",
-      "projectSynID"
+      "projectSynID",
+      "dataType"
     ),
     col_types = readr::cols(
       "estimatedMinNumSamples" = readr::col_integer(),
@@ -36,6 +37,7 @@ incoming_data <-
   ) %>%
   tidyr::unnest("fileFormat") %>%
   dplyr::group_by(
+    .data$dataType,
     .data$fileFormat,
     .data$date_uploadestimate,
     .data$reportMilestone,

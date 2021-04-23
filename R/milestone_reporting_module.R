@@ -19,7 +19,8 @@ milestone_reporting_module_ui <- function(id){
       collapsible = FALSE,
       shiny::h1(stringr::str_c(
         "The following plots track the expected and actual data uploads to this",
-        "study associated with each milestone."
+        "study associated with each milestone.",
+        sep = " "
       )),
       shiny::p("Select the visualization type for the plots from the list below"),
       shiny::fluidRow(
@@ -29,6 +30,7 @@ milestone_reporting_module_ui <- function(id){
         )
       ),
       # ----
+      shiny::hr(style = "border-top: 1px solid #000000;"),
       shiny::h1("Researcher reported milestone upload"),
       shiny::p(stringr::str_c(
         "Select a milestone from the list below.",
@@ -49,6 +51,7 @@ milestone_reporting_module_ui <- function(id){
         )
       ),
       # ----
+      shiny::hr(style = "border-top: 1px solid #000000;"),
       shiny::h1("Sage Internal milestone tracking"),
       shiny::p(stringr::str_c(
         "Click on a row in the table below to select the milestone of interest.",

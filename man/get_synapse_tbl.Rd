@@ -4,7 +4,7 @@
 \alias{get_synapse_tbl}
 \title{Get Synapse Table}
 \usage{
-get_synapse_tbl(syn, table_id, columns = NULL, limit = NULL)
+get_synapse_tbl(syn, table_id, columns = NULL, limit = NULL, ...)
 }
 \arguments{
 \item{syn}{An object of reticulate::import("synapseclient")$Synapse()}
@@ -14,6 +14,8 @@ get_synapse_tbl(syn, table_id, columns = NULL, limit = NULL)
 \item{columns}{A vector of columns to get from the syanpse table}
 
 \item{limit}{An integer, limits the number of rows in the table}
+
+\item{...}{Argument list to readr::read_csv()}
 }
 \description{
 Get Synapse Table

@@ -12,12 +12,12 @@ milestone_reporting_module_ui <- function(id){
 
   shiny::tagList(
     shinydashboard::box(
-      title = "Milestone tracking",
+      title = "Milestone tracker",
       status = "primary",
       solidHeader = TRUE,
       width = 12,
       collapsible = FALSE,
-      shiny::h1(stringr::str_c(
+      shiny::h4(stringr::str_c(
         "The following plots track the expected and actual data uploads to this",
         "study associated with each milestone.",
         sep = " "
@@ -30,61 +30,75 @@ milestone_reporting_module_ui <- function(id){
         )
       ),
       # ----
-      shiny::hr(style = "border-top: 1px solid #000000;"),
-      shiny::h1("Researcher reported milestone upload"),
-      shiny::p(stringr::str_c(
-        "Select a milestone from the list below.",
-        "The plots will show the expected data files for this milestone,",
-        "and the uploaded data files that the researcher reported for this milestone.",
-        sep = " "
-      )),
-      shiny::fluidRow(
-        shiny::column(
-          width = 2,
-          shiny::uiOutput(ns("milestone_choice_ui"))
-        )
-      ),
-      shiny::fluidRow(
-        shiny::column(
-          width = 12,
-          plotly::plotlyOutput(ns("plot2"))
-        )
-      ),
-      # ----
-      shiny::hr(style = "border-top: 1px solid #000000;"),
-      shiny::h1("Sage Internal milestone tracking"),
-      shiny::p(stringr::str_c(
-        "Click on a row in the table below to select the milestone of interest.",
-        "Then use the slider on the right to determine a time window around the",
-        "estimated date of upload to find all files uploaded during this window",
-        sep = " "
-      )),
-      shiny::fluidRow(
-        shiny::column(
-          width = 2,
-          DT::dataTableOutput(ns("dt"))
+      shinydashboard::box(
+        title = "Researcher reported milestone upload",
+        status = "primary",
+        solidHeader = TRUE,
+        width = 12,
+        shiny::p(stringr::str_c(
+          "Select a milestone from the list below.",
+          "The plots will show the expected data files for this milestone,",
+          "and the uploaded data files that the researcher reported for this milestone.",
+          sep = " "
+        )),
+        shiny::fluidRow(
+          shiny::column(
+            width = 2,
+            shiny::uiOutput(ns("milestone_choice_ui"))
+          )
         ),
-        shiny::column(
-          width = 4,
-          shiny::sliderInput(
-            inputId = ns("days_choice"),
-            label = "Select Amount of Days",
-            step = 1L,
-            min = 30L,
-            max = 365L,
-            value = 60L
+        shiny::textOutput(ns("plot_title2")),
+        shiny::fluidRow(
+          shiny::column(
+            width = 12,
+            plotly::plotlyOutput(ns("plot2"))
           )
         )
       ),
-      shiny::fluidRow(
-        shiny::column(
-          width = 12,
-          plotly::plotlyOutput(ns("plot1"))
+      # ----
+      shinydashboard::box(
+        title = "Sage Internal milestone tracking",
+        status = "primary",
+        solidHeader = TRUE,
+        width = 12,
+        shiny::fluidRow(
+          shiny::column(
+            width = 12,
+            shiny::p(stringr::str_c(
+              "Click on a row in the table below to select the milestone of interest.",
+              "Then use the slider on the right to determine a time window around the",
+              "estimated date of upload to find all files uploaded during this window",
+              sep = " "
+            ))
+          )
+        ),
+        shiny::fluidRow(
+          shiny::column(
+            width = 6,
+            DT::dataTableOutput(ns("dt"))
+          ),
+          shiny::column(
+            width = 6,
+            shiny::sliderInput(
+              inputId = ns("days_choice"),
+              label = "Select Amount of Days",
+              step = 1L,
+              min = 30L,
+              max = 365L,
+              value = 60L
+            )
+          )
+        ),
+        shiny::textOutput(ns("plot_title1")),
+        shiny::fluidRow(
+          shiny::column(
+            width = 12,
+            plotly::plotlyOutput(ns("plot1"))
+          )
         )
       )
     )
   )
-
 }
 
 # Milestone Reporting Module Server
@@ -145,6 +159,15 @@ milestone_reporting_module_server <- function(id, data, config){
 
       # plot1 ----
 
+      # output$value_box_1 <- shinydashboard::renderValueBox(
+      #   shinydashboard::valueBox(
+      #     value = "Sage Internal milestone tracking",
+      #     subtitle = NULL,
+      #     width = NULL,
+      #     color = "blue"
+      #   )
+      # )
+
       dt_tbl <- shiny::reactive({
         shiny::req(id_tbl(), config())
         config <- config()
@@ -192,6 +215,11 @@ milestone_reporting_module_server <- function(id, data, config){
           as.character(date_range_end()),
           "."
         )
+      })
+
+      output$plot_title1 <- shiny::renderText({
+        shiny::req(plot_title1())
+        plot_title1()
       })
 
       filtered_files_tbl1 <- shiny::reactive({
@@ -247,13 +275,11 @@ milestone_reporting_module_server <- function(id, data, config){
       plot_obj1 <- shiny::reactive({
         shiny::req(
           merged_tbl1(),
-          input$join_column_choice,
-          plot_title1()
+          input$join_column_choice
         )
         create_milestone_reporting_plot(
           merged_tbl1(),
-          input$join_column_choice,
-          title = plot_title1()
+          input$join_column_choice
         )
       })
 
@@ -295,6 +321,11 @@ milestone_reporting_module_server <- function(id, data, config){
           input$milestone_choice,
           "."
         )
+      })
+
+      output$plot_title2 <- shiny::renderText({
+        shiny::req(plot_title2())
+        plot_title2()
       })
 
       filtered_files_tbl2 <- shiny::reactive({
@@ -347,13 +378,11 @@ milestone_reporting_module_server <- function(id, data, config){
       plot_obj2 <- shiny::reactive({
         shiny::req(
           merged_tbl2(),
-          input$join_column_choice,
-          plot_title2()
+          input$join_column_choice
         )
         create_milestone_reporting_plot(
           merged_tbl2(),
-          input$join_column_choice,
-          title = plot_title2()
+          input$join_column_choice
         )
       })
 

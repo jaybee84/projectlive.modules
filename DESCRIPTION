@@ -26,6 +26,7 @@ Imports:
   forcats (>= 0.5),
   ggplot2 (>= 3.3),
   glue (>= 1.0),
+  httr (>= 1.0),
   jsonlite (>= 1.0),
   kableExtra (>= 1.0),
   knitr (>= 1.0),
@@ -41,6 +42,8 @@ Imports:
   shinydashboard (>= 0.7),
   stringr (>= 1.0),
   tibble (>= 3.0),
-  tidyr (>= 1.0)
+  tidyr (>= 1.0),
+  waiter (>= 0.2),
+  yaml (>= 2.0)
 Remotes:
   Sage-Bionetworks/sagethemes@main

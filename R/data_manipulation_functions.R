@@ -76,7 +76,7 @@ create_merged_table_with_config <- function(group_object, config){
     magrittr::extract(unlist(config$tables)) %>%
     purrr::map2(
       purrr::map(config$columns, unlist),
-      dplyr::select
+      ~dplyr::select(.x, dplyr::all_of(.y))
     ) %>%
     purrr::reduce(dplyr::left_join, by = config$join_column)
 }

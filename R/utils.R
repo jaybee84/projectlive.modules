@@ -1,4 +1,4 @@
-utils::globalVariables(c(".", "where"))
+utils::globalVariables(c(".", "where", "OAUTH_LIST"))
 
 get_system_path <- function(name, extension, folder){
   name %>%

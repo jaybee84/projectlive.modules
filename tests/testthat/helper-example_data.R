@@ -10,3 +10,5 @@ csbc_data <- get_csbc_data()
 csbc_summary_snapshot_config   <- get_csbc_summary_snapshot_config()
 csbc_study_summary_config      <- get_csbc_study_summary_config()
 csbc_publication_status_config <- get_csbc_publication_status_config()
+
+sagethemes::import_lato()

@@ -83,6 +83,12 @@ get_nf_publication_status_config <- function(){
     jsonlite::read_json()
 }
 
+get_nf_new_submissions_config <- function(){
+  "nf_new_submissions_module" %>%
+    get_json_path() %>%
+    jsonlite::read_json()
+}
+
 get_csbc_data <- function(){
   list(
     "tables" = list(

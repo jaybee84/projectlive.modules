@@ -56,12 +56,22 @@ incoming_data <-
 
 saveRDS(incoming_data, "inst/RDS/nf_incoming_data.rds")
 
-nf_files <-
+nf_studies2 <- nf_studies %>%
+  dplyr::select(
+    "studyName",
+    "studyLeads",
+    "fundingAgency",
+    "studyId"
+  )
+
+all_nf_files <-
   get_synapse_tbl(
     syn,
     "syn16858331",
     columns = c(
       "id",
+      "name",
+      "parentId",
       "individualID",
       "specimenID",
       "assay",
@@ -75,7 +85,9 @@ nf_files <-
       "species",
       "projectId",
       "reportMilestone",
-      "createdOn"
+      "createdOn",
+      "benefactorId",
+      "studyName"
     ),
     col_types = readr::cols(
       "consortium" = readr::col_character(),
@@ -83,17 +95,33 @@ nf_files <-
     )
   ) %>%
   format_date_columns() %>%
-  dplyr::select(-c("createdOn")) %>%
-  dplyr::inner_join(
-    dplyr::select(
-      nf_studies,
-      "studyName",
-      "studyLeads",
-      "fundingAgency",
-      "studyId"
-    ),
-    by = c("projectId" = "studyId")
-  )
+  dplyr::select(-c("createdOn"))
+
+
+
+nf_files <- dplyr::bind_rows(
+
+  nf_files1 <- dplyr::inner_join(all_nf_files, nf_studies2, by = "studyName"),
+
+  nf_files2 <- all_nf_files %>%
+    dplyr::filter(!id %in% nf_files1$id) %>%
+    dplyr::select(-studyName) %>%
+    dplyr::inner_join(nf_studies2, by = c("projectId" = "studyId"), keep = T),
+
+  nf_files3 <- all_nf_files %>%
+    dplyr::filter(!id %in% c(nf_files1$id, nf_files2$id)) %>%
+    dplyr::select(-studyName) %>%
+    dplyr::inner_join(nf_studies2, by = c("benefactorId" = "studyId"), keep = T),
+
+  nf_files4 <- all_nf_files %>%
+    dplyr::filter(!id %in% c(nf_files1$id, nf_files2$id, nf_files3$id)) %>%
+    dplyr::select(-studyName) %>%
+    dplyr::mutate(
+      "studyName" = "NA due to older study structure",
+      "studyLeads" = list("NA due to older study structure")
+    )
+
+)
 
 saveRDS(nf_files, "inst/RDS/nf_files.rds")
 

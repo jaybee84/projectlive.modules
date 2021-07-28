@@ -137,7 +137,7 @@ saveRDS(nf_tools, "inst/RDS/nf_tools.rds")
 # csbc ----
 
 csbc_studies <-
-  projectlive.modules::get_synapse_tbl(
+  get_synapse_tbl(
     syn,
     "syn21918972"
   ) %>%
@@ -146,7 +146,7 @@ csbc_studies <-
 saveRDS(csbc_studies, "inst/RDS/csbc_studies.rds")
 
 csbc_files <-
-  projectlive.modules::get_synapse_tbl(
+  get_synapse_tbl(
     syn,
     "syn9630847",
     columns = c(

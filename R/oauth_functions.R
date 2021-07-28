@@ -4,9 +4,9 @@
 #' @param ui_function A function that returns UI elements
 #'
 #' @export
-oauth_ui <- function(request, ui_function) {
+oauth_ui <- function(request, ui_function, oauth_list) {
   if (!has_auth_code(shiny::parseQueryString(request$QUERY_STRING))) {
-    return(create_oauth_url_script_html(OAUTH_LIST))
+    return(create_oauth_url_script_html(oauth_list))
   } else {
     return(ui_function())
   }
@@ -96,7 +96,7 @@ create_oauth_list <- function(
   config_file = "inst/oauth_config.yaml",
   config      = NULL,
   scope       = "openid view download modify",
-  claims_list = get_synapse_claims_list()
+  claims_list = list("userid" = NULL)
 ){
   if(is.null(config)){
     config   <- get_oauth_config(config_file)
@@ -137,7 +137,9 @@ has_auth_code <- function(params) {
 }
 
 
-get_synapse_claims_list <- function(){
+#' Get Extended Synapse Claims List
+#' @export
+get_extended_synapse_claims_list <- function(){
   # These are the user info details ('claims') requested from Synapse:
   return(
     list(

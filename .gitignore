@@ -3,3 +3,4 @@
 .RData
 .Ruserdata
 R/use_conda_env.R
+inst/oauth_config.yaml

@@ -59,3 +59,86 @@ read_rds_file_from_synapse <- function(synapse_id, syn){
     purrr::pluck("path") %>%
     readRDS(.)
 }
+
+get_acl_principal_ids <- function(syn, entity_id){
+  principal_ids <-
+    glue::glue("/entity/{entity_id}/acl") %>%
+    syn$restGET() %>%
+    purrr::pluck("resourceAccess") %>%
+    purrr::map_chr("principalId")
+}
+
+get_user_teams_ids <- function(syn, user_id){
+  team_ids <-
+    glue::glue("/user/{user_id}/team?limit=10000") %>%
+    syn$restGET() %>%
+    purrr::pluck("results") %>%
+    purrr::map_chr("id")
+}
+
+format_synapse_table_query <- function(
+  syn,
+  query_string,
+  list_columns = NULL,
+  ...
+){
+  tbl <- query_string %>%
+    syn$tableQuery(includeRowIdAndRowVersion = F) %>%
+    purrr::pluck("filepath") %>%
+    readr::read_csv(...)
+
+  if(is.null(list_columns)){
+    list_columns <- names(tbl)
+  }
+
+  tbl %>%
+    dplyr::mutate_at(
+      list_columns, ~stringr::str_remove_all(.x, '[\\"\\[\\]\\\\]')
+    ) %>%
+    dplyr::mutate_at(list_columns, ~stringr::str_split(.x, ", "))
+}
+
+# synapse module functions ----
+
+get_allowed_groups_from_synapse_user_id <- function(syn, config, synapse_user_id){
+  user_teams    <- get_user_teams_ids(syn, synapse_user_id)
+  allowed_teams <- get_acl_principal_ids(syn, config$acl_synapse_id)
+  allowed_user_teams <- user_teams[user_teams %in% allowed_teams]
+
+  create_team_table_from_synapse(syn, config) %>%
+    dplyr::filter(.data$teams %in% allowed_user_teams) %>%
+    dplyr::pull("groups") %>%
+    unlist() %>%
+    unique() %>%
+    sort()
+}
+
+create_team_table_from_synapse <- function(syn, config){
+  synapse_id <- purrr::pluck(config, "team_table", "synapse_id")
+  team_col <- purrr::pluck(config, "team_table", "team_column")
+  group_col <- purrr::pluck(config, "team_table", "group_column")
+
+  tbl <-
+    glue::glue(
+      "SELECT '{team_col}' AS t, '{group_col}' AS g FROM {synapse_id}"
+    ) %>%
+    format_synapse_table_query(syn, query_string = .) %>%
+    dplyr::select("teams" = "t", "groups" = "g")
+}
+
+get_tables_from_synapse <- function(syn, config){
+  config %>%
+    purrr::pluck("data_files") %>%
+    purrr::map_chr("synapse_id") %>%
+    purrr::map(read_rds_file_from_synapse, syn)
+}
+
+filter_table_list <- function(table_list, config, values){
+  purrr::map(
+    table_list,
+    filter_list_column,
+    config$team_filter_column,
+    values
+  )
+}
+

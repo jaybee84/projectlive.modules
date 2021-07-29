@@ -4,12 +4,19 @@
 \alias{oauth_ui}
 \title{OAUth UI}
 \usage{
-oauth_ui(request, ui_function)
+oauth_ui(request, ui_function, oauth_list)
 }
 \arguments{
 \item{request}{Request Internal parameter for Shiny}
 
 \item{ui_function}{A function that returns UI elements}
+
+\item{oauth_list}{A named list. The list must have the following items:
+\itemize{
+\item "endpoint" an object of type httr::oauth_endpoint()
+\item "app" an object pf type httr::oauth_app()
+\item "scope" a character vector
+}}
 }
 \description{
 OAUth UI

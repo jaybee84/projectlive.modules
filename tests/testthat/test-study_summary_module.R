@@ -8,7 +8,7 @@ test_that("nf_study_summary_module_server", {
     study_summary_module_server,
     args = list(
       "data" = shiny::reactiveVal(nf_data),
-      "config" = shiny::reactiveVal(nf_study_summary_config)
+      "config" = shiny::reactiveVal(get_nf_study_summary_config())
     ),
     {
 
@@ -26,7 +26,7 @@ test_that("nf_gff_study_summary_module_server", {
     study_summary_module_server,
     args = list(
       "data" = shiny::reactive(nf_gff_data),
-      "config" = shiny::reactive(nf_study_summary_config)
+      "config" = shiny::reactive(get_nf_study_summary_config())
     ),
     {
       expect_type(output$header_text, "character")
@@ -48,7 +48,7 @@ test_that("csbc_study_summary_module_server", {
     study_summary_module_server,
     args = list(
       "data" = shiny::reactiveVal(csbc_data),
-      "config" = shiny::reactiveVal(csbc_study_summary_config)
+      "config" = shiny::reactiveVal(get_csbc_study_summary_config())
     ),
     {
       expect_type(output$header_text, "character")

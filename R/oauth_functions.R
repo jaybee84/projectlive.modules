@@ -1,7 +1,13 @@
+# ui ----
+
 #' OAUth UI
 #'
 #' @param request Request Internal parameter for Shiny
 #' @param ui_function A function that returns UI elements
+#' @param oauth_list A named list. The list must have the following items:
+#' - "endpoint" an object of type httr::oauth_endpoint()
+#' - "app" an object pf type httr::oauth_app()
+#' - "scope" a character vector
 #'
 #' @export
 oauth_ui <- function(request, ui_function, oauth_list) {
@@ -11,6 +17,29 @@ oauth_ui <- function(request, ui_function, oauth_list) {
     return(ui_function())
   }
 }
+
+#' Create OAuth URL Script HTML
+#'
+#' @param oauth_list A named list. The list must have the following items:
+#' - "endpoint" an object of type httr::oauth_endpoint()
+#' - "app" an object pf type httr::oauth_app()
+#' - "scope" a character vector
+#'
+#' @export
+create_oauth_url_script_html <- function(oauth_list){
+
+  authorization_url = httr::oauth2.0_authorize_url(
+    endpoint = oauth_list$endpoint,
+    app      = oauth_list$app,
+    scope    = oauth_list$scope
+  )
+
+  script <- shiny::tags$script(shiny::HTML(sprintf(
+    "location.replace(\"%s\");", authorization_url
+  )))
+}
+
+# server ----
 
 #' Get OAuth Access Token
 #'
@@ -58,28 +87,19 @@ get_oauth_access_token <- function(oauth_list, session){
   access_token <- token_response$access_token
 }
 
-
-
-#' Create OAuth URL Script HTML
+#' Get OAuth Request With Token
 #'
-#' @param oauth_list A named list. The list must have the following items:
-#' - "endpoint" an object of type httr::oauth_endpoint()
-#' - "app" an object pf type httr::oauth_app()
-#' - "scope" a character vector
+#' @param access_token An OAuth access token
 #'
 #' @export
-create_oauth_url_script_html <- function(oauth_list){
-
-  authorization_url = httr::oauth2.0_authorize_url(
-    endpoint = oauth_list$endpoint,
-    app      = oauth_list$app,
-    scope    = oauth_list$scope
-  )
-
-  script <- shiny::tags$script(shiny::HTML(sprintf(
-    "location.replace(\"%s\");", authorization_url
-  )))
+get_oauth_request_with_token <- function(access_token){
+  response <- httr::content(httr::GET(
+    "https://repo-prod.prod.sagebase.org/auth/v1/oauth2/userinfo",
+    httr::add_headers(Authorization = glue::glue("Bearer {access_token}"))
+  ))
 }
+
+# global ----
 
 #' Create OAuth List
 #'

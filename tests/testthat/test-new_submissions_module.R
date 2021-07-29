@@ -7,7 +7,7 @@ test_that("new_submissions_module_server", {
     new_submissions_module_server,
     args = list(
       "data" = shiny::reactiveVal(nf_data),
-      "config" = shiny::reactiveVal(nf_new_submissions_config)
+      "config" = shiny::reactiveVal(get_nf_new_submissions_config())
     ),
     {
       session$setInputs(

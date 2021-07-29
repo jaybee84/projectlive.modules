@@ -8,7 +8,7 @@ test_that("summary_snapshot_module_server", {
     summary_snapshot_module_server,
     args = list(
       "data" = shiny::reactiveVal(nf_data),
-      "config" = shiny::reactiveVal(nf_summary_snapshot_config)
+      "config" = shiny::reactiveVal(get_nf_summary_snapshot_config())
     ),
     {
       expect_type(output$header_text, "character")

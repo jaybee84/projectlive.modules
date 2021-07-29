@@ -8,7 +8,7 @@ test_that("plot_module_server_nf1", {
     plot_module_server,
     args = list(
       "data" = shiny::reactiveVal(nf_data),
-      "config" = nf_summary_snapshot_config %>%
+      "config" = get_nf_summary_snapshot_config() %>%
         purrr::pluck("initiative_activity") %>%
         shiny::reactiveVal(),
       "plot_func" = shiny::reactiveVal("create_initiative_activity_plot")
@@ -25,7 +25,7 @@ test_that("plot_module_server_nf2", {
     plot_module_server,
     args = list(
       "data" = shiny::reactiveVal(nf_data),
-      "config" = nf_publication_status_config %>%
+      "config" = get_nf_publication_status_config() %>%
         purrr::pluck("publication_status") %>%
         shiny::reactiveVal(),
       "plot_func" = shiny::reactiveVal("create_publication_status_plot")
@@ -42,7 +42,7 @@ test_that("plot_module_server_nf3", {
     plot_module_server,
     args = list(
       "data" = shiny::reactiveVal(nf_ntap_data),
-      "config" = nf_publication_status_config %>%
+      "config" = get_nf_publication_status_config() %>%
         purrr::pluck("publication_status") %>%
         shiny::reactiveVal(),
       "plot_func" = shiny::reactiveVal("create_publication_status_plot")
@@ -59,7 +59,7 @@ test_that("plot_module_server_csbc1", {
     plot_module_server,
     args = list(
       "data" = shiny::reactiveVal(csbc_data),
-      "config" = csbc_summary_snapshot_config %>%
+      "config" = get_csbc_summary_snapshot_config() %>%
         purrr::pluck("initiative_activity") %>%
         shiny::reactiveVal(),
       "plot_func" = shiny::reactiveVal("create_initiative_activity_plot")
@@ -76,7 +76,7 @@ test_that("plot_module_server_csbc2", {
     plot_module_server,
     args = list(
       "data" = shiny::reactiveVal(csbc_data),
-      "config" = csbc_publication_status_config %>%
+      "config" = get_csbc_publication_status_config() %>%
         purrr::pluck("publication_disease") %>%
         shiny::reactiveVal(),
       "plot_func" = shiny::reactiveVal("create_publication_disease_plot")
@@ -93,7 +93,7 @@ test_that("plot_module_server_csbc3", {
     plot_module_server,
     args = list(
       "data" = shiny::reactiveVal(csbc_data),
-      "config" = csbc_summary_snapshot_config %>%
+      "config" = get_csbc_summary_snapshot_config() %>%
         purrr::pluck("resources_generated") %>%
         shiny::reactiveVal(),
       "plot_func" = shiny::reactiveVal("create_resources_generated_plot")

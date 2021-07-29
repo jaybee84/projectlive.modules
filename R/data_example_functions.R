@@ -65,6 +65,12 @@ get_nf_ctf_data <- function(){
   return(nf_ctf_data)
 }
 
+get_nf_synapse_config <- function(){
+  "nf_synapse_module" %>%
+    get_json_path() %>%
+    jsonlite::read_json()
+}
+
 get_nf_summary_snapshot_config <- function(){
   "nf_summary_snapshot_module" %>%
     get_json_path() %>%
@@ -112,6 +118,12 @@ get_csbc_data <- function(){
   )
 }
 
+get_csbc_synapse_config <- function(){
+  "csbc_synapse_module" %>%
+    get_json_path() %>%
+    jsonlite::read_json()
+}
+
 get_csbc_summary_snapshot_config <- function(){
   "csbc_summary_snapshot_module" %>%
     get_json_path() %>%
@@ -126,6 +138,12 @@ get_csbc_study_summary_config <- function(){
 
 get_csbc_publication_status_config <- function(){
   "csbc_publication_status_module" %>%
+    get_json_path() %>%
+    jsonlite::read_json()
+}
+
+get_csbc_new_submissions_config <- function(){
+  "csbc_new_submissions_module" %>%
     get_json_path() %>%
     jsonlite::read_json()
 }

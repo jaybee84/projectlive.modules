@@ -53,76 +53,32 @@ new_submissions_module_server <- function(id, data, config){
     function(input, output, session) {
       ns <- session$ns
 
-      # output$funding_agency <- shiny::renderText({
-      #   print(glue::glue(
-      #     "You are now viewing recent additions to studies moderated by {data()$selected_group}."
-      #   ))
-      # })
-
       output$header_text <- shiny::renderText({
         shiny::req(config())
         glue::glue(config()$header_text)
       })
 
+      minimum_date <- shiny::reactive({
+        shiny::req(input$new_files_day_choice)
+        lubridate::now() - lubridate::ddays(input$new_files_day_choice)
+      })
+
       new_files_table <- shiny::reactive({
 
-        shiny::req(data(), config, input$new_files_day_choice)
+        shiny::req(data(), config, minimum_date())
 
-        param_list <- purrr::pluck(
-          config,
-          "new_submissions",
+        config <- purrr::pluck(
+          config(),
           "new_files_table"
         )
 
-        minimum_date <-
-          lubridate::now() -
-          lubridate::ddays(input$new_files_day_choice)
-
-        files_table <- data() %>%
+        data <- data() %>%
           purrr::pluck("tables", "files") %>%
-          dplyr::select(-"studyLeads") %>%
-          dplyr::filter(!!rlang::sym(param_list$date_column) > minimum_date) %>%
-          dplyr::arrange(dplyr::desc(!!rlang::sym(param_list$date_column)))
+          dplyr::filter(!!rlang::sym(config$date_column) > minimum_date()) %>%
+          dplyr::arrange(dplyr::desc(!!rlang::sym(config$date_column))) %>%
+          format_plot_data_with_config(config$table)
 
-        studies_table <- data() %>%
-          purrr::pluck("tables", "studies")
-
-        data1 <- files_table %>%
-          dplyr::inner_join(
-            dplyr::select(studies_table, studyName, studyLeads),
-            by = "studyName"
-          )
-        data2 <- files_table %>%
-          dplyr::filter(!id %in% data1$id) %>%
-          dplyr::select(-studyName) %>%
-          dplyr::inner_join(
-            dplyr::select(studies_table, studyName, studyId, studyLeads),
-            by = c("projectId" = "studyId")
-          )
-
-        data3 <- files_table %>%
-          dplyr::filter(!id %in% c(data1$id, data2$id)) %>%
-          dplyr::select(-studyName) %>%
-          dplyr::inner_join(
-            dplyr::select(studies_table, studyName, studyId, studyLeads),
-            by = c("benefactorId" = "studyId")
-          )
-
-        data_a <-
-          dplyr::bind_rows(data1, data2, data3) %>%
-          format_plot_data_with_param_list(param_list$table1)
-
-        data_b <- files_table %>%
-          dplyr::filter(!id %in% c(data1$id, data2$id, data3$id)) %>%
-          dplyr::mutate(
-            "studyName" = NA_character_, "studyLeads" = NA_character_
-          ) %>%
-          format_plot_data_with_param_list(param_list$table2)
-
-
-        data <- dplyr::bind_rows(data_a, data_b)
-
-        validate(need(nrow(data) > 0, param_list$empty_table_message))
+        shiny::validate(shiny::need(nrow(data) > 0, config$empty_table_message))
 
         return(data)
       })

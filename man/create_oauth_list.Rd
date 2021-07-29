@@ -8,7 +8,7 @@ create_oauth_list(
   config_file = "inst/oauth_config.yaml",
   config = NULL,
   scope = "openid view download modify",
-  claims_list = get_synapse_claims_list()
+  claims_list = list(userid = NULL)
 )
 }
 \arguments{

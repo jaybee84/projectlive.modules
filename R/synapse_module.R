@@ -13,11 +13,11 @@ synapse_module_ui <- function(id){
         shiny::fluidPage(
           shinydashboard::infoBoxOutput(ns('about'), width = 12),
           shinydashboard::box(
-            title = "Funding Partner",
+            title = "Instructions",
             width = 12,
             solidHeader = T,
             status = "primary",
-            shiny::textOutput(ns('group'))
+            shiny::textOutput(ns('txt'))
           )
         )
       )
@@ -31,41 +31,37 @@ synapse_module_ui <- function(id){
 #'
 #' @param id A string, shiny id
 #' @param syn A synapseclient$Synapse object that has been logged in
-#' @param data_config A named list
+#' @param config a shiny::recative that returns a named list
 #'
 #' @export
-synapse_module_server <- function(id, syn, data_config){
+synapse_module_server <- function(id, syn, config){
   shiny::moduleServer(id, function(input, output, session) {
       ns <- session$ns
 
       output$about <- shinydashboard::renderInfoBox({
         shinydashboard::infoBox(
-          " ",
+          "projectLive: Track the progress and impact of your funding initiatives in real time",
           icon = shiny::icon("university", "fa-1x"),
           color = "light-blue",
           fill = TRUE
         )
       })
 
-      output$group <- shiny::renderText({
-        txt <- stringr::str_c(
-          "Navigate to the tabs at the top of the page to get more information ",
-          "about the participating investigators and the various resources ",
-          "that they have generated."
-        )
+      output$txt <- shiny::renderText({
+        shiny::req(config())
+        txt <- glue::glue(config()$text)
         waiter::waiter_hide()
         txt
       })
 
+      tables <- shiny::reactive({
+        shiny::req(syn, config())
+        get_tables_from_synapse(syn, config())
+      })
+
       data <- shiny::reactive({
-        shiny::req(syn, data_config)
-        tables <- data_config %>%
-          purrr::pluck("data_files") %>%
-          purrr::map_chr("synapse_id") %>%
-          purrr::map(read_rds_file_from_synapse, syn)
-        list(
-          "tables" = tables
-        )
+        shiny::req(tables())
+        list( "tables" = tables())
       })
 
     }

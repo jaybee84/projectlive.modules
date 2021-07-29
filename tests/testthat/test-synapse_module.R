@@ -5,22 +5,20 @@ test_that("synapse_module_ui", {
 
 synapseclient <- reticulate::import("synapseclient", delay_load = TRUE)
 syn <- synapseclient$Synapse()
-syn$login()
-config <- jsonlite::read_json(
-  system.file("JSON/csbc_data_config.json", package = "projectlive.modules")
-)
+invisible(syn$login())
+
 
 test_that("synapse_module_server", {
   shiny::testServer(
     synapse_module_server,
     args = list(
       syn = syn,
-      data_config = config
+      config = shiny::reactive(get_csbc_synapse_config())
     ),
     {
       expect_true(T)
       expect_type(output$about, "list")
-      expect_type(output$group, "character")
+      expect_type(output$txt, "character")
       expect_type(data(), "list")
       expect_named(data(), "tables")
       tables <- data()$tables

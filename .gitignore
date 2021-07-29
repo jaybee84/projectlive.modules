@@ -4,3 +4,5 @@
 .Ruserdata
 R/use_conda_env.R
 inst/oauth_config.yaml
+tests/testthat/test-secrets.R
+apps/nf_app_secret.R

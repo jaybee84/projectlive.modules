@@ -12,14 +12,14 @@ milestone_reporting_module_ui <- function(id){
 
   shiny::tagList(
     shinydashboard::box(
-      title = "Milestone tracker",
+      title = "Progress report tracker",
       status = "primary",
       solidHeader = TRUE,
       width = 12,
       collapsible = FALSE,
       shiny::h4(stringr::str_c(
         "The following plots track the expected and actual data uploads to this",
-        "study associated with each milestone.",
+        "study associated with each progress report or milestone report.",
         sep = " "
       )),
       shiny::p("Select the visualization type for the plots from the list below"),
@@ -31,14 +31,14 @@ milestone_reporting_module_ui <- function(id){
       ),
       # ----
       shinydashboard::box(
-        title = "Researcher reported milestone upload",
+        title = "Researcher reported progress/milestone update",
         status = "primary",
         solidHeader = TRUE,
         width = 12,
         shiny::p(stringr::str_c(
-          "Select a milestone from the list below.",
-          "The plots will show the expected data files for this milestone,",
-          "and the uploaded data files that the researcher reported for this milestone.",
+          "Select a milestone or progress report number from the list below.",
+          "The plots will show the expected data files for this milestone or progress report,",
+          "and the uploaded data files that the researcher reported for this milestone or progress report.",
           sep = " "
         )),
         shiny::fluidRow(
@@ -57,7 +57,7 @@ milestone_reporting_module_ui <- function(id){
       ),
       # ----
       shinydashboard::box(
-        title = "Sage Internal milestone tracking",
+        title = "Sage Internal milestone or progress report tracking",
         status = "primary",
         solidHeader = TRUE,
         width = 12,
@@ -65,7 +65,7 @@ milestone_reporting_module_ui <- function(id){
           shiny::column(
             width = 12,
             shiny::p(stringr::str_c(
-              "Click on a row in the table below to select the milestone of interest.",
+              "Click on a row in the table below to select the milestone or progress report number of interest.",
               "Then use the slider on the right to determine a time window around the",
               "estimated date of upload to find all files uploaded during this window",
               sep = " "
@@ -135,7 +135,7 @@ milestone_reporting_module_server <- function(id, data, config){
         shiny::req(data(), config())
         shiny::validate(shiny::need(
           !is.null(config()),
-          "Not Tracking Milestones"
+          "Not tracking milestones or progress reports"
         ))
         config <- purrr::pluck(config(), "files_table")
         tbl <- purrr::pluck(data(), "tables", config$name)
@@ -146,13 +146,13 @@ milestone_reporting_module_server <- function(id, data, config){
         shiny::req(data(), config())
         shiny::validate(shiny::need(
           !is.null(config()),
-          "Not Tracking Milestones"
+          "Not tracking milestones or progress reports"
         ))
         config <- purrr::pluck(config(), "incoming_data_table")
         tbl <- purrr::pluck(data(), "tables", config$name)
         shiny::validate(shiny::need(
           nrow(tbl) > 0,
-          "Study has no current milestones."
+          "Study has no current milestones or progress report updates."
         ))
         format_plot_data_with_config(tbl, config)
       })
@@ -309,7 +309,7 @@ milestone_reporting_module_server <- function(id, data, config){
         shiny::req(milestone_choices())
         shiny::selectInput(
           inputId = ns("milestone_choice"),
-          label = "Choose Milestone",
+          label = "Choose Milestone or Progress Report Number",
           choices = milestone_choices()
         )
       })
@@ -317,7 +317,7 @@ milestone_reporting_module_server <- function(id, data, config){
       plot_title2 <- shiny::reactive({
         shiny::req(input$milestone_choice)
         stringr::str_c(
-          "The plot below is showing all files expected or annotated with milestone number ",
+          "The plot below is showing all files expected or annotated with milestone or progress report number ",
           input$milestone_choice,
           "."
         )

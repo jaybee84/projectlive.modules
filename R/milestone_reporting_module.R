@@ -12,7 +12,7 @@ milestone_reporting_module_ui <- function(id){
 
   shiny::tagList(
     shinydashboard::box(
-      title = "Progress report tracker",
+      title = "Milestone or Progress Report tracker",
       status = "primary",
       solidHeader = TRUE,
       width = 12,
